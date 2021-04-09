@@ -1,13 +1,11 @@
 package me.func.forest
 
 import clepto.bukkit.B
-import lombok.Getter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
-import ru.cristalix.core.map.IMapService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.core.stats.IStatService
@@ -20,7 +18,6 @@ class Forest : JavaPlugin(), Listener {
 
     private val statScope = PlayerScope("forest", Stat::class.java)
 
-    @Getter
     lateinit var instance: Forest
     lateinit var userManager: UserManager<User>
 

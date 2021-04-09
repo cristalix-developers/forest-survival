@@ -33,8 +33,6 @@ tasks.withType(JavaCompile) {
 dependencies {
     compileOnly group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.7'
 
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
     compileOnly 'cristalix:bukkit-core:21.01.30'
     compileOnly 'cristalix:dark-paper:21.02.03'
     compileOnly 'bottle:bottle-libs:1.0'
