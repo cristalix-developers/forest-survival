@@ -1,0 +1,4 @@
+name: me.func.forest.Forest
+version: 1.0
+main: me.func.forest.Forest
+depend: [CoreAPI]
