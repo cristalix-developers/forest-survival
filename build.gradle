@@ -35,7 +35,8 @@ dependencies {
 
     compileOnly 'cristalix:bukkit-core:21.01.30'
     compileOnly 'cristalix:dark-paper:21.02.03'
-    compileOnly 'bottle:bottle-libs:1.0'
+
+    compileOnly 'dev.xdark:feder:1.0-SNAPSHOT'
 
     implementation 'clepto:clepto-bukkit:3.4.2'
     implementation 'clepto:clepto-cristalix:3.0.2'

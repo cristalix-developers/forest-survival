@@ -1,6 +1,7 @@
 package me.func.forest
 
 import clepto.bukkit.B
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -14,18 +15,16 @@ import ru.cristalix.core.stats.UserManager
 import ru.cristalix.core.stats.impl.StatService
 import ru.cristalix.core.stats.impl.network.StatServiceConnectionData
 
-class Forest : JavaPlugin(), Listener {
+class Forest : JavaPlugin() {
 
     private val statScope = PlayerScope("forest", Stat::class.java)
 
-    lateinit var instance: Forest
     lateinit var userManager: UserManager<User>
 
     override fun onEnable() {
-        instance = this
-        B.plugin = instance
+        B.plugin = this
 
-        B.events(this)
+        B.events(ModLoader())
 
         val info = IRealmService.get().currentRealmInfo
         info.status = RealmStatus.GAME_STARTED_CAN_JOIN
@@ -42,10 +41,5 @@ class Forest : JavaPlugin(), Listener {
             { context -> User(context.uuid, context.name, context.getData(statScope)) },
             { user: User, context -> context.store(statScope, user.stat) }
         )
-    }
-
-    @EventHandler
-    fun onJoin(event: PlayerJoinEvent) {
-        event.player.sendMessage("Hello")
     }
 }
