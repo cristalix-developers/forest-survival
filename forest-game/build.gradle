@@ -4,6 +4,7 @@ plugins {
 
 group = 'me.func'
 version = '1.0-SNAPSHOT'
+jar.baseName = 'forest'
 
 apply plugin: 'java'
 

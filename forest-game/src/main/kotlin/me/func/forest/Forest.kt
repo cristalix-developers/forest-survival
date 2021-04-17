@@ -1,6 +1,7 @@
 package me.func.forest
 
 import clepto.bukkit.B
+import clepto.cristalix.WorldMeta
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,12 +20,14 @@ class Forest : JavaPlugin() {
 
     private val statScope = PlayerScope("forest", Stat::class.java)
 
+    lateinit var worldMeta: WorldMeta
     lateinit var userManager: UserManager<User>
 
     override fun onEnable() {
         B.plugin = this
 
         B.events(ModLoader())
+        worldMeta = MapLoader().load("prod")!!
 
         val info = IRealmService.get().currentRealmInfo
         info.status = RealmStatus.GAME_STARTED_CAN_JOIN
