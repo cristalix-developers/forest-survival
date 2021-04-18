@@ -1,6 +1,5 @@
 package me.func.forest
 
-import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import net.minecraft.server.v1_12_R1.PacketDataSerializer
 import net.minecraft.server.v1_12_R1.PacketPlayOutCustomPayload
@@ -15,33 +14,25 @@ import java.nio.file.Files
 
 class ModLoader : Listener {
 
-    private lateinit var modList: Collection<ByteBuf>
-
-    init {
-        try {
-            val files = File("./mods/").listFiles()
-
-            if (files != null) {
-                modList = files.map {
-                    val buffer = Unpooled.buffer()
-                    buffer.writeBytes(Mod.serialize(Mod(Files.readAllBytes(it.toPath()))))
-                    buffer
-                }.toList()
-            }
-        } catch (exception: Exception) {
-            throw RuntimeException(exception)
-        }
+    private var modList = try {
+        File("./mods/").listFiles()!!.map {
+            val buffer = Unpooled.buffer()
+            buffer.writeBytes(Mod.serialize(Mod(Files.readAllBytes(it.toPath()))))
+            buffer
+        }.toList()
+    } catch (exception: Exception) {
+        throw RuntimeException(exception)
     }
 
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val connection = (event.player as CraftPlayer).handle.playerConnection
 
-        for (byteBuf in modList) {
+        modList.forEach {
             connection.sendPacket(
                 PacketPlayOutCustomPayload(
                     DisplayChannels.MOD_CHANNEL,
-                    PacketDataSerializer(byteBuf.retainedSlice())
+                    PacketDataSerializer(it.retainedSlice())
                 )
             )
         }
