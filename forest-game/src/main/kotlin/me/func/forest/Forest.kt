@@ -59,7 +59,7 @@ class Forest : JavaPlugin() {
         GameTimer(listOf()).runTaskTimer(this, 0, 1)
     }
 
-    fun getUser(player: Player): User {
+    fun getUser(player: Player): User? {
         return userManager.getUser(player)
     }
 

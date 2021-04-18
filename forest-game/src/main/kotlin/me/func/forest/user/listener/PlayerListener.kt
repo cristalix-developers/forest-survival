@@ -19,7 +19,7 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun joinEvent(event: PlayerJoinEvent) {
-        val user = app.getUser(event.player)
+        val user = app.getUser(event.player)!!
 
         prepares.forEach { it.execute(user) }
     }
@@ -30,7 +30,8 @@ class PlayerListener : Listener {
         val dismounted = event.dismounted
 
         if (entity is CraftPlayer) {
-            val user = app.getUser(entity)
+            val user = app.getUser(entity) ?: return
+
             // Если игрок находится в состоянии просмотра туториала,
             // не давать слезть с вертолета
             if (user.watchTutorial())
