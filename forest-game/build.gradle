@@ -11,7 +11,14 @@ bukkitPlugin {
 
 group = 'me.func'
 version = '1.0-SNAPSHOT'
-jar.archiveBaseName.set 'forest'
+
+afterEvaluate {
+    jar {
+        archiveBaseName.set 'forest'
+        from configurations.runtimeClasspath.collect { it.directory ? it : zipTree(it) }
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    }
+}
 
 
 sourceCompatibility = '1.8'
