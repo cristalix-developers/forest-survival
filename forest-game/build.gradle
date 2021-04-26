@@ -13,7 +13,6 @@ group = 'me.func'
 version = '1.0-SNAPSHOT'
 jar.archiveBaseName.set 'forest'
 
-
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
