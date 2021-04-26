@@ -36,13 +36,10 @@ compileKotlin {
 }
 
 dependencies {
-    compileOnly group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.7'
-
     compileOnly 'cristalix:bukkit-core:21.01.30'
     compileOnly 'cristalix:dark-paper:21.02.03'
 
     compileOnly 'dev.xdark:feder:1.0-SNAPSHOT'
-
     implementation 'clepto:clepto-bukkit:3.4.2'
     implementation 'clepto:clepto-cristalix:3.0.2'
     implementation 'ru.cristalix:stat-service-bukkit-api:21.02.28.1821'
@@ -54,6 +51,8 @@ ext.bukkitPlugin = [mainClass: 'me.func.forest.Forest', dependencies: 'CoreAPI']
 apply from: 'bukkitPlugin.gradle'
 
 afterEvaluate {
+    evaluationDependsOn ':forest-image'
+
     def bukkitPluginTask = tasks.bukkitPlugin
     def imageTask = project(":forest-image").tasks.jar
 
