@@ -17,6 +17,7 @@ import ru.cristalix.core.stats.PlayerScope
 import ru.cristalix.core.stats.UserManager
 import ru.cristalix.core.stats.impl.StatService
 import ru.cristalix.core.stats.impl.network.StatServiceConnectionData
+import java.util.*
 
 lateinit var app: Forest
 
@@ -48,8 +49,15 @@ class Forest : JavaPlugin() {
         statService.useScopes(statScope)
 
         userManager = statService.registerUserManager(
-            { context -> User(context.uuid, context.name, context.getData(statScope)) },
-            { user: User, context -> context.store(statScope, user.stat) }
+            {
+                val user = User(it.uuid, it.name, it.getData(statScope))
+                user.stat!!.lastEntry = Date().time
+                user
+            },
+            { user: User, context ->
+                user.stat!!.timeAlive += Date().time - user.stat!!.lastEntry
+                context.store(statScope, user.stat)
+            }
         )
 
         // Регистрация обработчиков событий

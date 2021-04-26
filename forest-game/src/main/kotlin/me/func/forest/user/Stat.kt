@@ -1,10 +1,13 @@
 package me.func.forest.user
 
 data class Stat (
-    val tutorial: Boolean,
-    val health: Double,
-    val heart: Int,
-    val thirst: Double,
-    val level: Int,
-    val money: Double,
+    var tutorial: Boolean,
+    var health: Double,
+    var heart: Int,
+    var thirst: Double,
+    var level: Int,
+    var money: Double,
+    var maxHeart: Int,
+    var lastEntry: Long,
+    var timeAlive: Long,
 )

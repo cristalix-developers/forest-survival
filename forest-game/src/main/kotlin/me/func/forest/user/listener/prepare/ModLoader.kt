@@ -4,7 +4,6 @@ import io.netty.buffer.Unpooled
 import me.func.forest.user.User
 import net.minecraft.server.v1_12_R1.PacketDataSerializer
 import net.minecraft.server.v1_12_R1.PacketPlayOutCustomPayload
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import ru.cristalix.core.display.DisplayChannels
 import ru.cristalix.core.display.messages.Mod
 import java.io.File
@@ -23,10 +22,8 @@ class ModLoader : PrepareUser {
     }
 
     override fun execute(user: User) {
-        val connection = (user.player as CraftPlayer).handle.playerConnection
-
         modList.forEach {
-            connection.sendPacket(
+            user.sendPacket(
                 PacketPlayOutCustomPayload(
                     DisplayChannels.MOD_CHANNEL,
                     PacketDataSerializer(it.retainedSlice())
