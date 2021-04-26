@@ -23,6 +23,10 @@ class BarManager {
 
     private var airHide: Boolean = false
 
+    private var health = 0
+    private var hunger = 0
+    private var exp = 0
+
     init {
         UIEngine.registerHandler(HealthRender::class.java) { isCancelled = true }
         UIEngine.registerHandler(ExpBarRender::class.java) { isCancelled = true }
@@ -48,12 +52,22 @@ class BarManager {
                     UIEngine.overlayContext.addChild(airBar!!)
                 }
             }
-
-            healthIndicator?.updatePercentage()
-            energyIndicator?.updatePercentage()
-            lvlIndicator?.updatePercentage()
+            val currentHealth = api.minecraft().player.health.toInt()
+            if (currentHealth != health) {
+                health = currentHealth
+                healthIndicator?.updatePercentage(currentHealth, 20)
+            }
+            val currentSaturation = api.minecraft().player.absorptionAmount.toInt()
+            if (currentSaturation != hunger) {
+                hunger = currentSaturation
+                energyIndicator?.updatePercentage(currentSaturation, 20)
+            }
+            val currentExp = api.minecraft().player.experience.toInt()
+            if (currentExp != exp) {
+                exp = currentExp
+                lvlIndicator?.updatePercentage(exp, 20, 20)
+            }
         }
-
         display()
     }
 
@@ -71,9 +85,9 @@ class BarManager {
 
         UIEngine.overlayContext.addChild(parent)
 
-        lvlIndicator!!.updatePercentage()
-        healthIndicator!!.updatePercentage()
-        energyIndicator!!.updatePercentage()
+        lvlIndicator!!.updatePercentage(1, 0, 0)
+        healthIndicator!!.updatePercentage(20, 20)
+        energyIndicator!!.updatePercentage(20, 20)
 
         airBar = rectangle {
             size = V3(260.0, 3.0)
@@ -100,8 +114,6 @@ class BarManager {
         }
 
         private val maxX: Double
-        private var health = 20
-        private var maxHealth = 20
 
         init {
             color = Color(0, 0, 0, 0.68)
@@ -121,15 +133,11 @@ class BarManager {
             addChild(bar, text)
         }
 
-        fun updatePercentage() {
-            health = api.minecraft().player.health.toInt()
-            maxHealth = 20
-
+        fun updatePercentage(current: Int, max: Int) {
             bar.animate(0.1, Easings.CUBIC_OUT) {
-                bar.size.x = maxX * min(1.0, health / maxHealth.toDouble())
+                bar.size.x = maxX * min(1.0, current / max.toDouble())
             }
-
-            this.text.content = "§f$health/$maxHealth ❤"
+            this.text.content = "§f$current/$max ❤"
         }
     }
 
@@ -165,14 +173,10 @@ class BarManager {
             addChild(bar, text)
         }
 
-        fun updatePercentage() {
-            energy = api.minecraft().player.absorptionAmount.toInt()
-            maxEnergy = 20
-
+        fun updatePercentage(energy: Int, maxEnergy: Int) {
             bar.animate(0.1, Easings.CUBIC_OUT) {
                 bar.size.x = maxX * min(1.0, energy / maxEnergy.toDouble())
             }
-
             this.text.content = "§f$energy/$maxEnergy"
         }
     }
@@ -187,9 +191,6 @@ class BarManager {
         }
 
         private val maxX: Double
-        private var level = 1
-        private var exp = 1
-        private var needExp = 1
 
         init {
             color = Color(0, 0, 0, 0.68)
@@ -209,15 +210,10 @@ class BarManager {
             addChild(bar, text)
         }
 
-        fun updatePercentage() {
-            level = 10
-            exp = 10
-            needExp = 10
-
+        fun updatePercentage(level: Int, exp: Int, needExp: Int) {
             bar.animate(0.1, Easings.CUBIC_OUT) {
                 bar.size.x = maxX * min(1.0, exp / needExp.toDouble())
             }
-
             this.text.content = "§f$level ур. ${if (needExp == 0) "Макс. уровень" else "§b$exp/$needExp"}"
         }
     }

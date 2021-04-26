@@ -64,8 +64,8 @@ class Map {
                 val dWheel = Mouse.getDWheel()
                 if (dWheel != 0) {
                     map.animate(30) {
-                        map.size.x = max(minSize, min(maxSize, map.size.x + (dWheel / 12).toDouble()))
-                        map.size.y = max(minSize, min(maxSize, map.size.y + (dWheel / 12).toDouble()))
+                        map.size.x = max(minSize, min(maxSize, map.size.x + (dWheel / 7).toDouble()))
+                        map.size.y = max(minSize, min(maxSize, map.size.y + (dWheel / 7).toDouble()))
                     }
                 }
                 if (dragging) {
