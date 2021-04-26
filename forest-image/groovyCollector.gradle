@@ -13,6 +13,7 @@ for (script in groovyScriptsStr.split(';')) {
             .replace('\\', '.')
             .replace('.groovy', '') + '\n'
 }
+
 jar {
     File groovyScriptsFile = file("$genOutputDir/groovyScripts")
     outputs.file(groovyScriptsFile)

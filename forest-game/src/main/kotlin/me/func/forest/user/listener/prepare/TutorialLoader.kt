@@ -13,7 +13,7 @@ class TutorialLoader : PrepareUser {
         .toCenterLocation()
 
     override fun execute(user: User) {
-        B.postpone(7) { ModTransfer.string("1").send("guide", user) }
+        B.postpone(20) { ModTransfer.string("1").send("guide", user) }
         if (!user.watchTutorial()) {
             // test
             val player = user.player

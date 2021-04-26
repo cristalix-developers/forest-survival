@@ -48,15 +48,18 @@ dependencies {
     implementation 'ru.cristalix:stat-service-bukkit-api:21.02.28.1821'
 }
 
+
 apply plugin: 'groovy'
 ext.bukkitPlugin = [mainClass: 'me.func.forest.Forest', dependencies: 'CoreAPI']
 apply from: 'bukkitPlugin.gradle'
 
-def bukkitPluginTask = tasks.bukkitPlugin
-def imageTask = project(':forest-image').tasks.jar
+afterEvaluate {
+    def bukkitPluginTask = tasks.bukkitPlugin
+    def imageTask = project(":forest-image").tasks.jar
 
-bukkitPluginTask.dependsOn imageTask
+    bukkitPluginTask.dependsOn imageTask
 
-bukkitPluginTask.with imageTask as Jar
+    bukkitPluginTask.with imageTask as Jar
 
-tasks.build.dependsOn bukkitPluginTask
+    tasks.build.dependsOn bukkitPluginTask
+}

@@ -1,5 +1,5 @@
 rootProject.name = 'forest'
 
+include 'forest-image'
 include 'forest-game'
 include 'forest-mod'
-include 'forest-image'
