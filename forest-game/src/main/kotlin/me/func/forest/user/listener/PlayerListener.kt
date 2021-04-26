@@ -30,7 +30,7 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { B.postpone(50) {it.player.setResourcePack("[URL][/URL]")} },
+        PrepareUser { B.postpone(50) {it.player.setResourcePack("[URL]https://implario.dev/art.zip[/URL]")} },
         SetupScoreBoard()
     )
 
