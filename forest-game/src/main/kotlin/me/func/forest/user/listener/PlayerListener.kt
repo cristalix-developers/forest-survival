@@ -30,7 +30,10 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { B.postpone(50) {it.player.setResourcePack("[URL]https://implario.dev/art.zip[/URL]")} },
+        PrepareUser { B.postpone(1) { it.player.setResourcePack(
+            "http://[CENSURED]/art.zip",
+            "08880C088F83D8890128126"
+        ) } },
         SetupScoreBoard()
     )
 
@@ -100,7 +103,7 @@ class PlayerListener : Listener {
         if (event.action == Action.LEFT_CLICK_AIR && event.material == Material.STONE_BUTTON) {
             val stand = player.world.spawnEntity(player.location, EntityType.ARMOR_STAND)
 
-            stand.velocity = player.eyeLocation.direction.multiply(0.3)
+            stand.velocity = player.eyeLocation.direction.multiply(1.3)
 
             val nmsStand = (stand as CraftArmorStand).handle
 

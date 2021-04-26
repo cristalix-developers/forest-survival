@@ -13,13 +13,15 @@ class TutorialLoader : PrepareUser {
         .toCenterLocation()
 
     override fun execute(user: User) {
-        B.postpone(10) { ModTransfer.string("1").send("guide", user) }
+        B.postpone(7) { ModTransfer.string("1").send("guide", user) }
         if (!user.watchTutorial()) {
             // test
             val player = user.player
             player.allowFlight = true
             player.isFlying = true
             player.isOp = true
+
+            player.teleport(startLocation)
 
             // Полет вперед
             //Cycle.run(updateTimeFlight, normalFlightTime * 20 * updateTimeFlight) {

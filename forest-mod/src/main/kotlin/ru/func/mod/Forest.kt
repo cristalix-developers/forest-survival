@@ -68,6 +68,8 @@ class Forest : ModMain {
 
                 api.minecraft().world.spawnEntity(helicopter)
 
+                player.startRiding(helicopter, true)
+
                 animationActive = true
             }
         }
@@ -87,10 +89,10 @@ class Forest : ModMain {
                 }
             }
             if (seconds < 40) {
-                //helicopter.setMotion(0.0, 0.17, 0.23)
                 val x = helicopter.x
                 val y = helicopter.y
                 val z = helicopter.z
+
                 helicopter.teleport(x, y + 0.0001, z + 0.004)
             }
         }
