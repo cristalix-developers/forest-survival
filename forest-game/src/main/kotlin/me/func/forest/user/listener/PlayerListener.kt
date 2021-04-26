@@ -27,11 +27,13 @@ import org.spigotmc.event.entity.EntityDismountEvent
  */
 class PlayerListener : Listener {
 
+    private val textureUrl = System.getenv("RESOURCE_PACK_URL")
+
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { B.postpone(1) { it.player.setResourcePack(
-            "http://[CENSURED]/art.zip",
+        PrepareUser { B.postpone(4) { it.player.setResourcePack(
+            textureUrl,
             "08880C088F83D8890128126"
         ) } },
         SetupScoreBoard()

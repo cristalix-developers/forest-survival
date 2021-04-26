@@ -23,17 +23,6 @@ class TutorialLoader : PrepareUser {
 
             player.teleport(startLocation)
 
-            // Полет вперед
-            //Cycle.run(updateTimeFlight, normalFlightTime * 20 * updateTimeFlight) {
-            //    val vec = helicopter.velocity
-            //
-            //    vec.x = 0.0
-            //    vec.y = 0.17
-            //    vec.z = 0.23
-            //
-            //    helicopter.velocity = vec
-            //}
-            //
             //val omega = 2.1
             //
             //// Вращение
