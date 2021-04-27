@@ -68,8 +68,6 @@ class Forest : ModMain {
 
                 api.minecraft().world.spawnEntity(helicopter)
 
-                player.startRiding(helicopter, true)
-
                 animationActive = true
             }
         }
