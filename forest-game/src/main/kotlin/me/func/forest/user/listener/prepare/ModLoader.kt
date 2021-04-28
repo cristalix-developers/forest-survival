@@ -12,11 +12,13 @@ import java.nio.file.Files
 class ModLoader : PrepareUser {
 
     private var modList = try {
-        File("./mods/").listFiles()!!.map {
-            val buffer = Unpooled.buffer()
-            buffer.writeBytes(Mod.serialize(Mod(Files.readAllBytes(it.toPath()))))
-            buffer
-        }.toList()
+        File("./mods/").listFiles()!!
+            .filter { it.name.contains("bundle") }
+            .map {
+                val buffer = Unpooled.buffer()
+                buffer.writeBytes(Mod.serialize(Mod(Files.readAllBytes(it.toPath()))))
+                buffer
+            }.toList()
     } catch (exception: Exception) {
         throw RuntimeException(exception)
     }
