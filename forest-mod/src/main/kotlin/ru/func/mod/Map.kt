@@ -6,6 +6,7 @@ import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
+import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
 import ru.cristalix.uiengine.element.RectangleElement
@@ -31,7 +32,7 @@ class Map {
             dragging = b
             if (b) {
                 val mouse = getMouse()
-                val resolution = api.resolution()
+                val resolution = clientApi.resolution()
                 draggingX =
                     mouse.x - this.offset.x - this.align.x * resolution.scaledWidth_double + this.origin.x * this.size.x
                 draggingY =
@@ -69,7 +70,7 @@ class Map {
                     }
                 }
                 if (dragging) {
-                    val resolution = api.resolution()
+                    val resolution = clientApi.resolution()
                     val factor = resolution.scaleFactor
                     val mouse = getMouse()
 

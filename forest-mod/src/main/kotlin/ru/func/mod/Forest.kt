@@ -1,10 +1,10 @@
 package ru.func.mod
 
-import dev.xdark.clientapi.ClientApi
+import KotlinMod
 import dev.xdark.clientapi.entity.EntityArmorStand
+import dev.xdark.clientapi.entity.EntityLightningBolt
 import dev.xdark.clientapi.entity.EntityPlayerSP
 import dev.xdark.clientapi.entity.EntityProvider
-import dev.xdark.clientapi.entry.ModMain
 import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.event.render.GuiOverlayRender
 import dev.xdark.clientapi.inventory.EntityEquipmentSlot
@@ -13,11 +13,13 @@ import dev.xdark.clientapi.nbt.NBTPrimitive
 import dev.xdark.clientapi.nbt.NBTTagCompound
 import dev.xdark.clientapi.nbt.NBTTagString
 import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.utility.V3
 import java.util.*
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
-lateinit var api: ClientApi
-
-class Forest : ModMain {
+class Forest : KotlinMod() {
 
     private val helicopterItem: ItemStack = ItemStack.of(
         NBTTagCompound.of(
@@ -25,9 +27,11 @@ class Forest : ModMain {
                 "id" to NBTTagString.of("emerald"),
                 "Count" to NBTPrimitive.of(1),
                 "Damage" to NBTPrimitive.of(0),
-                "tag" to NBTTagCompound.of(mapOf(
-                    "forest" to NBTTagString.of("helic")
-                ))
+                "tag" to NBTTagCompound.of(
+                    mapOf(
+                        "forest" to NBTTagString.of("helic")
+                    )
+                )
             )
         )
     )
@@ -35,68 +39,103 @@ class Forest : ModMain {
     private lateinit var helicopter: EntityArmorStand
 
     private var seconds = 0
-    private var lastTime = 0L
 
+    private var lastTime = 0L
     private var animationActive = false
 
+    private var helicopterCenter: V3? = null
+    private var radius = 5.0
+    private var omega = 0.1
+
     private lateinit var player: EntityPlayerSP
+    private lateinit var bolt: EntityLightningBolt
 
-    override fun load(clientApi: ClientApi) {
-        UIEngine.initialize(clientApi)
-        api = clientApi
+    override fun onEnable() {
+        UIEngine.initialize(this)
 
-        BarManager()
-        Map()
+        player = clientApi.minecraft().player
 
-        player = api.minecraft().player
-
-        UIEngine.registerHandler(PluginMessage::class.java) {
+        registerHandler<PluginMessage> {
             if (channel == "guide") {
-                helicopter = api.entityProvider()
-                    .newEntity(EntityProvider.ARMOR_STAND, api.minecraft().world) as EntityArmorStand
+                helicopter = clientApi.entityProvider()
+                    .newEntity(EntityProvider.ARMOR_STAND, clientApi.minecraft().world) as EntityArmorStand
+                bolt = clientApi.entityProvider()
+                    .newEntity(EntityProvider.LIGHTNING_BOLT, clientApi.minecraft().world) as EntityLightningBolt
+
+                UIEngine.overlayContext.schedule(0.05) {
+                    clientApi.minecraft().world.removeEntity(bolt)
+                }
 
                 helicopter.setItemInSlot(EntityEquipmentSlot.HEAD, helicopterItem)
 
-                val local = api.minecraft().player
+                val local = clientApi.minecraft().player
 
-               // helicopter.isInvisible = true
+                // helicopter.isInvisible = true
                 helicopter.setNoGravity(false)
                 helicopter.teleport(local.x, local.y, local.z)
 
                 helicopter.entityId = (-Math.random() * 1000).toInt()
                 helicopter.setUniqueId(UUID.randomUUID())
 
-                api.minecraft().world.spawnEntity(helicopter)
+                clientApi.minecraft().world.spawnEntity(helicopter)
+
+                player.startRiding(helicopter, true)
 
                 animationActive = true
+            } else if (channel == "complete_resources") {
+                BarManager()
+                Map()
             }
         }
 
-        UIEngine.registerHandler(GuiOverlayRender::class.java) {
+        registerHandler<GuiOverlayRender> {
             if (!animationActive)
                 return@registerHandler
 
+            val now = System.currentTimeMillis()
             if (lastTime < 1L)
-                lastTime = System.currentTimeMillis()
-            if ((System.currentTimeMillis() - lastTime) / 1000 > 1) {
+                lastTime = now
+            if ((now - lastTime) / 1000 > 1) {
                 // Если прошла секунда
-                lastTime = System.currentTimeMillis()
+                lastTime = now
                 seconds++
-                if (seconds == 10) {
-                    api.minecraft().world.time = 24000
-                }
             }
-            if (seconds < 40) {
-                val x = helicopter.x
-                val y = helicopter.y
-                val z = helicopter.z
+            if (seconds < 12) {
+                helicopter.teleport(helicopter.x, helicopter.y + 0.0006, helicopter.z + 0.01)
+                clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
 
-                helicopter.teleport(x, y + 0.0001, z + 0.004)
+                if (seconds > 8) {
+                    spawnBoltAt(helicopter.x + Math.random() * 10, helicopter.y + 10, helicopter.z + Math.random() * 10)
+                }
+            } else if (seconds < 22) {
+                if (helicopterCenter == null) {
+                    spawnBoltAt(helicopter.x, helicopter.y - 2, helicopter.z)
+                    clientApi.minecraft().world.setRainStrength(1F)
+
+                    helicopterCenter = V3(helicopter.x, helicopter.y, helicopter.z)
+                }
+                val angle = Math.toRadians(System.currentTimeMillis().toDouble() % (360 * (1 / omega)))
+                helicopter.teleport(
+                    helicopterCenter!!.x + sin(angle * omega) * radius,
+                    helicopter.y - 0.01,
+                    helicopterCenter!!.z + cos(angle * omega) * radius
+                )
+                helicopter.setYaw(
+                    Math.toDegrees(
+                        -atan2(
+                            helicopterCenter!!.x - helicopter.x,
+                            helicopterCenter!!.z - helicopter.z
+                        )
+                    ).toFloat()
+                )
             }
         }
     }
 
-    override fun unload() {
-        UIEngine.uninitialize()
+    fun spawnBoltAt(x: Double, y: Double, z: Double) {
+        bolt.teleport(x, y, z)
+        bolt.entityId = (-Math.random() * 1000).toInt()
+        bolt.setUniqueId(UUID.randomUUID())
+        clientApi.minecraft().world.spawnEntity(bolt)
     }
 }

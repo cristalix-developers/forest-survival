@@ -3,6 +3,7 @@ package ru.func.mod
 import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.resource.ResourceLocation
+import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
@@ -36,7 +37,7 @@ class BarManager {
 
         UIEngine.registerHandler(GameLoop::class.java) {
             if (airBar != null) {
-                var air = api.minecraft().player.air
+                var air = clientApi.minecraft().player.air
                 air = max(0, air)
 
                 if (!airHide)
@@ -52,17 +53,17 @@ class BarManager {
                     UIEngine.overlayContext.addChild(airBar!!)
                 }
             }
-            val currentHealth = api.minecraft().player.health.toInt()
+            val currentHealth = clientApi.minecraft().player.health.toInt()
             if (currentHealth != health) {
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
             }
-            val currentSaturation = api.minecraft().player.absorptionAmount.toInt()
+            val currentSaturation = clientApi.minecraft().player.absorptionAmount.toInt()
             if (currentSaturation != hunger) {
                 hunger = currentSaturation
                 energyIndicator?.updatePercentage(currentSaturation, 20)
             }
-            val currentExp = api.minecraft().player.experience.toInt()
+            val currentExp = clientApi.minecraft().player.experience.toInt()
             if (currentExp != exp) {
                 exp = currentExp
                 lvlIndicator?.updatePercentage(exp, 20, 20)

@@ -1,5 +1,6 @@
 package me.func.forest.user.listener.prepare
 
+import clepto.bukkit.B
 import io.netty.buffer.Unpooled
 import me.func.forest.user.User
 import net.minecraft.server.v1_12_R1.PacketDataSerializer
@@ -24,13 +25,15 @@ class ModLoader : PrepareUser {
     }
 
     override fun execute(user: User) {
-        modList.forEach {
-            user.sendPacket(
-                PacketPlayOutCustomPayload(
-                    DisplayChannels.MOD_CHANNEL,
-                    PacketDataSerializer(it.retainedSlice())
+        B.postpone(3) {
+            modList.forEach {
+                user.sendPacket(
+                    PacketPlayOutCustomPayload(
+                        DisplayChannels.MOD_CHANNEL,
+                        PacketDataSerializer(it.retainedSlice())
+                    )
                 )
-            )
+            }
         }
     }
 }

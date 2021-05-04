@@ -1,6 +1,5 @@
 package me.func.forest.user.listener.prepare
 
-import clepto.bukkit.B
 import me.func.forest.app
 import me.func.forest.channel.ModTransfer
 import me.func.forest.user.User
@@ -13,7 +12,7 @@ class TutorialLoader : PrepareUser {
         .toCenterLocation()
 
     override fun execute(user: User) {
-        B.postpone(20) { ModTransfer.string("1").send("guide", user) }
+        ModTransfer.string("1").send("guide", user)
         if (!user.watchTutorial()) {
             // test
             val player = user.player

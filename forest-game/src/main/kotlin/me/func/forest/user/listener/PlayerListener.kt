@@ -2,6 +2,7 @@ package me.func.forest.user.listener
 
 import clepto.bukkit.B
 import me.func.forest.app
+import me.func.forest.channel.ModTransfer
 import me.func.forest.user.listener.prepare.ModLoader
 import me.func.forest.user.listener.prepare.PrepareUser
 import me.func.forest.user.listener.prepare.SetupScoreBoard
@@ -19,6 +20,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.inventory.ItemStack
 import org.spigotmc.event.entity.EntityDismountEvent
 
@@ -49,6 +51,12 @@ class PlayerListener : Listener {
         val user = app.getUser(event.player)!!
 
         prepares.forEach { it.execute(user) }
+    }
+
+    @EventHandler
+    fun completeResources(event: PlayerResourcePackStatusEvent) {
+        if (event.status == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
+            ModTransfer.send("complete_resources", app.getUser(event.getPlayer())!!)
     }
 
     @EventHandler
