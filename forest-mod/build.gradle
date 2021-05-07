@@ -52,6 +52,7 @@ bundler {
 
 remotes {
     webServer {
+        port = project.properties["DEPLOY_PORT"] as int
         host = project.properties["DEPLOY_HOST"]
         user = project.properties["DEPLOY_USER"]
         identity = file(project.properties["DEPLOY_KEY_ROOT"])

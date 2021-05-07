@@ -5,6 +5,7 @@ import clepto.cristalix.WorldMeta
 import me.func.forest.clock.GameTimer
 import me.func.forest.user.Stat
 import me.func.forest.user.User
+import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -61,7 +62,7 @@ class Forest : JavaPlugin() {
         )
 
         // Регистрация обработчиков событий
-        B.events(PlayerListener())
+        B.events(PlayerListener(), CancelEvents())
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf()).runTaskTimer(this, 0, 1)

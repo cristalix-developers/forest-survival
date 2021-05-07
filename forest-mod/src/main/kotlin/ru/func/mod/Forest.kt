@@ -19,6 +19,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 class Forest : KotlinMod() {
 
     private val helicopterItem: ItemStack = ItemStack.of(
@@ -44,11 +45,10 @@ class Forest : KotlinMod() {
     private var animationActive = false
 
     private var helicopterCenter: V3? = null
-    private var radius = 5.0
-    private var omega = 0.1
+    private var radius = 7.0
+    private var omega = 0.2
 
     private lateinit var player: EntityPlayerSP
-    private lateinit var bolt: EntityLightningBolt
 
     override fun onEnable() {
         UIEngine.initialize(this)
@@ -59,20 +59,15 @@ class Forest : KotlinMod() {
             if (channel == "guide") {
                 helicopter = clientApi.entityProvider()
                     .newEntity(EntityProvider.ARMOR_STAND, clientApi.minecraft().world) as EntityArmorStand
-                bolt = clientApi.entityProvider()
-                    .newEntity(EntityProvider.LIGHTNING_BOLT, clientApi.minecraft().world) as EntityLightningBolt
-
-                UIEngine.overlayContext.schedule(0.05) {
-                    clientApi.minecraft().world.removeEntity(bolt)
-                }
 
                 helicopter.setItemInSlot(EntityEquipmentSlot.HEAD, helicopterItem)
 
                 val local = clientApi.minecraft().player
 
-                // helicopter.isInvisible = true
+                helicopter.isInvisible = true
                 helicopter.setNoGravity(false)
                 helicopter.teleport(local.x, local.y, local.z)
+                //helicopter.headRotation = Rotations.of(Math.toRadians(-45.0).toFloat(), 0F, 0F)
 
                 helicopter.entityId = (-Math.random() * 1000).toInt()
                 helicopter.setUniqueId(UUID.randomUUID())
@@ -99,14 +94,19 @@ class Forest : KotlinMod() {
                 // Если прошла секунда
                 lastTime = now
                 seconds++
+                if (seconds in 9..11) {
+                    spawnBoltAt(helicopter.x + (Math.random() - 0.5) * 100, helicopter.y + 100, helicopter.z + (Math.random() - 0.5) * 100)
+                }
+
+                val chunk = clientApi.minecraft().world.chunkProvider.getLoadedChunk(helicopter.x.toInt() shr 4, helicopter.z.toInt() shr 4)
+                if (chunk.getBlockState(helicopter.x.toInt(), helicopter.y.toInt() - 2, helicopter.z.toInt()).block.id != 0) {
+                    helicopter.removePassenger(player)
+                    seconds = 100
+                }
             }
             if (seconds < 12) {
-                helicopter.teleport(helicopter.x, helicopter.y + 0.0006, helicopter.z + 0.01)
+                helicopter.teleport(helicopter.x, helicopter.y + 0.0006, helicopter.z + 0.05)
                 clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
-
-                if (seconds > 8) {
-                    spawnBoltAt(helicopter.x + Math.random() * 10, helicopter.y + 10, helicopter.z + Math.random() * 10)
-                }
             } else if (seconds < 22) {
                 if (helicopterCenter == null) {
                     spawnBoltAt(helicopter.x, helicopter.y - 2, helicopter.z)
@@ -115,10 +115,13 @@ class Forest : KotlinMod() {
                     helicopterCenter = V3(helicopter.x, helicopter.y, helicopter.z)
                 }
                 val angle = Math.toRadians(System.currentTimeMillis().toDouble() % (360 * (1 / omega)))
+                val x = helicopterCenter!!.x + sin(angle * omega) * radius
+                val z = helicopterCenter!!.z + cos(angle * omega) * radius
+
                 helicopter.teleport(
-                    helicopterCenter!!.x + sin(angle * omega) * radius,
+                    x,
                     helicopter.y - 0.01,
-                    helicopterCenter!!.z + cos(angle * omega) * radius
+                    z
                 )
                 helicopter.setYaw(
                     Math.toDegrees(
@@ -132,10 +135,14 @@ class Forest : KotlinMod() {
         }
     }
 
-    fun spawnBoltAt(x: Double, y: Double, z: Double) {
+    private fun spawnBoltAt(x: Double, y: Double, z: Double) {
+        val bolt = clientApi.entityProvider()
+            .newEntity(EntityProvider.LIGHTNING_BOLT, clientApi.minecraft().world) as EntityLightningBolt
         bolt.teleport(x, y, z)
         bolt.entityId = (-Math.random() * 1000).toInt()
         bolt.setUniqueId(UUID.randomUUID())
+        bolt.boltLivingTime = 60
+
         clientApi.minecraft().world.spawnEntity(bolt)
     }
 }

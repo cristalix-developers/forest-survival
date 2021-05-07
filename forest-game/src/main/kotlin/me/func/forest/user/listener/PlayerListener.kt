@@ -10,7 +10,6 @@ import me.func.forest.user.listener.prepare.TutorialLoader
 import net.minecraft.server.v1_12_R1.EnumItemSlot
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.event.EventHandler
@@ -22,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.inventory.ItemStack
-import org.spigotmc.event.entity.EntityDismountEvent
 
 /**
  * Временный класс
@@ -60,32 +58,11 @@ class PlayerListener : Listener {
     }
 
     @EventHandler
-    fun dismountEvent(event: EntityDismountEvent) {
-        val entity = event.entity
-        val dismounted = event.dismounted
-
-        if (entity is CraftPlayer) {
-            val user = app.getUser(entity) ?: return
-
-            // Если игрок находится в состоянии просмотра туториала,
-            // не давать слезть с вертолета
-            if (user.watchTutorial())
-                return
-            B.postpone(1) {
-                if (dismounted != null && !dismounted.isDead) {
-                    dismounted.addPassenger(entity)
-                }
-            }
-        }
-    }
-
-    @EventHandler
     fun blockBreakEvent(event: BlockBreakEvent) {
         val block = event.block
         val player = event.player
 
         if (block.type == Material.CARPET) {
-
             val data = block.data
 
             if (interactiveItems.containsKey(data.toInt())) {

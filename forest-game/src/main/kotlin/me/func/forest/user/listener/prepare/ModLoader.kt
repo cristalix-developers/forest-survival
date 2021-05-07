@@ -25,7 +25,7 @@ class ModLoader : PrepareUser {
     }
 
     override fun execute(user: User) {
-        B.postpone(3) {
+        B.postpone(1) {
             modList.forEach {
                 user.sendPacket(
                     PacketPlayOutCustomPayload(
