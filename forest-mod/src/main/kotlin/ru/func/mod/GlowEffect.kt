@@ -29,7 +29,7 @@ object GlowEffect {
         }
     }
 
-    fun show(duration: Double, red: Int, blue: Int, green: Int) {
+    fun show(duration: Double, red: Int, blue: Int, green: Int, power: Double) {
         if (!added) {
             UIEngine.overlayContext.addChild(vignette)
             added = true
@@ -40,11 +40,11 @@ object GlowEffect {
         vignette.color.green = green
 
         vignette.animate(duration) {
-            vignette.color.alpha = 0.8
+            vignette.color.alpha = power
         }
 
         UIEngine.overlayContext.schedule(duration * 4) {
-            vignette.animate(duration * 8, Easings.CUBIC_OUT) {
+            vignette.animate(duration * 6, Easings.CUBIC_OUT) {
                 color.alpha = 0.0
             }
         }

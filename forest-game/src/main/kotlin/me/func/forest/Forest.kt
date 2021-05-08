@@ -3,11 +3,14 @@ package me.func.forest
 import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
 import me.func.forest.clock.GameTimer
+import me.func.forest.drop.ResourceManager
 import me.func.forest.user.Stat
 import me.func.forest.user.User
 import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
+import me.func.forest.user.listener.ThrowStone
 import org.bukkit.World
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
@@ -61,8 +64,15 @@ class Forest : JavaPlugin() {
             }
         )
 
+        B.regCommand({ player, _ ->
+            val mob = player.world.spawnEntity(player.location, EntityType.ZOMBIE)
+            mob.customName = "1"
+            mob.isCustomNameVisible = true
+            null
+        }, "f", "")
+
         // Регистрация обработчиков событий
-        B.events(PlayerListener(), CancelEvents())
+        B.events(PlayerListener(), CancelEvents(), ThrowStone(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf()).runTaskTimer(this, 0, 1)

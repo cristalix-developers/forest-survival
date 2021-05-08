@@ -91,15 +91,22 @@ class Guide {
                     spawnBoltAt(helicopter.x + (Math.random() - 0.5) * 100, helicopter.y + 100, helicopter.z + (Math.random() - 0.5) * 100)
                 }
 
-                val chunk = clientApi.minecraft().world.chunkProvider.getLoadedChunk(helicopter.x.toInt() shr 4, helicopter.z.toInt() shr 4)
-                if (chunk.getBlockState(helicopter.x.toInt(), helicopter.y.toInt() - 2, helicopter.z.toInt()).block.id != 0) {
-                    clientApi.minecraft().world.removeEntity(helicopter)
-
-                    clientApi.clientConnection().sendPayload("guide-end", Unpooled.buffer())
-
-                    GlowEffect.show(0.4, 255, 0, 0)
-
-                    seconds = 100
+                if (seconds < 22) {
+                    val chunk = clientApi.minecraft().world.chunkProvider.getLoadedChunk(
+                        helicopter.x.toInt() shr 4,
+                        helicopter.z.toInt() shr 4
+                    )
+                    if (chunk?.getBlockState(
+                            helicopter.x.toInt(),
+                            helicopter.y.toInt() - 2,
+                            helicopter.z.toInt()
+                        )?.block?.id != 0
+                    ) {
+                        clientApi.minecraft().world.removeEntity(helicopter)
+                        clientApi.clientConnection().sendPayload("guide-end", Unpooled.buffer())
+                        GlowEffect.show(0.4, 255, 0, 0, 0.7)
+                        seconds = 100
+                    }
                 }
             }
             if (seconds < 12) {

@@ -59,17 +59,7 @@ class CancelEvents : Listener {
     }
 
     @EventHandler
-    fun disable(event: PlayerInteractEvent) {
-        if (event.action === Action.RIGHT_CLICK_BLOCK) event.isCancelled = true
-    }
-
-    @EventHandler
     fun disable(event: BlockFadeEvent) {
-        event.isCancelled = true
-    }
-
-    @EventHandler
-    fun disable(event: BlockPhysicsEvent) {
         event.isCancelled = true
     }
 

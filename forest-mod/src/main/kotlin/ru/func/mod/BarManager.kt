@@ -58,7 +58,7 @@ class BarManager {
             if (currentHealth != health) {
 
                 if (currentHealth < health)
-                    GlowEffect.show(0.1, 255, 0, 0)
+                    GlowEffect.show(0.1, 255, 0, 0, (20 - currentHealth) * 0.05)
 
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
