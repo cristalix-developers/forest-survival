@@ -12,8 +12,9 @@ import ru.cristalix.core.GlobalSerializers
  * @author func 02.01.2021
  * @project forest
  */
-object ModTransfer {
+class ModTransfer {
     private val serializer = PacketDataSerializer(Unpooled.buffer())
+
     fun json(`object`: Any?): ModTransfer {
         return string(GlobalSerializers.toJson(`object`))
     }

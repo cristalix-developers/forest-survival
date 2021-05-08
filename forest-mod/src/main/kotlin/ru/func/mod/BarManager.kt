@@ -1,6 +1,6 @@
 package ru.func.mod
 
-import dev.xdark.clientapi.event.lifecycle.GameLoop
+import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.resource.ResourceLocation
 import ru.cristalix.clientapi.JavaMod.clientApi
@@ -35,7 +35,7 @@ class BarManager {
         UIEngine.registerHandler(ArmorRender::class.java) { isCancelled = true }
         UIEngine.registerHandler(AirBarRender::class.java) { isCancelled = true }
 
-        UIEngine.registerHandler(GameLoop::class.java) {
+        UIEngine.registerHandler(RenderTickPre::class.java) {
             if (airBar != null) {
                 var air = clientApi.minecraft().player.air
                 air = max(0, air)
@@ -53,8 +53,13 @@ class BarManager {
                     UIEngine.overlayContext.addChild(airBar!!)
                 }
             }
+
             val currentHealth = clientApi.minecraft().player.health.toInt()
             if (currentHealth != health) {
+
+                if (currentHealth < health)
+                    GlowEffect.show(0.1, 255, 0, 0)
+
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
             }
@@ -69,13 +74,32 @@ class BarManager {
                 lvlIndicator?.updatePercentage(exp, 20, 20)
             }
         }
-        display()
+        UIEngine.registerHandler(PluginMessage::class.java) {
+            if (channel == "rp-complete")
+                display()
+        }
     }
 
     private fun display() {
         lvlIndicator = LevelIndicator()
         healthIndicator = HealthIndicator()
         energyIndicator = EnergyIndicator()
+
+        val address = ""
+        val namespace = "forest"
+        val images: MutableList<RemoteTexture> = mutableListOf()
+        images.addAll(
+            arrayOf(
+                RemoteTexture(ResourceLocation.of(namespace, "health_bar.png"), address, "08880C088F83D8890128127"),
+                RemoteTexture(ResourceLocation.of(namespace, "xp_bar.png"), address, "08880C088F83D8890128128"),
+                RemoteTexture(ResourceLocation.of(namespace, "energy.png"), address, "08880C088F83D8890128129")
+            )
+        )
+        loadTexture(images)
+
+        healthIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "health_bar.png")
+        energyIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "xp_bar.png")
+        lvlIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "energy.png")
 
         val parent = rectangle {
             origin = Relative.BOTTOM
@@ -107,7 +131,7 @@ class BarManager {
 
     class HealthIndicator : RectangleElement() {
 
-        private val bar: RectangleElement
+        val bar: RectangleElement
         private val text: TextElement = text {
             origin = Relative.CENTER
             align = Relative.CENTER
@@ -127,7 +151,6 @@ class BarManager {
             bar = rectangle {
                 color = WHITE
                 size = parentSize
-                textureLocation = ResourceLocation.of("minecraft", "textures/health_bar.png")
             }
             this.maxX = bar.size.x
 
@@ -144,7 +167,7 @@ class BarManager {
 
     class EnergyIndicator : RectangleElement() {
 
-        private val bar: RectangleElement
+        val bar: RectangleElement
         private val text: TextElement = text {
             origin = Relative.CENTER
             align = Relative.CENTER
@@ -152,8 +175,6 @@ class BarManager {
         }
 
         private val maxX: Double
-        private var energy = 100
-        private var maxEnergy = 100
 
         init {
             color = Color(0, 0, 0, 0.68)
@@ -167,7 +188,6 @@ class BarManager {
             bar = rectangle {
                 color = WHITE
                 size = parentSize
-                textureLocation = ResourceLocation.of("minecraft", "textures/xp_bar.png")
             }
             this.maxX = bar.size.x
 
@@ -184,7 +204,7 @@ class BarManager {
 
     class LevelIndicator : RectangleElement() {
 
-        private val bar: RectangleElement
+        val bar: RectangleElement
         private val text: TextElement = text {
             origin = Relative.CENTER
             align = Relative.CENTER

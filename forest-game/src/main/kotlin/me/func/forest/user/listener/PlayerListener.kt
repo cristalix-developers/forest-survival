@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -28,14 +29,12 @@ import org.bukkit.inventory.ItemStack
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
+    private val textureHash = "08880C088F83D8890128126"
 
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { B.postpone(4) { it.player.setResourcePack(
-            textureUrl,
-            "08880C088F83D8890128126"
-        ) } },
+        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
         SetupScoreBoard()
     )
 
@@ -53,8 +52,8 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun completeResources(event: PlayerResourcePackStatusEvent) {
-        if (event.status == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
-            ModTransfer.send("complete_resources", app.getUser(event.getPlayer())!!)
+        if (event.status == SUCCESSFULLY_LOADED)
+            B.postpone(5) { ModTransfer().send("rp-complete", app.getUser(event.getPlayer())!!) }
     }
 
     @EventHandler

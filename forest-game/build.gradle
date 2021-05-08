@@ -58,6 +58,7 @@ dependencies {
 
 remotes {
     webServer {
+        port = project.properties["DEPLOY_PORT"] as int
         host = project.properties["DEPLOY_HOST"]
         user = project.properties["DEPLOY_USER"]
         identity = file(project.properties["DEPLOY_KEY_ROOT"])
@@ -73,7 +74,7 @@ task upload() {
     doLast {
         ssh.run {
             session(remotes.webServer) {
-                put from: jar.getArchiveFile().get().getAsFile(), into: "/home/func/forest/resources-bin/test"
+                put from: jar.getArchiveFile().get().getAsFile(), into: "/home/func/forest/resources-bin/prod"
                 execute 'netstat -tulpn | grep :10111 | grep --perl-regexp -o \"\\d+(?=/java)\" | xargs kill -TERM'
             }
         }
@@ -81,5 +82,5 @@ task upload() {
 }
 
 afterEvaluate {
-    tasks.upload.dependsOn(tasks.jar)
+    tasks.upload.dependsOn(tasks.build)
 }
