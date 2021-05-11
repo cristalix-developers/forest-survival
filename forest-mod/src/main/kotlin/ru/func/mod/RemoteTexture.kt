@@ -9,11 +9,11 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 
-data class RemoteTexture(val RC : ResourceLocation , val address : String, val sha1 : String)
+data class RemoteTexture(val RC: ResourceLocation, val address: String, val sha1: String)
 
-fun loadTexture(images: MutableList<RemoteTexture>){
+fun loadTexture(images: MutableList<RemoteTexture>) {
     val cacheDir = Paths.get("forest/")
-    if(!Files.exists(cacheDir))
+    if (!Files.exists(cacheDir))
         Files.createDirectory(cacheDir)
     images.forEach { it ->
         val path = cacheDir.resolve(it.sha1)
@@ -33,10 +33,11 @@ fun loadTexture(images: MutableList<RemoteTexture>){
                 baos.close()
                 Files.write((Paths.get(cacheDir.toString() + "/" + it.sha1)), imageInByte)
                 image
-            }catch (e:IOException){
+            } catch (e: IOException) {
                 null
             }
         }
-        UIEngine.clientApi.renderEngine().loadTexture(it.RC, UIEngine.clientApi.renderEngine().newImageTexture(image!!,false,false))
+        UIEngine.clientApi.renderEngine()
+            .loadTexture(it.RC, UIEngine.clientApi.renderEngine().newImageTexture(image!!, false, false))
     }
 }

@@ -9,6 +9,7 @@ import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -19,7 +20,7 @@ import java.util.function.Consumer
 class ThrowStone : Listener {
 
     private val omega = 20.0
-    private val ticksLive = 10 * 20
+    private val ticksLive = 5 * 20
     private val damage = 3.0
 
     @EventHandler
@@ -46,9 +47,9 @@ class ThrowStone : Listener {
                 pose.x += Math.toRadians(omega)
                 stand.headPose = pose
 
-                collision(stand, 2.3) { killStone(stand) }
+                collision(player, it, stand, 2.3) { killStone(stand) }
 
-                if ((stand.isOnGround || it == ticksLive - 1) && !collision(stand,3.2) { killStone(stand) })
+                if ((stand.isOnGround || it == ticksLive - 1) && !collision(player, it, stand, 3.2) { killStone(stand) })
                     killStone(stand)
             }
         }
@@ -61,10 +62,12 @@ class ThrowStone : Listener {
         Cycle.exit()
     }
 
-    private fun collision(stand: CraftArmorStand, radiusSquared: Double, doWith: Consumer<CraftArmorStand>): Boolean {
+    private fun collision(sender: Player, tick: Int, stand: CraftArmorStand, radiusSquared: Double, doWith: Consumer<CraftArmorStand>): Boolean {
         for (user in Bukkit.getOnlinePlayers()) {
+            if (user.player == sender && tick < 40)
+                continue
             if (stand.location.distanceSquared(user?.location) < radiusSquared) {
-                user.health -= damage
+                user.damage(damage, sender)
                 doWith.accept(stand)
                 return true
             }

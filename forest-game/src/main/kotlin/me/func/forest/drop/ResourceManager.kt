@@ -20,6 +20,9 @@ class ResourceManager : Listener {
         val block = event.block
 
         resources.filter { it.key.blockX == block.x && it.key.blockY == block.y && it.key.blockZ == block.z }
+            .filter { it.key.block.type == it.value.generator.getStand().first && it.key.block.data == it.value.generator.getStand().second }
             .forEach { (location, resource) -> resource.booty(location, event.player) }
+
+        event.cancel = true
     }
 }

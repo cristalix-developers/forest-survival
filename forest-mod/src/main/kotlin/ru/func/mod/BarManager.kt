@@ -63,20 +63,24 @@ class BarManager {
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
             }
-            val currentSaturation = clientApi.minecraft().player.absorptionAmount.toInt()
-            if (currentSaturation != hunger) {
-                hunger = currentSaturation
-                energyIndicator?.updatePercentage(currentSaturation, 20)
-            }
             val currentExp = clientApi.minecraft().player.experience.toInt()
             if (currentExp != exp) {
                 exp = currentExp
                 lvlIndicator?.updatePercentage(exp, 20, 20)
             }
         }
+
         UIEngine.registerHandler(PluginMessage::class.java) {
             if (channel == "rp-complete")
                 display()
+            else if (channel == "food-level") {
+                val foodLevel = data.readInt()
+
+                if (foodLevel != hunger) {
+                    hunger = foodLevel
+                    energyIndicator?.updatePercentage(foodLevel, 20)
+                }
+            }
         }
     }
 

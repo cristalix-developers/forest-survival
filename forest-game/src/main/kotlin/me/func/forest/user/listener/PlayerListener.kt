@@ -8,8 +8,10 @@ import me.func.forest.user.listener.prepare.PrepareUser
 import me.func.forest.user.listener.prepare.SetupScoreBoard
 import me.func.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
@@ -21,7 +23,7 @@ import org.bukkit.event.player.PlayerRespawnEvent
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
-    private val textureHash = "08880C088F83D8890128126"
+    private val textureHash = "08880C088F83D8890128128"
 
     private val prepares = listOf(
         ModLoader(),
@@ -42,6 +44,14 @@ class PlayerListener : Listener {
     fun completeResources(event: PlayerResourcePackStatusEvent) {
         if (event.status == SUCCESSFULLY_LOADED)
             B.postpone(5) { ModTransfer().send("rp-complete", app.getUser(event.getPlayer())!!) }
+    }
+
+    @EventHandler
+    fun foodLevelChange(event: FoodLevelChangeEvent) {
+        val human = event.entity
+
+        if (human is CraftPlayer)
+            ModTransfer().integer(event.foodLevel).send("food-level", app.getUser(human)!!)
     }
 
     @EventHandler

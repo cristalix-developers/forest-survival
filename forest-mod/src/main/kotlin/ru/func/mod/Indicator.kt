@@ -78,7 +78,6 @@ class Indicator {
             context.transformAndRender()
             GlStateManager.enableLighting()
             GL11.glDepthMask(true)
-
         }
     }
 }

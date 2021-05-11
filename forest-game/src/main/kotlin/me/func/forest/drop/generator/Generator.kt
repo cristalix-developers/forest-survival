@@ -4,8 +4,10 @@ import me.func.forest.drop.Resources
 import org.bukkit.Location
 
 @FunctionalInterface
-interface Generator {
+interface Generator<T> {
 
     fun generate(resource: Resources, location: Location)
+
+    fun getStand(): T
 
 }

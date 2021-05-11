@@ -5,11 +5,17 @@ import me.func.forest.drop.Resources
 import org.bukkit.Location
 import org.bukkit.Material
 
-class DelayGenerator(private val block: Pair<Material, Byte>, private val waitSeconds: Int) : Generator {
+class DelayGenerator(private val stand: Pair<Material, Byte>, private val waitSeconds: Int) : Generator<Pair<Material, Byte>> {
+
+    constructor(block: Material, waitSeconds: Int) : this(Pair(block, 0), waitSeconds)
+
     override fun generate(resource: Resources, location: Location) {
         B.postpone(20 * waitSeconds) {
-            location.block.type = block.first
-            location.block.data = block.second
+            location.block.setTypeAndDataFast(stand.first.id, stand.second)
         }
+    }
+
+    override fun getStand(): Pair<Material, Byte> {
+        return stand
     }
 }
