@@ -1,13 +1,14 @@
 package me.func.forest.drop.generator
 
 import me.func.forest.drop.Resources
+import me.func.forest.item.ItemList
 import org.bukkit.Location
 
 @FunctionalInterface
-interface Generator<T> {
+interface Generator {
 
     fun generate(resource: Resources, location: Location)
 
-    fun getStand(): T
+    fun getStand(): ItemList
 
 }

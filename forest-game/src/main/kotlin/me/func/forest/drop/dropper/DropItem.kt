@@ -1,6 +1,6 @@
 package me.func.forest.drop.dropper
 
-import me.func.forest.drop.Resources
+import me.func.forest.item.ItemList
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -10,8 +10,8 @@ object DropItem : Dropper {
 
     private val TOP = Vector(0.0, 0.5, 0.0)
 
-    override fun drop(resource: Resources, location: Location, player: Player?) {
-        val item = location.world.dropItemNaturally(location, resource.item)
+    override fun drop(drop: ItemList, location: Location, player: Player?) {
+        val item = location.world.dropItemNaturally(location, drop.item)
         item.velocity = TOP
     }
 

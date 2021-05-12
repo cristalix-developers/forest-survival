@@ -29,7 +29,7 @@ class PlayerListener : Listener {
         ModLoader(),
         TutorialLoader(),
         PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
-        PrepareUser { it.player.gameMode = GameMode.ADVENTURE },
+        PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         SetupScoreBoard()
     )
 

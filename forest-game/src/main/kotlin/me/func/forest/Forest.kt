@@ -3,17 +3,20 @@ package me.func.forest
 import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
 import me.func.forest.clock.GameTimer
+import me.func.forest.craft.CraftManager
 import me.func.forest.drop.ResourceManager
+import me.func.forest.item.ItemManager
 import me.func.forest.user.Stat
 import me.func.forest.user.User
 import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
-import me.func.forest.user.listener.ThrowStone
 import org.bukkit.World
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
+import ru.cristalix.core.inventory.IInventoryService
+import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.core.stats.IStatService
@@ -45,8 +48,10 @@ class Forest : JavaPlugin() {
         info.readableName = "Лес"
         info.groupName = "Лес"
 
-        // Регистрация сервиса статистики
+        // Регистрация сервисов
         val core = CoreApi.get()
+
+        CoreApi.get().registerService(IInventoryService::class.java, InventoryService())
         val statService = StatService(core.platformServer, StatServiceConnectionData.fromEnvironment())
         core.registerService(IStatService::class.java, statService)
 
@@ -71,8 +76,11 @@ class Forest : JavaPlugin() {
             null
         }, "f", "")
 
+        // Регистрация меню крафтов
+        CraftManager()
+
         // Регистрация обработчиков событий
-        B.events(PlayerListener(), CancelEvents(), ThrowStone(), ResourceManager())
+        B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf()).runTaskTimer(this, 0, 1)
