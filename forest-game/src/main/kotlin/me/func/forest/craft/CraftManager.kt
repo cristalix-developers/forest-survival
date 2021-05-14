@@ -19,8 +19,8 @@ class CraftManager {
         .rows(3)
         .columns(9)
         .provider(object : InventoryProvider {
-            override fun init(player: Player?, contents: InventoryContents?) {
-                contents?.setLayout(
+            override fun init(player: Player, contents: InventoryContents) {
+                contents.setLayout(
                     "XXXXXXXXX",
                     "XXXXXXXXX",
                     "XXXXXXXXX"
@@ -37,12 +37,11 @@ class CraftManager {
                             .toTypedArray()
                     )
 
-                    contents?.add('X', ClickableItem.of(itemWithLore) {
-                        val inventory = player?.inventory!!
+                    contents.add('X', ClickableItem.of(itemWithLore) {
+                        val inventory = player.inventory
 
                         pairs.forEach {
                             if (!inventory.contains(it.first.item.getType(), it.second)) {
-                                player.closeInventory()
                                 ModHelper.error(
                                     app.getUser(player)!!,
                                     "Нет `§c${ChatColor.stripColor(it.first.item.itemMeta.displayName)}§f`!"
@@ -55,7 +54,7 @@ class CraftManager {
                         inventory.addItem(item.to.item)
                     })
                 }
-                contents?.fillMask('X', ClickableItem.empty(ItemStack(Material.AIR)))
+                contents.fillMask('X', ClickableItem.empty(ItemStack(Material.AIR)))
             }
         }).build()
 
