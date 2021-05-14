@@ -1,6 +1,9 @@
 package me.func.forest.craft
 
 import clepto.bukkit.B
+import me.func.forest.app
+import me.func.forest.channel.ModHelper
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -24,16 +27,32 @@ class CraftManager {
                 )
 
                 CraftItem.values().forEach { item ->
-
                     val itemWithLore = item.to.item.clone()
+                    val pairs = item.from
 
-                    val lore = mutableListOf("")
-                    lore.addAll(item.from.map { "x${it.second} ${it.first.item.itemMeta.displayName}" })
-
-                    itemWithLore.itemMeta.lore = lore
+                    itemWithLore.lore = listOf(
+                        *itemWithLore.lore?.map { "§7${it}" }!!.toTypedArray(),
+                        "", "§7Необходимые ресурсы §f㨃§7: ",
+                        *pairs.map { " §bx${it.second} §f${ChatColor.stripColor(it.first.item.itemMeta.displayName)}" }
+                            .toTypedArray()
+                    )
 
                     contents?.add('X', ClickableItem.of(itemWithLore) {
-                        player?.inventory!!.addItem(item.to.item)
+                        val inventory = player?.inventory!!
+
+                        pairs.forEach {
+                            if (!inventory.contains(it.first.item.getType(), it.second)) {
+                                player.closeInventory()
+                                ModHelper.error(
+                                    app.getUser(player)!!,
+                                    "Нет `§c${ChatColor.stripColor(it.first.item.itemMeta.displayName)}§f`!"
+                                )
+                                return@of
+                            }
+                        }
+
+                        pairs.forEach { current -> repeat(current.second) { inventory.remove(current.first.item.getType()) } }
+                        inventory.addItem(item.to.item)
                     })
                 }
                 contents?.fillMask('X', ClickableItem.empty(ItemStack(Material.AIR)))

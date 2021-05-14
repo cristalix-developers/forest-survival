@@ -71,4 +71,26 @@ object ItemHelper {
             .lore(mutableListOf("").plus(lore))
             .build()
     }
+
+    fun item(name: String, count: Int, type: Material, lore: Iterable<String>): ItemStack {
+        return Items.builder()
+            .displayName(name)
+            .amount(count)
+            .type(type)
+            .flags(ItemFlag.HIDE_ATTRIBUTES)
+            .lore(mutableListOf("").plus(lore))
+            .build()
+    }
+
+    fun <T : ItemMeta> item(name: String, count: Int, type: Material, lore: Iterable<String>, clazz: Class<T>, consumer: Consumer<T>): ItemStack {
+        return Items.builder()
+            .displayName(name)
+            .amount(count)
+            .type(type)
+            .meta(clazz, consumer)
+            .flags(ItemFlag.HIDE_ATTRIBUTES)
+            .lore(mutableListOf("").plus(lore))
+            .build()
+    }
+
 }

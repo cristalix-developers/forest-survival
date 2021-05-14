@@ -19,8 +19,8 @@ enum class ItemList(val item: ItemStack, val onClick: BiConsumer<ItemList, Playe
     STONE3(item("Камень в полете", STONE), null),
     APPLE3(item("Яблоко в полете", APPLE), null),
 
-    ARROW1(item("Стрела", 4, ARROW), null),
-    POISONED_ARROW1(item("Отравленная стрела", 1, TIPPED_ARROW, PotionMeta::class.java) {
+    ARROW1(item("Стрела", 4, ARROW, listOf("Орудие дальнего боя.")), null),
+    POISONED_ARROW1(item("Отравленная стрела", 1, TIPPED_ARROW, listOf("Отравленное орудие дальнего боя."), PotionMeta::class.java) {
         it.basePotionData = PotionData(PotionType.POISON)
     }, null),
     FLINT1(item("Кремень", FLINT), null),
@@ -35,7 +35,7 @@ enum class ItemList(val item: ItemStack, val onClick: BiConsumer<ItemList, Playe
         }
     }),
     SKULL1(item("Череп", BONE), null),
-    BOW1(item("Лук", BOW), null),
+    BOW1(item("Лук", BOW, listOf("Оружие дальнего боя.")), null),
 
     MUSHROOM2(item("Гриб", BROWN_MUSHROOM), null),
     RED_MUSHROOM2(item("Мухомор", RED_MUSHROOM), { _, event ->

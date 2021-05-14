@@ -12,6 +12,7 @@ class Forest : KotlinMod() {
         BarManager()
         //Guide()
         Indicator()
+        ItemTitle()
 
         registerHandler<KeyPress> {
             if (key == Keyboard.KEY_C)
