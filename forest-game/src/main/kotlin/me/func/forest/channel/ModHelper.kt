@@ -18,4 +18,8 @@ object ModHelper {
             .send("itemtitle", user)
     }
 
+    fun highlight(user: User, message: String) {
+        ModTransfer().string(message).send("highlight", user)
+    }
+
 }

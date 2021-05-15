@@ -25,6 +25,16 @@ object ItemHelper {
             .build()
     }
 
+    fun item(name: String, type: Material, data: Byte, lore: Iterable<String>): ItemStack {
+        return Items.builder()
+            .displayName(name)
+            .type(type)
+            .flags(ItemFlag.HIDE_ATTRIBUTES)
+            .lore(mutableListOf("").plus(lore))
+            .damage(data.toShort())
+            .build()
+    }
+
     fun item(type: Material): ItemStack {
         return Items.builder()
             .type(type)

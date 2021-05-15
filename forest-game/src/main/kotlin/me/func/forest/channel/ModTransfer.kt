@@ -34,6 +34,11 @@ class ModTransfer {
         return this
     }
 
+    fun double(double: Double): ModTransfer {
+        serializer.writeDouble(double)
+        return this
+    }
+
     fun send(channel: String?, user: User) {
         user.sendPacket(PacketPlayOutCustomPayload(channel, serializer))
     }

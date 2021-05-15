@@ -5,7 +5,7 @@ data class Stat (
     var health: Double,
     var heart: Int,
     var thirst: Double,
-    var level: Int,
+    var exp: Int,
     var money: Double,
     var maxHeart: Int,
     var lastEntry: Long,

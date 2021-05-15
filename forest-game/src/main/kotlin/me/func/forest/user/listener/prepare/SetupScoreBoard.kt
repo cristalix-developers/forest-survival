@@ -13,7 +13,7 @@ class SetupScoreBoard : PrepareUser{
         objective.displayName = "Выжить в тайге"
 
         objective.startGroup("Игрок")
-            .record("Уровень") { "§b${user.stat?.level} §fур."}
+            .record("Уровень") { "§b${user.level} §fур."}
             .record("Жизней") {
                 "§c${"❤".repeat(user.stat!!.heart)}§7${"❤".repeat(user.stat!!.maxHeart - user.stat!!.heart)}"}
             .record("Дней") { "§a${(user.stat!!.timeAlive / 1000 / 3600 / 24).toInt()}"}

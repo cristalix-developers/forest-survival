@@ -27,6 +27,7 @@ class BarManager {
     private var health = 0
     private var hunger = 0
     private var exp = 0
+    private var level = 0
 
     init {
         UIEngine.registerHandler(HealthRender::class.java) { isCancelled = true }
@@ -63,22 +64,27 @@ class BarManager {
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
             }
-            val currentExp = clientApi.minecraft().player.experience.toInt()
-            if (currentExp != exp) {
-                exp = currentExp
-                lvlIndicator?.updatePercentage(exp, 20, 20)
-            }
         }
 
+        display()
+
         UIEngine.registerHandler(PluginMessage::class.java) {
-            if (channel == "rp-complete")
-                display()
-            else if (channel == "food-level") {
+            if (channel == "food-level") {
                 val foodLevel = data.readInt()
 
                 if (foodLevel != hunger) {
                     hunger = foodLevel
                     energyIndicator?.updatePercentage(foodLevel, 20)
+                }
+            } else if (channel == "exp-level") {
+                val actualLevel = data.readInt()
+                val haveExp = data.readInt()
+                val needExp = data.readInt()
+
+                if (actualLevel != level || haveExp != exp) {
+                    exp = haveExp
+                    level = actualLevel
+                    lvlIndicator?.updatePercentage(level, exp, needExp)
                 }
             }
         }
@@ -89,21 +95,9 @@ class BarManager {
         healthIndicator = HealthIndicator()
         energyIndicator = EnergyIndicator()
 
-        val address = ""
-        val namespace = "forest"
-        val images: MutableList<RemoteTexture> = mutableListOf()
-        images.addAll(
-            arrayOf(
-                RemoteTexture(ResourceLocation.of(namespace, "health_bar.png"), address, "08880C088F83D8890128127"),
-                RemoteTexture(ResourceLocation.of(namespace, "xp_bar.png"), address, "08880C088F83D8890128128"),
-                RemoteTexture(ResourceLocation.of(namespace, "energy.png"), address, "08880C088F83D8890128129")
-            )
-        )
-        loadTexture(images)
-
-        healthIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "health_bar.png")
-        energyIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "xp_bar.png")
-        lvlIndicator!!.bar.textureLocation = ResourceLocation.of(namespace, "energy.png")
+        healthIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "health_bar.png")
+        energyIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "xp_bar.png")
+        lvlIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "energy.png")
 
         val parent = rectangle {
             origin = Relative.BOTTOM
@@ -228,7 +222,6 @@ class BarManager {
             bar = rectangle {
                 color = WHITE
                 size = parentSize
-                textureLocation = ResourceLocation.of("minecraft", "textures/energy.png")
             }
             this.maxX = bar.size.x
 

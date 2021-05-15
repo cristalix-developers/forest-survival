@@ -26,7 +26,9 @@ class CraftManager {
                     "XXXXXXXXX"
                 )
 
-                CraftItem.values().forEach { item ->
+                val user = app.getUser(player)!!
+
+                CraftItem.values().filter { it.minLevel <= user.level }.forEach { item ->
                     val itemWithLore = item.to.item.clone()
                     val pairs = item.from
 
@@ -43,7 +45,7 @@ class CraftManager {
                         pairs.forEach {
                             if (!inventory.contains(it.first.item.getType(), it.second)) {
                                 ModHelper.error(
-                                    app.getUser(player)!!,
+                                    user,
                                     "Нет `§c${ChatColor.stripColor(it.first.item.itemMeta.displayName)}§f`!"
                                 )
                                 return@of

@@ -16,8 +16,10 @@ object DropItem : Dropper {
     }
 
     fun drop(location: Location, vectorRandom: Double, items: Iterable<ItemStack>) {
+        val centredLocation = location.clone().add(0.5, 0.0, 0.5)
+
         for (item in items) {
-            val drop = location.world.dropItemNaturally(location, item)
+            val drop = location.world.dropItemNaturally(centredLocation, item)
             drop.velocity = Vector((Math.random() - 0.5) * vectorRandom, 0.5, (Math.random() - 0.5) * vectorRandom)
         }
     }

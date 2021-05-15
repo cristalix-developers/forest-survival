@@ -14,7 +14,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.event.world.ChunkLoadEvent
 import org.spigotmc.event.entity.EntityDismountEvent
@@ -46,6 +45,11 @@ class CancelEvents : Listener {
         val chunk = event.chunk
         chunk.biome = EmptyChunkBiome.INSTANCE
         chunk.emittedLight = FixedChunkLight((-1).toByte())
+    }
+
+    @EventHandler
+    fun disable(event: BlockPlaceEvent) {
+        event.isCancelled = true
     }
 
     @EventHandler

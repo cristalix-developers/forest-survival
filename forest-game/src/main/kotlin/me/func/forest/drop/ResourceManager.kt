@@ -1,6 +1,8 @@
 package me.func.forest.drop
 
 import me.func.forest.app
+import me.func.forest.drop.booty.BonfireBooty
+import me.func.forest.drop.generator.BonfireGenerator
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -9,7 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent
 class ResourceManager : Listener {
 
     private var resources: Map<Location, Resources> = app.worldMeta.getLabels("drop")
-        .associate { it.toCenterLocation() to Resources.valueOf(it.tag.toUpperCase()) }
+        .associate { it.toBlockLocation() to Resources.valueOf(it.tag.toUpperCase()) }
 
     init {
         resources.forEach { (location, resource) -> resource.generate(location) }
@@ -19,12 +21,14 @@ class ResourceManager : Listener {
     fun blockBreakEvent(event: BlockBreakEvent) {
         val block = event.block
 
-        resources.filter {
-            val type = it.key.block
-            val realItem = it.value.generator.getStand().item
-            (it.key.blockX == block.x && it.key.blockY == block.y && it.key.blockZ == block.z) &&
-                    (type.typeId == realItem.typeId && type.data == realItem.data.data)
-        }.forEach { (location, resource) -> resource.booty(location, event.player) }
+        val resource = resources[block.location]
+        val item = resource?.generator?.getStand()?.item
+        if (block.typeId == item?.typeId && block.data == item.data.data)
+            resource.booty(block.location, event.player)
+
+        val bonfire = BonfireGenerator.BONFIRES[block.location]
+        if (bonfire != null)
+            BonfireBooty.get(Resources.FIRE, block.location, app.getUser(event.player)!!)
 
         event.cancel = true
     }

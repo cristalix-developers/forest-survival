@@ -9,10 +9,10 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 
-data class RemoteTexture(val RC: ResourceLocation, val address: String, val sha1: String)
+data class RemoteTexture(val RC: ResourceLocation, val sha1: String)
 
-fun loadTexture(images: MutableList<RemoteTexture>) {
-    val cacheDir = Paths.get("forest/")
+fun loadTexture(vararg images: RemoteTexture) {
+    val cacheDir = Paths.get("$NAMESPACE/")
     if (!Files.exists(cacheDir))
         Files.createDirectory(cacheDir)
     images.forEach { it ->
@@ -24,7 +24,7 @@ fun loadTexture(images: MutableList<RemoteTexture>) {
             }
         } catch (ex: IOException) {
             try {
-                val url = URL(it.address + "/" + it.RC.path)
+                val url = URL("$FILE_STORE${it.RC.path}")
                 val image = ImageIO.read(url);
                 val baos = ByteArrayOutputStream()
                 ImageIO.write(image, "png", baos)
