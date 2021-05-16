@@ -28,7 +28,7 @@ class CraftManager {
 
                 val user = app.getUser(player)!!
 
-                CraftItem.values().filter { it.minLevel <= user.level }.forEach { item ->
+                CraftItem.values().filter { user.hasLevel(it.minLevel) }.forEach { item ->
                     val itemWithLore = item.to.item.clone()
                     val pairs = item.from
 

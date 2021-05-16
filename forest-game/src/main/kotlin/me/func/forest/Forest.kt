@@ -10,6 +10,7 @@ import me.func.forest.user.Stat
 import me.func.forest.user.User
 import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
+import me.func.forest.weather.ZoneManager
 import org.bukkit.World
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -83,7 +84,7 @@ class Forest : JavaPlugin() {
         B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
-        GameTimer(listOf()).runTaskTimer(this, 0, 1)
+        GameTimer(listOf(ZoneManager())).runTaskTimer(this, 0, 1)
     }
 
     fun getUser(player: Player): User? {

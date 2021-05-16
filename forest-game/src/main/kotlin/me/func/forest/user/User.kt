@@ -7,6 +7,8 @@ import net.minecraft.server.v1_12_R1.PlayerConnection
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import ru.cristalix.core.stats.player.PlayerWrapper
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
@@ -34,6 +36,12 @@ object LevelHelper {
     }
 }
 
+const val MAX_TEMPERATURE = 41.2
+const val AVR_TEMPERATURE = 36.6
+const val MIN_TEMPERATURE = 25.0
+const val CRITICAL_MIN_TEMPERATURE = 31.0
+const val CRITICAL_MAX_TEMPERATURE = 39.0
+
 class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name) {
 
     private var connection: PlayerConnection? = null
@@ -41,7 +49,7 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
     init {
         if (stat == null) {
-            stat = Stat(false, 1.0, 1, 1.0, 1, 1.0, 3, 0, 0)
+            stat = Stat(false, 1.0, 1, 1, 36.0, 1, 3, 0)
         }
         level = LevelHelper.exp2level(stat!!.exp)
     }
@@ -80,5 +88,29 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
     fun hasLevel(level: Int): Boolean {
         return level <= this.level
+    }
+
+    fun changeTemperature(dx: Double) {
+        stat!!.temperature += dx
+        val temperature = stat!!.temperature
+
+        if (temperature < CRITICAL_MIN_TEMPERATURE)
+            player.damage(0.06)
+        if (temperature > CRITICAL_MAX_TEMPERATURE)
+            player.damage(0.07)
+
+        if (temperature < MIN_TEMPERATURE || temperature > MAX_TEMPERATURE) {
+            stat!!.temperature = min(max(MIN_TEMPERATURE, temperature), MAX_TEMPERATURE)
+            return
+        }
+    }
+
+    fun normalizeTemperature(step: Double) {
+        val temperature = stat!!.temperature
+
+        if (temperature < AVR_TEMPERATURE)
+            changeTemperature(step)
+        else if (temperature > AVR_TEMPERATURE)
+            changeTemperature(-step)
     }
 }
