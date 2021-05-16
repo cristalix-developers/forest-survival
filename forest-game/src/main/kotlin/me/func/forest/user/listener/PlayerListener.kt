@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.FoodLevelChangeEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
@@ -28,7 +29,7 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
+        //PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         SetupScoreBoard()
     )
@@ -57,5 +58,25 @@ class PlayerListener : Listener {
     @EventHandler
     fun respawn(event: PlayerRespawnEvent) {
         event.respawnLocation = app.worldMeta.getLabel("guide_end")
+    }
+
+    @EventHandler
+    fun deathEvent(event: PlayerDeathEvent) {
+        val user = app.getUser(event.getEntity())!!
+        val stat = user.stat!!
+        stat.heart--
+
+        if (stat.heart < 1) {
+            stat.exp = 1
+            stat.heart = 3
+            stat.timeAlive = 0
+        } else {
+            event.cancelled = true
+            user.player.health = 20.0
+            user.player.teleport(app.worldMeta.getLabel("guide_end"))
+            ModTransfer()
+                .integer(stat.heart + 1)
+                .send("player-dead", user)
+        }
     }
 }

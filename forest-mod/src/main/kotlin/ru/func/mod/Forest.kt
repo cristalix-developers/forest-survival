@@ -31,6 +31,7 @@ class Forest : KotlinMod() {
         ItemTitle()
         Highlight()
         LevelNew()
+        LoseHeart()
 
         registerHandler<KeyPress> {
             if (key == Keyboard.KEY_C)
@@ -59,12 +60,14 @@ class Forest : KotlinMod() {
                     temperature.content = "$temp §c▲"
                 else
                     temperature.content = "$temp §b▼"
+                if (original < 31 || original > 39)
+                    temperature.content = ""
 
                 prevTemp = original
 
                 lastUpdate = System.currentTimeMillis()
                 if (hidden) {
-                    temperature.animate(5, Easings.EXPO_OUT) {
+                    temperature.animate(15, Easings.EXPO_OUT) {
                         offset.y += 40
                     }
                 }
