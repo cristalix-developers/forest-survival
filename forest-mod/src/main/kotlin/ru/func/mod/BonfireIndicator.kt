@@ -1,6 +1,5 @@
 package ru.func.mod
 
-import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.event.render.RenderTickPre
 import dev.xdark.clientapi.opengl.GlStateManager
@@ -16,7 +15,7 @@ import kotlin.collections.set
 
 class BonfireIndicator {
 
-    private val bonfires = mutableMapOf<Context3D, Double>()
+    private val bonfires = HashMap<Context3D, Double>()
     private var maxTime = -1.0
 
     init {
@@ -42,59 +41,53 @@ class BonfireIndicator {
                 context.addChild(body)
                 maxTime = maxTime.coerceAtLeast(data.readInt().toDouble())
                 bonfires[context] = maxTime
-                clientApi.chat().printChatMessage("adding...")
+                UIEngine.worldContexts.add(context)
             }
-        }
-
-        UIEngine.registerHandler(GameLoop::class.java) {
         }
 
         UIEngine.registerHandler(RenderTickPre::class.java) {
             if (bonfires.isNotEmpty()) {
-                val contextsToRemove = mutableListOf<Context3D>()
+                val contextsToRemove = ArrayList<Context3D>()
                 bonfires.forEach {
-                    if ((it.value * 100.0).toInt() % 2 == 0) {
-                        val width = (maxTime * 2).coerceAtMost(30.0)
-                        val part = it.value / maxTime
+                    val width = (maxTime * 2).coerceAtMost(20.0)
+                    val part = it.value / maxTime
 
-                        val body = it.key.children[0] as RectangleElement
-                        val bar = body.children[0] as RectangleElement
+                    val body = it.key.children[0] as RectangleElement
+                    val bar = body.children[0] as RectangleElement
 
-                        bar.size.x = width * part
-                        body.size.x = width + 1.0
+                    bar.size.x = width * part
+                    body.size.x = width + 2.0
 
-                        GlStateManager.disableLighting()
-                        GL11.glEnable(GL11.GL_TEXTURE_2D)
-                        GL11.glDepthMask(false)
+                    GlStateManager.disableLighting()
+                    GL11.glEnable(GL11.GL_TEXTURE_2D)
+                    GL11.glDepthMask(false)
 
-                        it.key.transformAndRender()
+                    it.key.transformAndRender()
 
-                        GlStateManager.enableLighting()
-                        GL11.glDepthMask(true)
-                    } else {
-                        val player = clientApi.minecraft().player
+                    GlStateManager.enableLighting()
+                    GL11.glDepthMask(true)
+                    val player = clientApi.minecraft().player
 
-                        val matrix = Matrix4f()
-                        Matrix4f.rotate(
-                            ((player.rotationYaw + 180) / 180 * Math.PI).toFloat(),
-                            Vector3f(0f, -1f, 0f),
-                            matrix,
-                            matrix
-                        )
-                        Matrix4f.rotate(
-                            (player.rotationPitch / 180 * Math.PI).toFloat(),
-                            Vector3f(-1f, 0f, 0f),
-                            matrix,
-                            matrix
-                        )
-                        it.key.matrices[rotationMatrix] = matrix
-                    }
+                    val matrix = Matrix4f()
+                    Matrix4f.rotate(
+                        ((player.rotationYaw + 180) / 180 * Math.PI).toFloat(),
+                        Vector3f(0f, -1f, 0f),
+                        matrix,
+                        matrix
+                    )
+                    Matrix4f.rotate(
+                        (player.rotationPitch / 180 * Math.PI).toFloat(),
+                        Vector3f(-1f, 0f, 0f),
+                        matrix,
+                        matrix
+                    )
+                    it.key.matrices[rotationMatrix] = matrix
                     if (it.value < 0)
                         contextsToRemove.add(it.key)
                 }
                 contextsToRemove.forEach {
+                    UIEngine.worldContexts.remove(it)
                     bonfires.remove(it)
-                    clientApi.chat().printChatMessage("removing...")
                 }
                 bonfires.replaceAll { _, timeLeft -> timeLeft - 0.05 }
                 contextsToRemove.clear()

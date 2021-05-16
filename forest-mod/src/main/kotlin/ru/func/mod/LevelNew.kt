@@ -73,7 +73,7 @@ class LevelNew {
                         origin = TOP
                         align.y += i * (height / 10 * 5 / (crafts.size + 1))
                     }
-                }.forEach(middleBlock::addChild)
+                }.forEach { middleBlock.addChild(it) }
             }
         }
         UIEngine.registerHandler(KeyPress::class.java) {

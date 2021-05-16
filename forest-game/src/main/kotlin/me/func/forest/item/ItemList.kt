@@ -41,7 +41,7 @@ enum class ItemList(val item: ItemStack, val onClick: BiConsumer<ItemList, Playe
                 ItemHelper.useItem(event.player)
                 me.func.forest.channel.ModTransfer()
                     .double(location.x + 0.5)
-                    .double(location.y + 0.5)
+                    .double(location.y + 1.25)
                     .double(location.z + 0.5)
                     .integer(me.func.forest.drop.generator.BonfireGenerator.TICKS_FIRE)
                     .send("bonfire-new", me.func.forest.app.getUser(event.player)!!)
