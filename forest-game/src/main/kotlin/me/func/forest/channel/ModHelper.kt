@@ -22,4 +22,9 @@ object ModHelper {
         ModTransfer().string(message).send("highlight", user)
     }
 
+    fun updateTemperature(user: User) {
+        ModTransfer()
+            .double(user.stat!!.temperature)
+            .send("temperature-update", user)
+    }
 }

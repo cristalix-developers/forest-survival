@@ -34,7 +34,7 @@ class ZoneManager : ClockInject {
     }
 
     override fun doEvery(): Int {
-        return 5
+        return 10
     }
 
 }

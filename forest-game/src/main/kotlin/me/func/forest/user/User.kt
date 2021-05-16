@@ -1,5 +1,6 @@
 package me.func.forest.user
 
+import me.func.forest.channel.ModHelper
 import me.func.forest.channel.ModTransfer
 import me.func.forest.craft.CraftItem
 import net.minecraft.server.v1_12_R1.Packet
@@ -7,6 +8,7 @@ import net.minecraft.server.v1_12_R1.PlayerConnection
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import ru.cristalix.core.stats.player.PlayerWrapper
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -92,12 +94,18 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
     fun changeTemperature(dx: Double) {
         stat!!.temperature += dx
+
         val temperature = stat!!.temperature
+
+        if (abs(temperature - AVR_TEMPERATURE) < 0.05)
+            return
 
         if (temperature < CRITICAL_MIN_TEMPERATURE)
             player.damage(0.06)
         if (temperature > CRITICAL_MAX_TEMPERATURE)
             player.damage(0.07)
+
+        ModHelper.updateTemperature(this)
 
         if (temperature < MIN_TEMPERATURE || temperature > MAX_TEMPERATURE) {
             stat!!.temperature = min(max(MIN_TEMPERATURE, temperature), MAX_TEMPERATURE)

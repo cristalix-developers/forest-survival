@@ -1,10 +1,14 @@
 package ru.func.mod
 
 import dev.xdark.clientapi.event.input.KeyPress
+import dev.xdark.clientapi.event.network.PluginMessage
+import dev.xdark.clientapi.event.render.RenderTickPre
 import dev.xdark.clientapi.resource.ResourceLocation
 import org.lwjgl.input.Keyboard
 import ru.cristalix.clientapi.KotlinMod
 import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.element.animate
+import ru.cristalix.uiengine.utility.*
 
 const val NAMESPACE = "forest"
 
@@ -32,5 +36,49 @@ class Forest : KotlinMod() {
             if (key == Keyboard.KEY_C)
                 clientApi.chat().sendChatMessage("/craft")
         }
+
+        var lastUpdate: Long = 0
+        var hidden = true
+
+        val temperature = text {
+            align = TOP
+            origin = TOP
+            color = WHITE
+            scale = V3(1.4, 1.4, 1.4)
+            offset.y -= 40
+        }
+
+        var prevTemp = 36.6
+
+        registerHandler<PluginMessage> {
+            if (channel == "temperature-update") {
+                val original = data.readDouble()
+                val temp = (original * 10).toInt() / 10.0
+
+                if (prevTemp < original)
+                    temperature.content = "$temp §c▲"
+                else
+                    temperature.content = "$temp §b▼"
+
+                prevTemp = original
+
+                lastUpdate = System.currentTimeMillis()
+                if (hidden) {
+                    temperature.animate(5, Easings.EXPO_OUT) {
+                        offset.y += 40
+                    }
+                }
+                hidden = false
+            }
+        }
+        registerHandler<RenderTickPre> {
+            if (System.currentTimeMillis() - lastUpdate > 10_000 && !hidden) {
+                temperature.animate(15, Easings.EXPO_OUT) {
+                    offset.y -= 40
+                }
+                hidden = true
+            }
+        }
+        UIEngine.overlayContext.addChild(temperature)
     }
 }
