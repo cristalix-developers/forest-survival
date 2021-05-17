@@ -14,19 +14,19 @@ class Banner {
     private val leftText = text {
         align = TOP_LEFT
         origin = TOP_LEFT
-        offset.x += 10
-        offset.y += 7
-        size = V3(600.0, 50.0, 0.0)
-        scale = V3(4.0, 4.0, 4.0)
+        offset.x += 20
+        offset.y += 20
+        size = V3(600.0, 70.0, 0.0)
+        scale = V3(3.0, 3.0, 3.0)
     }
     private val rightText = text {
         align = TOP_RIGHT
         origin = TOP_RIGHT
-        content = "Закрыть - [X]"
-        offset.x -= 10
-        offset.y += 7
+        content = "[X] - Закрыть"
+        offset.x -= 20
+        offset.y += 20
         size = V3(600.0, 50.0, 0.0)
-        scale = V3(4.0, 4.0, 4.0)
+        scale = V3(3.0, 3.0, 3.0)
     }
     private val photo = rectangle {
         align = BOTTOM
@@ -38,10 +38,10 @@ class Banner {
         align = CENTER
         origin = CENTER
         offset.y -= 100
-        size = V3(1294.0, 350.0, 0.0)
+        size = V3(1294.0, 370.0, 0.0)
         color = Color(0, 0, 0, 0.1)
         enabled = false
-        scale = V3(0.27, 0.27, 0.27)
+        scale = V3(0.24, 0.24, 0.24)
         addChild(rightText, leftText, photo)
     }
 
@@ -59,7 +59,7 @@ class Banner {
                 photo.animate(0.2) {
                     color = Color(255, 255, 255, 1.0)
                 }
-                UIEngine.overlayContext.schedule(8) {
+                UIEngine.overlayContext.schedule(15) {
                     end()
                 }
             }

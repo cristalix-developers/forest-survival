@@ -30,24 +30,24 @@ enum class Resources(
         DelayGenerator(STONE2, 10), DropThenGenerate
     ),
     BUSH(
-        "Куст", 2, APPLE1,
+        "Куст", 1, APPLE1,
         RandomItemDrop(3, APPLE1, STICK1, HEAL1, STRING1),
         DelayGenerator(FULL_BUSH2, 20), ReplaceThenGenerate(EMPTY_BUSH2)
     ),
     GRIB(
-        "Гриб", 6, MUSHROOM2,
+        "Гриб", 2, MUSHROOM2,
         DropItem, DelayGenerator(MUSHROOM2, 20), DropThenGenerate
     ),
     TOXIC(
-        "Мухомор", 10, RED_MUSHROOM2,
+        "Мухомор", 2, RED_MUSHROOM2,
         DropItem, DelayGenerator(RED_MUSHROOM2, 20), DropThenGenerate
     ),
     SHELL(
-        "Ракушка", 12, SHELL2,
+        "Ракушка", 4, SHELL2,
         DropItem, DelayGenerator(SHELL2, 20), DropThenGenerate
     ),
     TOTEM(
-        "Тотем", 20, SKULL1,
+        "Тотем", 7, SKULL1,
         RandomItemDrop(3, STICK1),
         DelayGenerator(TOTEM2, 20), DropThenGenerate
     ),

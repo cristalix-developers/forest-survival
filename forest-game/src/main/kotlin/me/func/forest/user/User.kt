@@ -10,20 +10,31 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
 object LevelHelper {
     fun exp2level(exp: Int): Int {
-        return sqrt(exp.toDouble()).toInt()
+        return when (exp) {
+            0 -> 0
+            in 1..4 -> 1
+            in 5..99 -> 2
+            in 100..999 -> 3
+            in 1000..4999 -> 4
+            in 5000..999999 -> 5
+            else -> 6
+        }
     }
 
     fun level2exp(level: Int): Int {
-        return level * level
-    }
-
-    fun need2next(currentLevel: Int): Int {
-        return level2exp(currentLevel + 1) - level2exp(currentLevel)
+        return when (level) {
+            0 -> 0
+            1 -> 5
+            2 -> 100
+            3 -> 1000
+            4 -> 5000
+            5 -> 100000
+            else -> 10000000
+        }
     }
 }
 
@@ -62,12 +73,14 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
         ModTransfer()
             .integer(currentLevel)
-            .integer(stat!!.exp - LevelHelper.level2exp(currentLevel))
-            .integer(LevelHelper.need2next(level))
+            .integer(LevelHelper.level2exp(currentLevel) - (LevelHelper.level2exp(currentLevel) - stat!!.exp))
+            .integer(LevelHelper.level2exp(currentLevel))
             .send("exp-level", this)
 
         if (currentLevel != level) {
-            level++
+            level = currentLevel
+            if (level < 1)
+                return
             ModTransfer()
                 .integer(currentLevel)
                 .string("Получен $level уровень")

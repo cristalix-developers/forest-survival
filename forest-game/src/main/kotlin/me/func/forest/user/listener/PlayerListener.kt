@@ -67,7 +67,8 @@ class PlayerListener : Listener {
         stat.heart--
 
         if (stat.heart < 1) {
-            stat.exp = 1
+            stat.exp = 0
+            user.giveExperience(0)
             stat.heart = 3
             stat.timeAlive = 0
             stat.temperature = 36.6
