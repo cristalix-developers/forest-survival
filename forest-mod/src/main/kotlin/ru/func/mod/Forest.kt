@@ -22,6 +22,11 @@ class Forest : KotlinMod() {
             RemoteTexture(ResourceLocation.of(NAMESPACE, "xp_bar.png"), "08880C088F83D8890128128"),
             RemoteTexture(ResourceLocation.of(NAMESPACE, "energy.png"), "08880C088F83D8890128129"),
             RemoteTexture(ResourceLocation.of(NAMESPACE, "second_level.png"), "08880C088F83D8890128111"),
+            RemoteTexture(ResourceLocation.of(NAMESPACE, "forest/1.png"), "08880C088F83D8890028112"),
+            RemoteTexture(ResourceLocation.of(NAMESPACE, "forest/2.png"), "08880C088F83D8890028113"),
+            RemoteTexture(ResourceLocation.of(NAMESPACE, "forest/3.png"), "08880C088F83D8890028114"),
+            RemoteTexture(ResourceLocation.of(NAMESPACE, "forest/4.png"), "08880C088F83D8890028115"),
+            RemoteTexture(ResourceLocation.of(NAMESPACE, "forest/5.png"), "08880C088F83D8890028116"),
         )
 
         BarManager()
@@ -30,7 +35,7 @@ class Forest : KotlinMod() {
         BonfireIndicator()
         ItemTitle()
         Highlight()
-        LevelNew()
+        Banner()
         LoseHeart()
 
         registerHandler<KeyPress> {
@@ -46,7 +51,7 @@ class Forest : KotlinMod() {
             origin = TOP
             color = WHITE
             scale = V3(1.4, 1.4, 1.4)
-            offset.y -= 40
+            offset.y -= 35
         }
 
         var prevTemp = 36.6

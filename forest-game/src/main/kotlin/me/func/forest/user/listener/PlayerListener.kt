@@ -24,7 +24,7 @@ import org.bukkit.event.player.PlayerRespawnEvent
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
-    private val textureHash = "08880C088F83D8890128128"
+    private val textureHash = "08880C088F83D8890128129"
 
     private val prepares = listOf(
         ModLoader(),
@@ -70,6 +70,7 @@ class PlayerListener : Listener {
             stat.exp = 1
             stat.heart = 3
             stat.timeAlive = 0
+            stat.temperature = 36.6
         } else {
             event.cancelled = true
             user.player.health = 20.0

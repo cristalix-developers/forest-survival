@@ -2,7 +2,6 @@ package me.func.forest.user
 
 import me.func.forest.channel.ModHelper
 import me.func.forest.channel.ModTransfer
-import me.func.forest.craft.CraftItem
 import net.minecraft.server.v1_12_R1.Packet
 import net.minecraft.server.v1_12_R1.PlayerConnection
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
@@ -26,16 +25,6 @@ object LevelHelper {
     fun need2next(currentLevel: Int): Int {
         return level2exp(currentLevel + 1) - level2exp(currentLevel)
     }
-
-    fun levelImage(level: Int): String {
-        return when(level) {
-            2 -> "second_level"
-            3 -> "second_level"
-            4 -> "second_level"
-            5 -> "second_level"
-            else -> "second_level"
-        }
-    }
 }
 
 const val MAX_TEMPERATURE = 41.2
@@ -51,9 +40,10 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
     init {
         if (stat == null) {
-            stat = Stat(false, 1.0, 1, 1, 36.0, 1, 3, 0)
+            stat = Stat(false, 1.0, 3, 1, 36.6, 3, 3, 0)
         }
         level = LevelHelper.exp2level(stat!!.exp)
+        stat!!.heart = max(1, stat!!.heart)
     }
 
     fun watchTutorial(): Boolean {
@@ -80,11 +70,8 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
             level++
             ModTransfer()
                 .integer(currentLevel)
-                .string(LevelHelper.levelImage(currentLevel))
-                .string(CraftItem.values()
-                    .filter { it.minLevel == currentLevel }
-                    .joinToString("next") { it.to.item.itemMeta.displayName }
-                ).send("level-new", this)
+                .string("Получен $level уровень")
+                .send("banner-new", this)
         }
     }
 
