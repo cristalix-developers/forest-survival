@@ -1,5 +1,7 @@
 package me.func.forest.user
 
+import me.func.forest.knowledge.Knowledge
+
 data class Stat (
     var tutorial: Boolean,
     var health: Double,
@@ -9,4 +11,5 @@ data class Stat (
     var maxHeart: Int,
     var lastEntry: Long,
     var timeAlive: Long,
+    var knowledge: MutableList<Knowledge>
 )

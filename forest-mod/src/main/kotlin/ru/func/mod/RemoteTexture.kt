@@ -2,42 +2,49 @@ package ru.func.mod
 
 import dev.xdark.clientapi.resource.ResourceLocation
 import ru.cristalix.uiengine.UIEngine
-import java.io.ByteArrayOutputStream
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import java.util.concurrent.CompletableFuture
 import javax.imageio.ImageIO
 
-data class RemoteTexture(val RC: ResourceLocation, val sha1: String)
+data class RemoteTexture(val location: ResourceLocation, val sha1: String)
 
-fun loadTexture(vararg images: RemoteTexture) {
-    val cacheDir = Paths.get("$NAMESPACE/")
-    if (!Files.exists(cacheDir))
-        Files.createDirectory(cacheDir)
-    images.forEach { it ->
-        val path = cacheDir.resolve(it.sha1)
+private val cacheDir = Paths.get("$NAMESPACE/")
 
-        val image = try {
-            Files.newInputStream(path).use {
-                ImageIO.read(it)
-            }
-        } catch (ex: IOException) {
+fun loadTextures(vararg info: RemoteTexture): CompletableFuture<Nothing> {
+    val future = CompletableFuture<Nothing>()
+    CompletableFuture.runAsync {
+        for (photo in info) {
             try {
-                val url = URL("$FILE_STORE${it.RC.path}")
-                val image = ImageIO.read(url);
-                val baos = ByteArrayOutputStream()
-                ImageIO.write(image, "png", baos)
-                baos.flush()
-                val imageInByte = baos.toByteArray()
-                baos.close()
-                Files.write((Paths.get(cacheDir.toString() + "/" + it.sha1)), imageInByte)
-                image
-            } catch (e: IOException) {
-                null
+                val cacheDir = cacheDir
+                Files.createDirectories(cacheDir)
+                val path = cacheDir.resolve(photo.sha1)
+
+                val image = try {
+                    Files.newInputStream(path).use {
+                        ImageIO.read(it)
+                    }
+                } catch (ex: IOException) {
+                    val url = URL("$FILE_STORE${photo.location.path}")
+                    val bytes = url.openStream().readBytes()
+                    Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+                    ImageIO.read(ByteArrayInputStream(bytes))
+                }
+                val api = UIEngine.clientApi
+                val mc = api.minecraft()
+                val renderEngine = api.renderEngine()
+                mc.execute {
+                    renderEngine.loadTexture(photo.location, renderEngine.newImageTexture(image, false, false))
+                    future.complete(null)
+                }
+            } catch (e: Exception) {
+                future.completeExceptionally(e)
             }
         }
-        UIEngine.clientApi.renderEngine()
-            .loadTexture(it.RC, UIEngine.clientApi.renderEngine().newImageTexture(image!!, false, false))
     }
+    return future
 }

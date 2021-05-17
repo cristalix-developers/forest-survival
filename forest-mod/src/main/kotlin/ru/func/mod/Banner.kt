@@ -50,7 +50,7 @@ class Banner {
 
         UIEngine.registerHandler(PluginMessage::class.java) {
             if (channel == "banner-new") {
-                photo.textureLocation = ResourceLocation.of(NAMESPACE, "forest/${data.readInt()}.png")
+                photo.textureLocation = ResourceLocation.of(NAMESPACE, "forest/${NetUtil.readUtf8(data)}.png")
                 block.enabled = true
                 leftText.content = NetUtil.readUtf8(data)
                 block.animate(0.2) {
@@ -59,7 +59,7 @@ class Banner {
                 photo.animate(0.2) {
                     color = Color(255, 255, 255, 1.0)
                 }
-                UIEngine.overlayContext.schedule(15) {
+                UIEngine.overlayContext.schedule(9) {
                     end()
                 }
             }
@@ -71,13 +71,13 @@ class Banner {
     }
 
     private fun end() {
-        block.animate(0.3) {
+        block.animate(0.5) {
             color = Color(0, 0, 0, 0.1)
         }
-        photo.animate(0.3) {
+        photo.animate(0.5) {
             color = Color(0, 0, 0, 0.1)
         }
-        UIEngine.overlayContext.schedule(0.3) {
+        UIEngine.overlayContext.schedule(0.5) {
             block.enabled = false
         }
     }

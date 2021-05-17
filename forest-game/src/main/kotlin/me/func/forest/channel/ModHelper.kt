@@ -27,4 +27,11 @@ object ModHelper {
             .double(user.stat!!.temperature)
             .send("temperature-update", user)
     }
+
+    fun banner(user: User, path: String, content: String) {
+        ModTransfer()
+            .string(path)
+            .string(content)
+            .send("banner-new", user)
+    }
 }

@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.event.player.PlayerRespawnEvent
+import kotlin.math.min
 
 /**
  * Временный класс
@@ -52,7 +53,7 @@ class PlayerListener : Listener {
         val human = event.entity
 
         if (human is CraftPlayer)
-            ModTransfer().integer(event.foodLevel).send("food-level", app.getUser(human)!!)
+            ModTransfer().integer(min(20, event.foodLevel)).send("food-level", app.getUser(human)!!)
     }
 
     @EventHandler

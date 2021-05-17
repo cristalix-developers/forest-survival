@@ -52,7 +52,12 @@ class CraftManager {
                             }
                         }
 
-                        pairs.forEach { current -> repeat(current.second) { inventory.remove(current.first.item.getType()) } }
+                        // Отнятие у игрока предметов
+                        pairs.forEach { pair ->
+                            val clone = pair.first.item.clone()
+                            clone.amount = pair.second
+                            inventory.removeItem(clone)
+                        }
                         inventory.addItem(item.to.item)
                     })
                 }
