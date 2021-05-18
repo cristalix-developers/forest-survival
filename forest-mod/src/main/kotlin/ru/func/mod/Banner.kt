@@ -4,12 +4,15 @@ import dev.xdark.clientapi.event.input.KeyPress
 import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.resource.ResourceLocation
 import dev.xdark.feder.NetUtil
+import io.netty.buffer.ByteBuf
 import org.lwjgl.input.Keyboard
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.animate
 import ru.cristalix.uiengine.utility.*
 
 class Banner {
+
+    private val duration = 7.0
 
     private val leftText = text {
         align = TOP_LEFT
@@ -50,18 +53,7 @@ class Banner {
 
         UIEngine.registerHandler(PluginMessage::class.java) {
             if (channel == "banner-new") {
-                photo.textureLocation = ResourceLocation.of(NAMESPACE, "forest/${NetUtil.readUtf8(data)}.png")
-                block.enabled = true
-                leftText.content = NetUtil.readUtf8(data)
-                block.animate(0.2) {
-                    color = Color(0, 0, 0, 0.62)
-                }
-                photo.animate(0.2) {
-                    color = Color(255, 255, 255, 1.0)
-                }
-                UIEngine.overlayContext.schedule(9) {
-                    end()
-                }
+                start(data)
             }
         }
         UIEngine.registerHandler(KeyPress::class.java) {
@@ -77,8 +69,23 @@ class Banner {
         photo.animate(0.5) {
             color = Color(0, 0, 0, 0.1)
         }
-        UIEngine.overlayContext.schedule(0.5) {
+        UIEngine.overlayContext.schedule(duration / 10) {
             block.enabled = false
+        }
+    }
+
+    private fun start(data: ByteBuf) {
+        photo.textureLocation = ResourceLocation.of(NAMESPACE, "forest/${NetUtil.readUtf8(data)}.png")
+        block.enabled = true
+        leftText.content = NetUtil.readUtf8(data)
+        block.animate(0.2) {
+            color = Color(0, 0, 0, 0.62)
+        }
+        photo.animate(0.2) {
+            color = Color(255, 255, 255, 1.0)
+        }
+        UIEngine.overlayContext.schedule(duration) {
+            end()
         }
     }
 }

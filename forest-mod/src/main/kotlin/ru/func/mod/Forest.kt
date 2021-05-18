@@ -7,6 +7,7 @@ import ru.cristalix.clientapi.KotlinMod
 import ru.cristalix.uiengine.UIEngine
 
 const val NAMESPACE = "forest"
+const val FILE_STORE = "http://51.38.128.132/"
 
 class Forest : KotlinMod() {
 
@@ -25,6 +26,11 @@ class Forest : KotlinMod() {
             load("forest/5.png", "08880C088F83D8890028116"),
             load("forest/cold.png", "08880C088F83D8890028117"),
             load("forest/hot.png", "08880C088F83D8890028118"),
+            load("forest/apple.png", "08880C088F83D1890028117"),
+            load("forest/stone.png", "08880C088F83D2890028118"),
+            load("forest/flint.png", "08880C088F83D8390028117"),
+            load("forest/red_mushroom.png", "08880C088F43D8890028118"),
+            load("forest/heal.png", "08880C088F53D8890028117"),
         ).thenRun {
             BarManager()
             //Guide()

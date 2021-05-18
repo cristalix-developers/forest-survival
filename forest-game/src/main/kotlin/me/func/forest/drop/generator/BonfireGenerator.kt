@@ -13,7 +13,7 @@ object BonfireGenerator : Generator {
 
     val BONFIRES: MutableMap<Location, Boolean> = mutableMapOf() // todo: load from disk
     val MARK_FIRING: MutableList<Zone> = arrayListOf()
-    const val TICKS_FIRE = 20 * 12
+    const val TICKS_FIRE = 20 * 20
     private const val HOT_RADIUS = 5.0
 
     override fun generate(resource: Resources, location: Location) {

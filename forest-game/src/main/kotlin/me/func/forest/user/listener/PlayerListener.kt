@@ -30,7 +30,7 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        //PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
+        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         SetupScoreBoard()
     )
