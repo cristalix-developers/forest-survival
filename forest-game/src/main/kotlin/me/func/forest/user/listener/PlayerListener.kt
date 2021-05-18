@@ -36,34 +36,30 @@ class PlayerListener : Listener {
     )
 
     @EventHandler
-    fun joinEvent(event: PlayerJoinEvent) {
-        val user = app.getUser(event.player)!!
-
-        prepares.forEach { it.execute(user) }
+    fun PlayerJoinEvent.handle() {
+        prepares.forEach { it.execute(app.getUser(player)!!) }
     }
 
     @EventHandler
-    fun completeResources(event: PlayerResourcePackStatusEvent) {
-        if (event.status == SUCCESSFULLY_LOADED)
-            B.postpone(5) { ModTransfer().send("rp-complete", app.getUser(event.getPlayer())!!) }
+    fun PlayerResourcePackStatusEvent.handle() {
+        if (status == SUCCESSFULLY_LOADED)
+            B.postpone(5) { ModTransfer().send("rp-complete", app.getUser(player)!!) }
     }
 
     @EventHandler
-    fun foodLevelChange(event: FoodLevelChangeEvent) {
-        val human = event.entity
-
-        if (human is CraftPlayer)
-            ModTransfer().integer(min(20, event.foodLevel)).send("food-level", app.getUser(human)!!)
+    fun FoodLevelChangeEvent.handle() {
+        if (entity is CraftPlayer)
+            ModTransfer().integer(min(20, foodLevel)).send("food-level", app.getUser(entity as CraftPlayer)!!)
     }
 
     @EventHandler
-    fun respawn(event: PlayerRespawnEvent) {
-        event.respawnLocation = app.worldMeta.getLabel("guide_end")
+    fun PlayerRespawnEvent.handle() {
+        respawnLocation = app.worldMeta.getLabel("guide_end")
     }
 
     @EventHandler
-    fun deathEvent(event: PlayerDeathEvent) {
-        val user = app.getUser(event.getEntity())!!
+    fun PlayerDeathEvent.handle() {
+        val user = app.getUser(getEntity())!!
         val stat = user.stat!!
         stat.heart--
 
@@ -74,7 +70,7 @@ class PlayerListener : Listener {
             stat.timeAlive = 0
             stat.temperature = 36.6
         } else {
-            event.cancelled = true
+            cancelled = true
             user.player.health = 20.0
             user.player.teleport(app.worldMeta.getLabel("guide_end"))
             ModTransfer()

@@ -18,18 +18,17 @@ class ResourceManager : Listener {
     }
 
     @EventHandler
-    fun blockBreakEvent(event: BlockBreakEvent) {
-        val block = event.block
+    fun BlockBreakEvent.handle() {
 
         val resource = resources[block.location]
         val item = resource?.generator?.getStand()?.item
         if (block.typeId == item?.typeId && block.data == item.data.data)
-            resource.booty(block.location, event.player)
+            resource.booty(block.location, player)
 
         val bonfire = BonfireGenerator.BONFIRES[block.location]
         if (bonfire != null)
-            BonfireBooty.get(Resources.FIRE, block.location, app.getUser(event.player)!!)
+            BonfireBooty.get(Resources.FIRE, block.location, app.getUser(player)!!)
 
-        event.cancel = true
+        cancel = true
     }
 }

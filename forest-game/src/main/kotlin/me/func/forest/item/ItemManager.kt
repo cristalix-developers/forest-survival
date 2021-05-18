@@ -10,15 +10,15 @@ import org.bukkit.inventory.ItemStack
 class ItemManager : Listener {
 
     @EventHandler
-    fun interactEvent(event: PlayerInteractEvent) {
-        if (!event.hasItem())
+    fun PlayerInteractEvent.handle() {
+        if (!hasItem())
             return
-        isItem(event.item, event)
+        isItem(item, this)
     }
 
     @EventHandler
-    fun pickUpItem(event: PlayerAttemptPickupItemEvent) {
-        isItem(event.item.itemStack, event)
+    fun PlayerAttemptPickupItemEvent.handle() {
+        isItem(item.itemStack, this)
     }
 
     private fun isItem(itemStack: ItemStack, on: PlayerEvent) {
