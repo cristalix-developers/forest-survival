@@ -1,8 +1,6 @@
 package me.func.forest.user.listener.prepare
 
-import clepto.bukkit.B
 import me.func.forest.app
-import me.func.forest.channel.ModTransfer
 import me.func.forest.user.User
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -11,7 +9,7 @@ class TutorialLoader : PrepareUser {
 
     init {
         // При завершении туториала
-        Bukkit.getMessenger().registerIncomingPluginChannel(app, "guide-end") { s, player, bytes ->
+        Bukkit.getMessenger().registerIncomingPluginChannel(app, "guide-end") { _, player, _ ->
 
             player.teleport(endLocation)
             player.health = 1.0
@@ -23,8 +21,6 @@ class TutorialLoader : PrepareUser {
     private val endLocation: Location = app.worldMeta.getLabel("guide_end")
 
     override fun execute(user: User) {
-        B.postpone(5) { ModTransfer().send("guide", user) }
-
         if (!user.watchTutorial()) {
             // test
             val player = user.player

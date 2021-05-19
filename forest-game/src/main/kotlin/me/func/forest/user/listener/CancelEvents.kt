@@ -2,8 +2,6 @@ package me.func.forest.user.listener
 
 import clepto.bukkit.B
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent
-import dev.xdark.feder.EmptyChunkBiome
-import dev.xdark.feder.FixedChunkLight
 import me.func.forest.app
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.event.EventHandler
@@ -15,7 +13,6 @@ import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
-import org.bukkit.event.world.ChunkLoadEvent
 import org.spigotmc.event.entity.EntityDismountEvent
 
 class CancelEvents : Listener {
@@ -38,13 +35,6 @@ class CancelEvents : Listener {
                 }
             }
         }
-    }
-
-    @EventHandler
-    fun disable(event: ChunkLoadEvent) {
-        val chunk = event.chunk
-        chunk.biome = EmptyChunkBiome.INSTANCE
-        chunk.emittedLight = FixedChunkLight((-1).toByte())
     }
 
     @EventHandler

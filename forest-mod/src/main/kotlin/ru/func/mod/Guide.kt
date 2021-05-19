@@ -11,7 +11,6 @@ import dev.xdark.clientapi.nbt.NBTPrimitive
 import dev.xdark.clientapi.nbt.NBTTagCompound
 import dev.xdark.clientapi.nbt.NBTTagString
 import io.netty.buffer.Unpooled
-import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.V3
@@ -54,7 +53,7 @@ class Guide {
         UIEngine.registerHandler(PluginMessage::class.java) {
             if (channel == "guide") {
                 helicopter = clientApi.entityProvider()
-                    .newEntity(EntityProvider.ARMOR_STAND, JavaMod.clientApi.minecraft().world) as EntityArmorStand
+                    .newEntity(EntityProvider.ARMOR_STAND, clientApi.minecraft().world) as EntityArmorStand
 
                 helicopter.setItemInSlot(EntityEquipmentSlot.HEAD, helicopterItem)
 
@@ -110,7 +109,7 @@ class Guide {
                 }
             }
             if (seconds < 12) {
-                helicopter.teleport(helicopter.x, helicopter.y + 0.0006, helicopter.z + 0.01)
+                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.07)
                 clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
             } else if (seconds < 22) {
                 if (helicopterCenter == null) {
@@ -125,7 +124,7 @@ class Guide {
 
                 helicopter.teleport(
                     x,
-                    helicopter.y - 0.01,
+                    helicopter.y - 0.2,
                     z
                 )
                 helicopter.setYaw(

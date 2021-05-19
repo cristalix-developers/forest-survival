@@ -14,6 +14,13 @@ class Forest : KotlinMod() {
     override fun onEnable() {
         UIEngine.initialize(this)
 
+        Guide()
+        Indicator()
+        BonfireIndicator()
+        ItemTitle()
+        LoseHeart()
+        Temperature()
+
         loadTextures(
             load("health_bar.png", "08880C088F83D8890128127"),
             load("xp_bar.png", "08880C088F83D8890128128"),
@@ -33,14 +40,8 @@ class Forest : KotlinMod() {
             load("forest/heal.png", "08880C088F53D8890028117"),
         ).thenRun {
             BarManager()
-            //Guide()
-            Indicator()
-            BonfireIndicator()
-            ItemTitle()
             Highlight()
             Banner()
-            LoseHeart()
-            Temperature()
 
             registerHandler<KeyPress> {
                 if (key == Keyboard.KEY_C)
@@ -49,7 +50,7 @@ class Forest : KotlinMod() {
         }
     }
 
-    fun load(path: String, hash: String): RemoteTexture {
+    private fun load(path: String, hash: String): RemoteTexture {
         return RemoteTexture(ResourceLocation.of(NAMESPACE, path), hash)
     }
 }

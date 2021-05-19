@@ -3,8 +3,10 @@ package me.func.forest.craft
 import clepto.bukkit.B
 import me.func.forest.app
 import me.func.forest.channel.ModHelper
+import net.minecraft.server.v1_12_R1.NBTTagCompound
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import ru.cristalix.core.inventory.ClickableItem
@@ -28,18 +30,33 @@ class CraftManager {
 
                 val user = app.getUser(player)!!
 
-                CraftItem.values().filter { user.hasLevel(it.minLevel) }.forEach { item ->
-                    val itemWithLore = item.to.item.clone()
+                CraftItem.values().forEach { item ->
+                    val locked = !user.hasLevel(item.minLevel)
+                    var itemWithLore = item.to.item.clone()
                     val pairs = item.from
+                    val title = ChatColor.stripColor(itemWithLore.itemMeta.displayName)
+
+                    if (locked) {
+                        val meta = itemWithLore.itemMeta
+                        meta.displayName = "§7§m$title§7§l НЕТ УРОВНЯ"
+                        itemWithLore.itemMeta = meta
+
+                        val nms = CraftItemStack.asNMSCopy(itemWithLore)
+                        nms.tag ?: NBTTagCompound()
+                        nms.tag.setInt("color", -15658735)
+                        itemWithLore = CraftItemStack.asCraftMirror(nms)
+                    }
 
                     itemWithLore.lore = listOf(
                         *itemWithLore.lore?.map { "§7${it}" }!!.toTypedArray(),
                         "", "§7Необходимые ресурсы §f㨃§7: ",
-                        *pairs.map { " §bx${it.second} §f${ChatColor.stripColor(it.first.item.itemMeta.displayName)}" }
+                        *pairs.map { " §bx${it.second} §f$title" }
                             .toTypedArray()
                     )
 
                     contents.add('X', ClickableItem.of(itemWithLore) {
+                        if (locked)
+                            return@of
                         val inventory = player.inventory
 
                         pairs.forEach {

@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY
 import org.bukkit.event.player.PlayerRespawnEvent
 import kotlin.math.min
 
+
 /**
  * Временный класс
  */
@@ -42,8 +43,9 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerResourcePackStatusEvent.handle() {
-        if (status == SUCCESSFULLY_LOADED)
-            B.postpone(5) { ModTransfer().send("rp-complete", app.getUser(player)!!) }
+        if (status == SUCCESSFULLY_LOADED) {
+            B.postpone(20) { ModTransfer().send("guide", app.getUser(player)!!) }
+        }
     }
 
     @EventHandler
@@ -59,9 +61,14 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerDeathEvent.handle() {
-        val user = app.getUser(getEntity())!!
+        val player = getEntity()
+        val user = app.getUser(player)!!
         val stat = user.stat!!
         stat.heart--
+
+        player.activePotionEffects.forEach {
+            player.removePotionEffect(it.type)
+        }
 
         if (stat.heart < 1) {
             stat.exp = 0
