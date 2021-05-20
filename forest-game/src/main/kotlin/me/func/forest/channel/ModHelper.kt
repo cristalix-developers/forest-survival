@@ -32,12 +32,13 @@ object ModHelper {
     }
 
     fun banner(user: User, path: String, content: String) {
-        if (delay.contains(user.uuid)) {
+        val uuid = user.uuid
+        if (delay.contains(uuid)) {
             B.postpone(10 * 20) { banner(user, path, content) }
             return
         }
-        B.postpone(9 * 20) { delay.remove(user.uuid) }
-        delay.add(user.uuid)
+        B.postpone(9 * 20) { delay.remove(uuid) }
+        delay.add(uuid)
         ModTransfer()
             .string(path)
             .string(content)

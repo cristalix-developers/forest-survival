@@ -1,7 +1,9 @@
 package me.func.forest.item
 
+import dev.implario.bukkit.item.item
 import me.func.forest.app
 import me.func.forest.item.ItemHelper.item
+import me.func.forest.item.ItemHelper.useItem
 import me.func.forest.knowledge.Knowledge
 import org.bukkit.Material.*
 import org.bukkit.event.block.Action
@@ -18,10 +20,14 @@ import java.util.function.BiConsumer
 
 enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>>?) {
 
-    STONE3(item("Камень в полете", STONE), null),
-    APPLE3(item("Яблоко в полете", APPLE), null),
+    STONE3(item { type = STONE }.text("Камень в полете").build(), null),
+    APPLE3(item { type = APPLE }.text("Яблоко в полете").build(), null),
 
-    ARROW1(item("Стрела", 4, ARROW, listOf("Орудие дальнего боя.")), null),
+    ARROW1(item {
+        type = ARROW
+        amount = 4
+        text("Стрела")
+    }.build(), null),
     POISONED_ARROW1(
         item(
             "Отравленная стрела",
@@ -33,9 +39,15 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             it.basePotionData = PotionData(PotionType.POISON)
         }, null
     ),
-    FLINT1(item("Кремень", FLINT), mapOf(StandardsHandlers.knowledgeItem(Knowledge.FLINT))),
+    IRON1(item { type = IRON_INGOT }.text("Железо").build(), null),
+    IRON_SWORD1(item { type = IRON_SWORD }.text("Железный меч").build(), null),
+    IRON_HELMET1(item { type = CHAINMAIL_HELMET }.text("Железный шлем").build(), null),
+    IRON_CHEST1(item { type = CHAINMAIL_CHESTPLATE }.text("Железный нагрудник").build(), null),
+    IRON_LEGGINGS1(item { type = CHAINMAIL_LEGGINGS }.text("Железные поножи").build(), null),
+    IRON_BOOTS1(item { type = CHAINMAIL_BOOTS }.text("Железные ботинки").build(), null),
+    FLINT1(item { type = FLINT }.text("Кремень").build(), mapOf(StandardsHandlers.knowledgeItem(Knowledge.FLINT))),
     FLINT_AND_STEEL1(
-        item("Поджег костра", FLINT_AND_STEEL, listOf("Необходимо для разжега костра.")), mapOf(
+        item { type = FLINT_AND_STEEL }.text("Поджег костра").build(), mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_BLOCK) {
@@ -43,7 +55,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                     val fire = me.func.forest.drop.generator.BonfireGenerator.BONFIRES[location]
                     if (fire != null && !fire) {
                         me.func.forest.drop.Resources.FIRE.generate(location)
-                        ItemHelper.useItem(event.player)
+                        useItem(event.player)
                         org.bukkit.Bukkit.getOnlinePlayers().forEach {
                             me.func.forest.channel.ModTransfer()
                                 .double(location.x + 0.5)
@@ -56,17 +68,44 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                 }
             })
     ),
-    STICK1(item("Палка", STICK), null),
-    STRING1(item("Нить", STRING), null),
+    STICK1(item { type = STICK }.text("Палка").build(), null),
+    STRING1(item { type = STRING }.text("Нить").build(), null),
+    TENT1(
+        item {
+            type = EMERALD
+            nbt("forest", "p2")
+        }.text("Палатка").build(), mapOf(
+            PlayerInteractEvent::class.java to BiConsumer { _, it ->
+                val event = it as PlayerInteractEvent
+                if (event.action != Action.RIGHT_CLICK_BLOCK)
+                    return@BiConsumer
+
+                val user = app.getUser(it.player)!!
+                val stat = user.stat!!
+
+                if (stat.place != null) {
+                    me.func.forest.channel.ModHelper.error(
+                        user,
+                        "Уже на ${stat.place!!.x.toInt()} ${stat.place!!.z.toInt()}"
+                    )
+                    return@BiConsumer
+                }
+
+                useItem(it.player)
+
+                val location = event.blockClicked.location
+                stat.place = implario.math.V3.of(location.x, location.y, location.z)
+            })
+    ),
     STONE1(
-        item("Камень", FIREWORK_CHARGE),
+        item { type = FIREWORK_CHARGE }.text("Камень").build(),
         mapOf(
             StandardsHandlers.throwableItem(STONE3, 3.0),
             StandardsHandlers.knowledgeItem(Knowledge.STONE)
         )
     ),
     APPLE1(
-        item("Плод", APPLE),
+        item { type = APPLE }.text("Плод").build(),
         mapOf(
             StandardsHandlers.throwableItem(APPLE3, 1.2),
             StandardsHandlers.knowledgeItem(Knowledge.APPLE)
@@ -77,21 +116,28 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_AIR) {
-                    ItemHelper.useItem(event.player)
+                    useItem(event.player)
                     event.player.health += 1.7
                 }
-            }, StandardsHandlers.knowledgeItem(Knowledge.HEAL))
+            }, StandardsHandlers.knowledgeItem(Knowledge.HEAL)
+        )
     ),
-    SKULL1(item("Череп", BONE), null),
-    BOW1(item("Лук", BOW, listOf("Оружие дальнего боя.")), null),
+    SKULL1(item { type = BONE }.text("Череп").build(), null),
+    BOW1(item { type = BOW }.text("Лук").build(), null),
+    LEATHER1(item { type = LEATHER }.text("Кожа").build(), null),
+    LEATHER_HELMET1(item { type = LEATHER_HELMET }.text("Кожаный шлем").build(), null),
+    LEATHER_CHEST1(item { type = LEATHER_CHESTPLATE }.text("Кожаный нагрудник").build(), null),
+    LEATHER_LEGGINGS1(item { type = LEATHER_LEGGINGS }.text("Кожаные поножи").build(), null),
+    LEATHER_BOOTS1(item { type = LEATHER_BOOTS }.text("Кожаные ботинки").build(), null),
+    STONE_AXE1(item { type = STONE_AXE }.text("Каменное орудие").build(), null),
 
-    MUSHROOM2(item("Гриб", BROWN_MUSHROOM), null),
+    MUSHROOM2(item { type = BROWN_MUSHROOM }.text("Гриб").build(), null),
     RED_MUSHROOM2(
-        item("Мухомор", RED_MUSHROOM), mapOf(
+        item { type = RED_MUSHROOM }.text("Мухомор").build(), mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
-                    ItemHelper.useItem(event.player)
+                    useItem(event.player)
                     event.player.addPotionEffect(
                         PotionEffect(
                             implario.ListUtils.random(PotionEffectType.values()),
@@ -100,25 +146,43 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                         )
                     )
                 }
-            }, StandardsHandlers.knowledgeItem(Knowledge.TOXIC))
+            }, StandardsHandlers.knowledgeItem(Knowledge.TOXIC)
+        )
     ),
-    SHELL2(item("Ракушка", CARPET, 10), null),
-    STONE2(item("Камень блок", CARPET), null),
-    FULL_BUSH2(item("Куст с плодами", CARPET, 1), null),
-    EMPTY_BUSH2(item("Пустой куст", CARPET, 6), null),
-    TOTEM2(item("Тотем", CARPET, 4), null),
+    SHELL2(item {
+        type = CARPET
+        data = 10
+        text("Ракушка")
+    }.build(), null),
+    STONE2(item { type = CARPET }.build(), null),
+    FULL_BUSH2(item {
+        type = CARPET
+        data = 1
+    }.build(), null),
+    EMPTY_BUSH2(item {
+        type = CARPET
+        data = 6
+    }.build(), null),
+    TOTEM2(item {
+        type = CARPET
+        data = 4
+    }.build(), null),
 
     BONFIRE_OFF2(
-        item("Потухший костер", CARPET, 14, listOf("Согревает в холоде.")), mapOf(
+        item {
+            type = CARPET
+            data = 14
+            text("Потухший костер")
+        }.build(), mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 val location = event.blockClicked.location
                 if (event.action == Action.RIGHT_CLICK_BLOCK && me.func.forest.Postulates.isGround(location)) {
-                    ItemHelper.useItem(event.player)
+                    useItem(event.player)
                     me.func.forest.drop.Resources.FIRE.generate(location.clone().add(0.0, 1.0, 0.0))
                 }
             })
     ),
-    BONFIRE_ON2(item("Горящий костер", TORCH), null),
+    BONFIRE_ON2(item { type = TORCH }.build(), null),
     ;
 }

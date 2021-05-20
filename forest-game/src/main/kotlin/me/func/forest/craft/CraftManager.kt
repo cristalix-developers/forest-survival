@@ -30,7 +30,7 @@ class CraftManager {
 
                 val user = app.getUser(player)!!
 
-                CraftItem.values().forEach { item ->
+                CraftItem.values().sortedBy { it.minLevel }.forEach { item ->
                     val locked = !user.hasLevel(item.minLevel)
                     var itemWithLore = item.to.item.clone()
                     val pairs = item.from
@@ -48,9 +48,9 @@ class CraftManager {
                     }
 
                     itemWithLore.lore = listOf(
-                        *itemWithLore.lore?.map { "§7${it}" }!!.toTypedArray(),
+                        *itemWithLore.lore?.map { "§7${it}" }?.toTypedArray() ?: arrayOf(),
                         "", "§7Необходимые ресурсы §f㨃§7: ",
-                        *pairs.map { " §bx${it.second} §f$title" }
+                        *pairs.map { " §bx${it.second} §f${it.first.item.itemMeta.displayName}" }
                             .toTypedArray()
                     )
 

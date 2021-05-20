@@ -17,78 +17,11 @@ object ItemHelper {
         player.itemInHand = hand
     }
 
-    fun item(name: String, type: Material, data: Byte): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .type(type)
-            .damage(data.toShort())
-            .build()
-    }
-
-    fun item(name: String, type: Material, data: Byte, lore: Iterable<String>): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .type(type)
-            .flags(ItemFlag.HIDE_ATTRIBUTES)
-            .lore(mutableListOf("").plus(lore))
-            .damage(data.toShort())
-            .build()
-    }
-
-    fun item(type: Material): ItemStack {
-        return Items.builder()
-            .type(type)
-            .build()
-    }
-
-    fun item(name: String, type: Material): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .type(type)
-            .build()
-    }
-
-    fun item(name: String, count: Int, type: Material): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .amount(count)
-            .type(type)
-            .build()
-    }
-
-    fun <T : ItemMeta> item(name: String, count: Int, type: Material, clazz: Class<T>, consumer: Consumer<T>): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .amount(count)
-            .type(type)
-            .meta(clazz, consumer)
-            .build()
-    }
-
     fun item(name: String, type: Material, color: Color): ItemStack {
         return Items.builder()
             .displayName(name)
             .type(type)
             .color(color)
-            .build()
-    }
-
-    fun item(name: String, type: Material, lore: Iterable<String>): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .flags(ItemFlag.HIDE_ATTRIBUTES)
-            .type(type)
-            .lore(mutableListOf("").plus(lore))
-            .build()
-    }
-
-    fun item(name: String, count: Int, type: Material, lore: Iterable<String>): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .amount(count)
-            .type(type)
-            .flags(ItemFlag.HIDE_ATTRIBUTES)
-            .lore(mutableListOf("").plus(lore))
             .build()
     }
 

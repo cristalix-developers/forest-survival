@@ -2,6 +2,8 @@ package me.func.forest
 
 import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
+import dev.implario.bukkit.platform.Platforms
+import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
 import me.func.forest.clock.GameTimer
 import me.func.forest.craft.CraftManager
 import me.func.forest.drop.ResourceManager
@@ -39,6 +41,7 @@ class Forest : JavaPlugin() {
     override fun onEnable() {
         B.plugin = this
         app = this
+        Platforms.set(PlatformDarkPaper())
 
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
@@ -76,6 +79,13 @@ class Forest : JavaPlugin() {
             mob.isCustomNameVisible = true
             null
         }, "f", "")
+
+
+        B.regCommand({ player, args ->
+            getUser(player)?.giveExperience(args[0].toInt())
+            null
+        }, "exp", "")
+
 
         // Регистрация меню крафтов
         CraftManager()

@@ -89,7 +89,7 @@ class BonfireIndicator {
                     UIEngine.worldContexts.remove(it)
                     bonfires.remove(it)
                 }
-                bonfires.replaceAll { _, timeLeft -> timeLeft - 0.05 }
+                bonfires.replaceAll { _, timeLeft -> timeLeft - 1 }
                 contextsToRemove.clear()
             }
         }
