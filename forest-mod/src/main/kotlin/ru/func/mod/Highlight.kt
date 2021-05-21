@@ -21,7 +21,7 @@ class Highlight {
                 val hint = rectangle {
                     offset = Relative.CENTER
                     align = Relative.CENTER
-                    scale = V3(1.3, 1.3, 1.3)
+                    scale = V3(1.1, 1.1, 1.1)
                     addChild(text {
                         offset.x -= clientApi.fontRenderer().getStringWidth(string) / 2 * (1.15) // 1 + половина %30
                         offset.y += 5

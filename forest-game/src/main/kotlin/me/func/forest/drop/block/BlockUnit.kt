@@ -1,4 +1,4 @@
-package me.func.forest.drop
+package me.func.forest.drop.block
 
 import me.func.forest.app
 import me.func.forest.drop.booty.BonfireBooty
@@ -16,7 +16,7 @@ import me.func.forest.item.ItemList.*
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
-enum class Resources(
+enum class BlockUnit (
     val title: String,
     val exp: Int,
     val item: ItemList,

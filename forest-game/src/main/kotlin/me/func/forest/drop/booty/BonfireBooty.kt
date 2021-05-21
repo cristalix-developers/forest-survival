@@ -1,13 +1,13 @@
 package me.func.forest.drop.booty
 
-import me.func.forest.drop.Resources
+import me.func.forest.drop.block.BlockUnit
 import me.func.forest.drop.generator.BonfireGenerator
 import me.func.forest.user.User
 import org.bukkit.Location
 import org.bukkit.Material
 
 object BonfireBooty : Booty {
-    override fun get(resource: Resources, location: Location, user: User) {
+    override fun get(resource: BlockUnit, location: Location, user: User) {
         val fire = BonfireGenerator.BONFIRES[location]
         if (fire != null) {
             if (fire) {

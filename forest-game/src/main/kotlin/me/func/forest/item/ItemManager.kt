@@ -1,5 +1,6 @@
 package me.func.forest.item
 
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
@@ -22,15 +23,12 @@ class ItemManager : Listener {
     }
 
     private fun isItem(itemStack: ItemStack, on: PlayerEvent) {
-        if (!itemStack.hasItemMeta())
-            return
+        val tag = CraftItemStack.asNMSCopy(itemStack).tag
 
-        for (item in ItemList.values()) {
-            if (item.item.itemMeta.displayName == itemStack.itemMeta.displayName) {
-                if (item.on != null)
-                    item.on[on::class.java]?.accept(item, on)
-                return
-            }
+        if (tag != null && tag.hasKey("code")) {
+            val item = ItemList.valueOf(tag.getString("code"))
+            if (item.on != null)
+                item.on[on::class.java]?.accept(item, on)
         }
     }
 }

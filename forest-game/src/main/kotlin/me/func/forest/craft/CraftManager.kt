@@ -72,9 +72,9 @@ class CraftManager {
                         // Отнятие у игрока предметов
                         pairs.forEach { pair ->
                             val clone = pair.first.item.clone()
-                            clone.amount = pair.second
-                            inventory.removeItem(clone)
+                            repeat(pair.second) { inventory.removeItem(clone) }
                         }
+                        player.updateInventory()
                         inventory.addItem(item.to.item)
                     })
                 }

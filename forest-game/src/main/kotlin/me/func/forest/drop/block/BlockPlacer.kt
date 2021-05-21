@@ -1,4 +1,4 @@
-package me.func.forest.drop
+package me.func.forest.drop.block
 
 import me.func.forest.item.ItemList
 import org.bukkit.Location

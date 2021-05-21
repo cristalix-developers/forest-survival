@@ -1,5 +1,6 @@
 package me.func.forest.item
 
+import dev.implario.bukkit.item.item
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
@@ -34,6 +35,14 @@ object ItemHelper {
             .flags(ItemFlag.HIDE_ATTRIBUTES)
             .lore(mutableListOf("").plus(lore))
             .build()
+    }
+
+    fun item(name: String, material: Material, code: String): ItemStack {
+        return item {
+            text(name)
+            type = material
+            nbt("code", code)
+        }.build()
     }
 
 }

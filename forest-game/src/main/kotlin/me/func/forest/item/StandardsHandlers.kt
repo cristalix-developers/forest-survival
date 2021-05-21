@@ -5,11 +5,13 @@ import me.func.forest.app
 import me.func.forest.drop.dropper.DropItem
 import me.func.forest.knowledge.Knowledge
 import net.minecraft.server.v1_12_R1.EnumItemSlot
-import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.entity.PolarBear
+import org.bukkit.entity.Wolf
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
 import org.bukkit.event.player.PlayerEvent
@@ -74,13 +76,15 @@ object StandardsHandlers {
     }
 
     private fun collision(sender: Player, tick: Int, stand: CraftArmorStand, radiusSquared: Double, damage: Double, doWith: Consumer<CraftArmorStand>): Boolean {
-        for (user in Bukkit.getOnlinePlayers()) {
-            if (user.player == sender && tick < 40)
-                continue
-            if (stand.location.distanceSquared(user?.location) < radiusSquared) {
-                user.damage(damage, sender)
-                doWith.accept(stand)
-                return true
+        for (living in sender.world.livingEntities) {
+           if (living is Wolf || living is PolarBear || living is CraftPlayer) {
+                if (living is CraftPlayer && living.player == sender && tick < 40)
+                    continue
+                if (stand.location.distanceSquared(living.location) < radiusSquared) {
+                    living.damage(damage, sender)
+                    doWith.accept(stand)
+                    return true
+                }
             }
         }
         return false
