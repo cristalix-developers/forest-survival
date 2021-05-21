@@ -9,6 +9,7 @@ import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
 import ru.cristalix.uiengine.element.animate
 import ru.cristalix.uiengine.utility.*
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
@@ -55,7 +56,7 @@ class BarManager {
                 }
             }
 
-            val currentHealth = clientApi.minecraft().player.health.toInt()
+            val currentHealth = ceil(clientApi.minecraft().player.health).toInt()
             if (currentHealth != health) {
 
                 if (currentHealth < health)

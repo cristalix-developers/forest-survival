@@ -99,7 +99,9 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                 useItem(it.player)
 
                 val location = event.blockClicked.location
-                stat.place = implario.math.V3.of(location.x, location.y, location.z)
+                stat.place = ru.cristalix.core.math.V3(location.x, location.y, location.z)
+                stat.placeLevel = 1
+                user.showTent(location)
             })
     ),
     STONE1(
@@ -128,6 +130,8 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                 if (event.action == Action.RIGHT_CLICK_AIR) {
                     useItem(event.player)
                     event.player.health += 1.7
+                    if (event.player.health > 20.0)
+                        event.player.health = 20.0
                 }
             }, StandardsHandlers.knowledgeItem(Knowledge.HEAL)
         )

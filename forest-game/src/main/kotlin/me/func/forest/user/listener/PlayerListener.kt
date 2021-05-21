@@ -8,7 +8,6 @@ import me.func.forest.user.listener.prepare.PrepareUser
 import me.func.forest.user.listener.prepare.SetupScoreBoard
 import me.func.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
-import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -16,6 +15,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
@@ -41,7 +41,9 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerJoinEvent.handle() {
-        prepares.forEach { it.execute(app.getUser(player)!!) }
+        val user = app.getUser(player)!!
+        prepares.forEach { it.execute(user) }
+        user.spawn()
     }
 
     @EventHandler
@@ -58,12 +60,16 @@ class PlayerListener : Listener {
     }
 
     @EventHandler
+    fun PlayerInteractAtEntityEvent.handle() {
+        val entity = clickedEntity
+        if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString()) {
+            player.openInventory(app.getUser(player)!!.homeInventory)
+        }
+    }
+
+    @EventHandler
     fun PlayerRespawnEvent.handle() {
-        val place = app.getUser(player)!!.stat!!.place
-        respawnLocation = if (place == null)
-            app.worldMeta.getLabel("guide_end")
-        else
-            Location(app.getWorld(), place.x, place.y, place.z)
+        B.postpone(1) { app.getUser(player)!!.spawn() }
     }
 
     @EventHandler
@@ -104,11 +110,13 @@ class PlayerListener : Listener {
             stat.timeAlive = 0
             stat.temperature = 36.6
             stat.place = null
-            stat.placeInventory.clear()
+            stat.placeInventory?.clear()
+            user.homeInventory.clear()
+            user.tent?.remove()
         } else {
             cancelled = true
             user.player.health = 20.0
-            user.player.teleport(app.worldMeta.getLabel("guide_end"))
+            user.spawn()
             ModTransfer()
                 .integer(stat.heart + 1)
                 .send("player-dead", user)

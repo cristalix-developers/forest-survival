@@ -4,6 +4,7 @@ import clepto.cristalix.Cristalix
 import me.func.forest.user.User
 import org.bukkit.Bukkit
 import java.util.*
+import kotlin.math.max
 
 class SetupScoreBoard : PrepareUser{
     override fun execute(user: User) {
@@ -15,7 +16,7 @@ class SetupScoreBoard : PrepareUser{
         objective.startGroup("Игрок")
             .record("Уровень") { "§b${user.level} §fур."}
             .record("Жизней") {
-                "§c${"❤".repeat(user.stat!!.heart)}§7${"❤".repeat(user.stat!!.maxHeart - user.stat!!.heart)}"}
+                "§c${"❤".repeat(max(1, user.stat!!.heart))}§7${"❤".repeat(max(0, user.stat!!.maxHeart - user.stat!!.heart))}"}
             .record("Дней") { "§a${(user.stat!!.timeAlive / 1000 / 3600 / 24).toInt()}"}
 
         objective.startGroup("Тайга")

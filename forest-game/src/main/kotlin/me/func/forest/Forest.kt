@@ -7,6 +7,7 @@ import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
 import me.func.forest.clock.GameTimer
 import me.func.forest.craft.CraftManager
 import me.func.forest.drop.ResourceManager
+import me.func.forest.item.ItemList
 import me.func.forest.item.ItemManager
 import me.func.forest.user.Stat
 import me.func.forest.user.User
@@ -14,6 +15,7 @@ import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
 import me.func.forest.weather.ZoneManager
 import org.bukkit.World
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -68,6 +70,24 @@ class Forest : JavaPlugin() {
                 user
             },
             { user: User, context ->
+                user.ifTent {
+                    user.stat!!.placeInventory?.clear()
+                    val items = mutableMapOf<ItemList, Int>()
+
+                    user.homeInventory.forEach {
+                        val nms = CraftItemStack.asNMSCopy(it)
+                        if (nms.tag!= null && nms.tag.hasKey("code")) {
+                            val type = ItemList.valueOf(nms.tag.getString("code"))
+                            if (items[type] != null)
+                                items.replace(type, items[type]?.plus(it.amount) ?: 0)
+                            else
+                                items[type] = it.amount
+                        }
+                    }
+
+                    user.stat!!.placeInventory = items.toList().toMutableList()
+                    user.tent?.remove()
+                }
                 user.stat!!.timeAlive += Date().time - user.stat!!.lastEntry
                 context.store(statScope, user.stat)
             }

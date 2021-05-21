@@ -13,7 +13,20 @@ class ZoneManager : ClockInject {
         Zone(it, contents[0].toDouble().pow(2), ZoneType.valueOf(contents[1].toUpperCase()))
     }
 
+    private var state = 0.0
+    private var weather = false
+
     override fun run() {
+        app.getWorld().time += 2
+
+        state--
+        if (state < 0) {
+            state = Math.random() * 20.0 * 300.0
+            app.getWorld().weatherDuration = (Math.random() * 20.0 * 300.0).toInt()
+            app.getWorld().setStorm(weather)
+            weather = !weather
+        }
+
         for (player in Bukkit.getOnlinePlayers()) {
             if (player.isDead)
                 continue
