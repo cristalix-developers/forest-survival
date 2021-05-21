@@ -10,7 +10,7 @@ data class Stat (
     var heart: Int,
     var exp: Int,
     var place: V3?,
-    var placeInventory: List<Pair<ItemList, Int>>,
+    var placeInventory: MutableList<Pair<ItemList, Int>>,
     var temperature: Double,
     var maxHeart: Int,
     var lastEntry: Long,

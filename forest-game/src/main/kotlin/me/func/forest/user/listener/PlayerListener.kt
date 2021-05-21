@@ -8,9 +8,12 @@ import me.func.forest.user.listener.prepare.PrepareUser
 import me.func.forest.user.listener.prepare.SetupScoreBoard
 import me.func.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -56,7 +59,31 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerRespawnEvent.handle() {
-        respawnLocation = app.worldMeta.getLabel("guide_end")
+        val place = app.getUser(player)!!.stat!!.place
+        respawnLocation = if (place == null)
+            app.worldMeta.getLabel("guide_end")
+        else
+            Location(app.getWorld(), place.x, place.y, place.z)
+    }
+
+    @EventHandler
+    fun EntityDamageByEntityEvent.handle() {
+        if (entity !is CraftPlayer)
+            return
+
+        val damageBy = if (damager is CraftPlayer)
+            damager as CraftPlayer
+        else if (damager is Projectile && (damager as Projectile).shooter is CraftPlayer)
+            (damager as Projectile).shooter as CraftPlayer
+        else null
+
+        if (damageBy != null) {
+            val entityLvl = app.getUser(entity as CraftPlayer)!!.level
+            val damagerLvl = app.getUser(damageBy)!!.level
+
+            if (entityLvl != damagerLvl || entityLvl < 3 || damagerLvl < 3)
+                cancelled = true
+        }
     }
 
     @EventHandler
@@ -76,6 +103,8 @@ class PlayerListener : Listener {
             stat.heart = 3
             stat.timeAlive = 0
             stat.temperature = 36.6
+            stat.place = null
+            stat.placeInventory.clear()
         } else {
             cancelled = true
             user.player.health = 20.0
