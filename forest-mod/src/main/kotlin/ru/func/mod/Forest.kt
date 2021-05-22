@@ -14,7 +14,7 @@ class Forest : KotlinMod() {
     override fun onEnable() {
         UIEngine.initialize(this)
 
-        //Guide()
+        Guide()
         Indicator()
         BonfireIndicator()
         ItemTitle()

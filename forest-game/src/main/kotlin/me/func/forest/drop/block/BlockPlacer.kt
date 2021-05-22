@@ -6,7 +6,12 @@ import org.bukkit.Location
 object BlockPlacer {
 
     fun place(item: ItemList, location: Location) {
-        location.block.setTypeAndDataFast(item.item.type, item.item.getData().data)
+        val data = item.item.getData()
+        var realData: Byte = 0
+        if (data != null)
+            realData = data.data
+
+        location.block.setTypeAndDataFast(item.item.typeId, realData)
     }
 
 }
