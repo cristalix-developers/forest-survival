@@ -12,7 +12,6 @@ class TutorialLoader : PrepareUser {
         // При завершении туториала
         Bukkit.getMessenger().registerIncomingPluginChannel(app, "guide-end") { _, player, _ ->
 
-            player.teleport(Postulates.SPAWN)
             player.health = 1.0
             player.saturation = 5F
         }

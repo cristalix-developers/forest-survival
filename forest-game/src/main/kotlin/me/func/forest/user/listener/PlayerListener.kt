@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.EquipmentSlot
+import ru.cristalix.core.formatting.Formatting
 import kotlin.math.min
 
 
@@ -35,16 +36,15 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        //PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
+        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
+        PrepareUser { it.spawn() },
         SetupScoreBoard()
     )
 
     @EventHandler
     fun PlayerJoinEvent.handle() {
-        val user = app.getUser(player)!!
-        prepares.forEach { it.execute(user) }
-        user.spawn()
+        prepares.forEach { it.execute(app.getUser(player)!!) }
     }
 
     @EventHandler
@@ -95,16 +95,15 @@ class PlayerListener : Listener {
             if (entityLvl != damagerLvl || entityLvl < 3 || damagerLvl < 3)
                 cancelled = true
             else if (
-                entityUser.tent != null ||
-                entity.location.distanceSquared(entityUser.tent!!.location) < 10 ||
-                damageBy.location.distanceSquared(entityUser.tent!!.location) < 10
+                entityUser.tent != null &&
+                (entity.location.distanceSquared(entityUser.tent!!.location) < 10 ||
+                damageBy.location.distanceSquared(entityUser.tent!!.location) < 10)
             ) {
                 cancelled = true
-            }
-            else if (
-                damagerUser.tent != null ||
-                damageBy.location.distanceSquared(damagerUser.tent!!.location) < 10 ||
-                entity.location.distanceSquared(damagerUser.tent!!.location) < 10
+            } else if (
+                damagerUser.tent != null &&
+                (damageBy.location.distanceSquared(damagerUser.tent!!.location) < 10 ||
+                entity.location.distanceSquared(damagerUser.tent!!.location) < 10)
             )
                 cancelled = true
             cancelled = true
@@ -127,7 +126,6 @@ class PlayerListener : Listener {
             user.giveExperience(0)
             stat.heart = 3
             stat.timeAlive = 0
-            stat.temperature = 36.6
             stat.place = null
             stat.placeInventory?.clear()
             user.homeInventory.clear()
@@ -140,5 +138,6 @@ class PlayerListener : Listener {
                 .integer(stat.heart + 1)
                 .send("player-dead", user)
         }
+        stat.temperature = 36.6
     }
 }

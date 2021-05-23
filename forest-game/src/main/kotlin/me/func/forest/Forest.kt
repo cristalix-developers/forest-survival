@@ -14,6 +14,7 @@ import me.func.forest.user.User
 import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
 import me.func.forest.weather.ZoneManager
+import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
@@ -40,6 +41,8 @@ class Forest : JavaPlugin() {
     lateinit var worldMeta: WorldMeta
     lateinit var userManager: UserManager<User>
 
+    lateinit var spawn: Location
+
     override fun onEnable() {
         B.plugin = this
         app = this
@@ -47,6 +50,7 @@ class Forest : JavaPlugin() {
 
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
+        spawn = worldMeta.getLabel("guide_end")
 
         // Конфигурация реалма
         val info = IRealmService.get().currentRealmInfo
@@ -65,7 +69,7 @@ class Forest : JavaPlugin() {
 
         userManager = statService.registerUserManager(
             {
-                val user = User(it.uuid, it.name, null)
+                val user = User(it.uuid, it.name, it.getData(statScope))
                 user.stat!!.lastEntry = Date().time
                 user
             },

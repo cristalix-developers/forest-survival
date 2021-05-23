@@ -1,6 +1,7 @@
 package me.func.forest.weather
 
 import me.func.forest.app
+import me.func.forest.channel.ModTransfer
 import me.func.forest.clock.ClockInject
 import me.func.forest.drop.generator.BonfireGenerator
 import org.bukkit.Bukkit
@@ -17,12 +18,12 @@ class ZoneManager : ClockInject {
     private var weather = false
 
     override fun run() {
-        app.getWorld().time += 2
+        app.getWorld().time += 3
 
         state--
         if (state < 0) {
-            state = Math.random() * 20.0 * 300.0
-            app.getWorld().weatherDuration = (Math.random() * 20.0 * 300.0).toInt()
+            state = Math.random() * 20.0 * 100.0
+            app.getWorld().weatherDuration = state.toInt()
             app.getWorld().setStorm(weather)
             weather = !weather
         }
@@ -31,18 +32,46 @@ class ZoneManager : ClockInject {
             if (player.isDead)
                 continue
             val user = app.getUser(player)!!
+
+            if (!user.hasLevel(3))
+                return
+
+            var weather = ""
+
             val zonesIn = zones
                 .filter { it.inside(player.location) }
                 .distinctBy { it.type }
 
-            if (zonesIn.isEmpty())
+            if (zonesIn.isEmpty()) {
                 ZoneType.NEUTRAL.playerIn.accept(user)
-            else
-                zonesIn.forEach { it.type.playerIn.accept(user) }
+            } else {
+                zonesIn.forEach {
+                    it.type.playerIn.accept(user)
+                    weather += it.type.title + " "
+                }
+            }
+
+            if (app.getWorld().hasStorm()) {
+                ZoneType.RAIN.playerIn.accept(user)
+                weather += ZoneType.RAIN.title + " "
+            }
+
+            if (app.getWorld().time in 12301..23849) {
+                ZoneType.NIGHT.playerIn.accept(user)
+                weather += ZoneType.NIGHT.title + " "
+            }
 
             BonfireGenerator.MARK_FIRING
                 .filter { it.inside(player.location) }
-                .forEach { it.type.playerIn.accept(user) }
+                .forEach {
+                    it.type.playerIn.accept(user)
+                    if (!weather.contains(ZoneType.BONFIRE.title))
+                        weather += ZoneType.BONFIRE.title + " "
+                }
+
+            ModTransfer()
+                .string(weather)
+                .send("weather-update", user)
         }
     }
 

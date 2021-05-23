@@ -2,6 +2,7 @@ package ru.func.mod
 
 import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.event.render.RenderTickPre
+import dev.xdark.feder.NetUtil
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.UIEngine.registerHandler
 import ru.cristalix.uiengine.element.animate
@@ -19,6 +20,17 @@ class Temperature {
             color = WHITE
             scale = V3(1.4, 1.4, 1.4)
             offset.y -= 35
+        }
+
+        val weather = text {
+            align = BOTTOM_RIGHT
+            origin = BOTTOM_RIGHT
+            offset.y -= 12
+            offset.x -= 1
+            color = WHITE
+            content = ""
+            scale = V3(1.2, 1.2, 1.2)
+            shadow = true
         }
 
         var prevTemp = 36.6
@@ -46,6 +58,8 @@ class Temperature {
                     }
                 }
                 hidden = false
+            } else if (channel == "weather-update") {
+                weather.content = NetUtil.readUtf8(data)
             }
         }
         registerHandler(RenderTickPre::class.java) {
@@ -56,7 +70,7 @@ class Temperature {
                 hidden = true
             }
         }
-        UIEngine.overlayContext.addChild(temperature)
+        UIEngine.overlayContext.addChild(weather, temperature)
     }
 
 }

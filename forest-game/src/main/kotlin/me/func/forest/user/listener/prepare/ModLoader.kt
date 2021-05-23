@@ -2,6 +2,8 @@ package me.func.forest.user.listener.prepare
 
 import clepto.bukkit.B
 import io.netty.buffer.Unpooled
+import me.func.forest.channel.ModTransfer
+import me.func.forest.user.LevelHelper
 import me.func.forest.user.User
 import net.minecraft.server.v1_12_R1.PacketDataSerializer
 import net.minecraft.server.v1_12_R1.PacketPlayOutCustomPayload
@@ -33,6 +35,13 @@ class ModLoader : PrepareUser {
                         PacketDataSerializer(it.retainedSlice())
                     )
                 )
+            }
+            B.postpone(5) {
+                ModTransfer()
+                    .integer(user.level)
+                    .integer(user.stat!!.exp)
+                    .integer(LevelHelper.level2exp(user.level))
+                    .send("exp-level", user)
             }
         }
     }

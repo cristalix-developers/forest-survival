@@ -1,7 +1,6 @@
 package me.func.forest.user
 
 import clepto.bukkit.B
-import me.func.forest.Postulates
 import me.func.forest.app
 import me.func.forest.channel.ModHelper
 import me.func.forest.channel.ModTransfer
@@ -51,7 +50,7 @@ object LevelHelper {
 
 const val MAX_TEMPERATURE = 41.2
 const val AVR_TEMPERATURE = 36.6
-const val MIN_TEMPERATURE = 25.0
+const val MIN_TEMPERATURE = 29.0
 const val CRITICAL_MIN_TEMPERATURE = 31.0
 const val CRITICAL_MAX_TEMPERATURE = 39.0
 
@@ -157,7 +156,7 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
         if (place != null)
             player.teleport(Location(player.world, place.x, place.y, place.z))
         else
-            player.teleport(Postulates.SPAWN)
+            player.teleport(app.spawn)
     }
 
     fun showTent(location: Location) {

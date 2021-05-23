@@ -121,9 +121,10 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_AIR) {
                     useItem(event.player)
-                    event.player.health += 1.7
-                    if (event.player.health > 20.0)
+                    if (event.player.health + 1.7 > 20.0)
                         event.player.health = 20.0
+                    else
+                        event.player.health += 1.7
                 }
             }, StandardsHandlers.knowledgeItem(Knowledge.HEAL)
         )
@@ -139,7 +140,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
     LEATHER_LEGGINGS1(item("⭐⭐ §aКожаные поножи", LEATHER_LEGGINGS, "LEATHER_LEGGINGS1"), null),
     LEATHER_BOOTS1(item("⭐⭐ §aКожаные ботинки", LEATHER_BOOTS, "LEATHER_BOOTS1"), null),
     STONE_AXE1(item("⭐⭐ §aКаменное орудие", STONE_AXE, "STONE_AXE1"), null),
-
+    MUSHROOM_SOUP1(item("⭐⭐ §aГрибной суп", MUSHROOM_SOUP, "MUSHROOM_SOUP1"), null),
     MUSHROOM2(item("⭐ §7Гриб", BROWN_MUSHROOM, "MUSHROOM2"), null),
     RED_MUSHROOM2(
         item("⭐⭐ §aМухомор", RED_MUSHROOM, "RED_MUSHROOM2"), mapOf(
