@@ -80,30 +80,21 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             type = EMERALD
             nbt("forest", "p2")
             nbt("code", "TENT1")
-        }.text("Палатка").build(), mapOf(
-            PlayerInteractEvent::class.java to BiConsumer { _, it ->
-                val event = it as PlayerInteractEvent
-                if (event.action != Action.RIGHT_CLICK_BLOCK)
-                    return@BiConsumer
-
-                val user = app.getUser(it.player)!!
-                val stat = user.stat!!
-
-                if (stat.place != null) {
-                    me.func.forest.channel.ModHelper.error(
-                        user,
-                        "Уже на ${stat.place!!.x.toInt()} ${stat.place!!.z.toInt()}"
-                    )
-                    return@BiConsumer
-                }
-
-                useItem(it.player)
-
-                val location = event.blockClicked.location
-                stat.place = ru.cristalix.core.math.V3(location.x, location.y, location.z)
-                stat.placeLevel = 1
-                user.showTent(location)
-            })
+        }.text("⭐ §7Палатка 1УР.").build(), mapOf(StandardsHandlers.tentItem(1))
+    ),
+    TENT2(
+        item {
+            type = EMERALD
+            nbt("forest", "p3")
+            nbt("code", "TENT2")
+        }.text("⭐⭐ §aПалатка 2УР.").build(), mapOf(StandardsHandlers.tentItem(2))
+    ),
+    TENT3(
+        item {
+            type = EMERALD
+            nbt("forest", "p1")
+            nbt("code", "TENT3")
+        }.text("⭐⭐⭐ §cПалатка 3УР.").build(), mapOf(StandardsHandlers.tentItem(3))
     ),
     STONE1(
         item("⭐ §7Камень", FIREWORK_CHARGE, "STONE1"),

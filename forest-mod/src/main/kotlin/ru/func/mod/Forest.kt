@@ -14,12 +14,13 @@ class Forest : KotlinMod() {
     override fun onEnable() {
         UIEngine.initialize(this)
 
-        Guide()
+        //Guide()
         Indicator()
         BonfireIndicator()
         ItemTitle()
         LoseHeart()
         Temperature()
+        TentSettings()
 
         loadTextures(
             load("health_bar.png", "08880C088F83D8890128127"),

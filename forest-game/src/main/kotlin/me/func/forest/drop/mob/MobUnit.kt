@@ -24,7 +24,8 @@ enum class MobUnit(
 
     RABBIT("⭐ §7Кролик", 2, 30, 5.0, EntityType.RABBIT, RandomItemDrop(2, ItemList.RABBIT_MEAL1)),
     WOLF("⭐⭐ §aВолк", 5, 300, 50.0, EntityType.WOLF, RandomItemDrop(2, ItemList.WOLF_MEAL1)),
-    BEAR("⭐⭐⭐ §cМедведь", 20, 500, 120.0, EntityType.POLAR_BEAR, RandomItemDrop(1, ItemList.BEAR_MEAL1)),;
+    ABO("⭐⭐ §aАбориген", 10, 600, 85.0, EntityType.SKELETON, RandomItemDrop(2, ItemList.ARROW1)),
+    BEAR("⭐⭐⭐ §cМедведь", 20, 600, 120.0, EntityType.POLAR_BEAR, RandomItemDrop(1, ItemList.BEAR_MEAL1)),;
 
     fun spawn(location: Location) {
         val mob = location.world.spawnEntity(location, type) as LivingEntity

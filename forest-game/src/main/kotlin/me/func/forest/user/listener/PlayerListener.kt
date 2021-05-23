@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.event.player.PlayerRespawnEvent
+import org.bukkit.inventory.EquipmentSlot
 import kotlin.math.min
 
 
@@ -34,7 +35,7 @@ class PlayerListener : Listener {
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
+        //PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         SetupScoreBoard()
     )
@@ -61,10 +62,11 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.handle() {
+        if (hand == EquipmentSlot.OFF_HAND)
+            return
         val entity = clickedEntity
-        if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString()) {
-            player.openInventory(app.getUser(player)!!.homeInventory)
-        }
+        if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString())
+            ModTransfer().send("tent-open", app.getUser(player)!!)
     }
 
     @EventHandler
@@ -84,11 +86,28 @@ class PlayerListener : Listener {
         else null
 
         if (damageBy != null) {
-            val entityLvl = app.getUser(entity as CraftPlayer)!!.level
-            val damagerLvl = app.getUser(damageBy)!!.level
+            val entityUser = app.getUser(entity as CraftPlayer)!!
+            val damagerUser = app.getUser(damageBy)!!
+            val entityLvl = entityUser.level
+            val damagerLvl = damagerUser.level
 
+            // Если уровень <3 и уровни не равны
             if (entityLvl != damagerLvl || entityLvl < 3 || damagerLvl < 3)
                 cancelled = true
+            else if (
+                entityUser.tent != null ||
+                entity.location.distanceSquared(entityUser.tent!!.location) < 10 ||
+                damageBy.location.distanceSquared(entityUser.tent!!.location) < 10
+            ) {
+                cancelled = true
+            }
+            else if (
+                damagerUser.tent != null ||
+                damageBy.location.distanceSquared(damagerUser.tent!!.location) < 10 ||
+                entity.location.distanceSquared(damagerUser.tent!!.location) < 10
+            )
+                cancelled = true
+            cancelled = true
         }
     }
 

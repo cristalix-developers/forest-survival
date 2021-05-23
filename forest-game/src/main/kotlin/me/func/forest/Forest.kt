@@ -65,7 +65,7 @@ class Forest : JavaPlugin() {
 
         userManager = statService.registerUserManager(
             {
-                val user = User(it.uuid, it.name, it.getData(statScope))
+                val user = User(it.uuid, it.name, null)
                 user.stat!!.lastEntry = Date().time
                 user
             },
@@ -100,7 +100,6 @@ class Forest : JavaPlugin() {
             null
         }, "f", "")
 
-
         B.regCommand({ player, args ->
             getUser(player)?.giveExperience(args[0].toInt())
             null
@@ -109,6 +108,8 @@ class Forest : JavaPlugin() {
 
         // Регистрация меню крафтов
         CraftManager()
+
+        TentManipulator()
 
         // Регистрация обработчиков событий
         B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())

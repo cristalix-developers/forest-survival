@@ -158,8 +158,6 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
             player.teleport(Location(player.world, place.x, place.y, place.z))
         else
             player.teleport(Postulates.SPAWN)
-
-        player.inventory.addItem(ItemList.TENT1.item)
     }
 
     fun showTent(location: Location) {

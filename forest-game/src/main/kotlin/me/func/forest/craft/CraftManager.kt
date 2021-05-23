@@ -38,7 +38,7 @@ class CraftManager {
 
                     if (locked) {
                         val meta = itemWithLore.itemMeta
-                        meta.displayName = "§7§m$title§7§l НЕТ УРОВНЯ"
+                        meta.displayName = "§c§m$title"
                         itemWithLore.itemMeta = meta
 
                         val nms = CraftItemStack.asNMSCopy(itemWithLore)

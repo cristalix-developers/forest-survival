@@ -12,11 +12,13 @@ import me.func.forest.drop.mob.MobUnit
 import me.func.forest.item.ItemList
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 
@@ -45,6 +47,12 @@ class ResourceManager : Listener {
             BonfireBooty.get(BlockUnit.FIRE, block.location, app.getUser(player)!!)
 
         cancel = true
+    }
+
+    @EventHandler
+    fun EntityDamageEvent.handle() {
+        if (entityType == EntityType.SKELETON && cause == EntityDamageEvent.DamageCause.FIRE_TICK)
+            cancelled = true
     }
 
     @EventHandler
