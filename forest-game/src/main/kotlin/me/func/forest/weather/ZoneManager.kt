@@ -15,17 +15,22 @@ class ZoneManager : ClockInject {
     }
 
     private var state = 0.0
-    private var weather = false
+    private var storm = false
 
     override fun run() {
         app.getWorld().time += 3
 
         state--
         if (state < 0) {
-            state = Math.random() * 20.0 * 100.0
+            var multiplier = 100.0
+
+            if (storm)
+                multiplier = 20.0
+
+            state = Math.random() * 20.0 * multiplier
             app.getWorld().weatherDuration = state.toInt()
-            app.getWorld().setStorm(weather)
-            weather = !weather
+            app.getWorld().setStorm(storm)
+            storm = !storm
         }
 
         for (player in Bukkit.getOnlinePlayers()) {

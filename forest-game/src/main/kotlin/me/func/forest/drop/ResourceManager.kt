@@ -77,6 +77,7 @@ class ResourceManager : Listener {
                 val user = app.getUser(player)!!
 
                 user.giveExperience(mob.exp)
+                user.stat!!.killMobs++
                 ModHelper.highlight(user, "§f§l+${mob.exp} §bexp")
             }
         }

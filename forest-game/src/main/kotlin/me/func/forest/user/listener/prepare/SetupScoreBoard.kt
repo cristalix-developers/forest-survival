@@ -9,7 +9,7 @@ class SetupScoreBoard : PrepareUser {
     override fun execute(user: User) {
         val objective = Cristalix.scoreboardService().getPlayerObjective(user.uuid, user.uuid.toString())
 
-        objective.displayName = "Выжить в тайге"
+        objective.displayName = "Выжить"
 
         objective.startGroup("Игрок")
             .record("Уровень") { "§b${user.level} §fур." }
@@ -23,7 +23,9 @@ class SetupScoreBoard : PrepareUser {
                     )
                 }"
             }
-            .record("Дней") { "§a${(user.stat!!.timeAlive / 1000 / 3600 / 24).toInt()}" }
+            .record("Часов") { "§a${(user.stat!!.timeAlive / 1000 / 3600).toInt()}" }
+            .record("У/С") { "§c${user.stat!!.kills}§f/${user.stat!!.deaths}" }
+            .record("Жерт") { "${user.stat!!.killMobs}" }
 
         objective.startGroup("Мир")
             .record("Онлайн") { "§b${Bukkit.getOnlinePlayers().size}" }

@@ -9,6 +9,7 @@ import me.func.forest.user.listener.prepare.SetupScoreBoard
 import me.func.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -21,7 +22,6 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.EquipmentSlot
-import ru.cristalix.core.formatting.Formatting
 import kotlin.math.min
 
 
@@ -31,12 +31,19 @@ import kotlin.math.min
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
-    private val textureHash = "08880C088F83D8890128129"
+    private val textureHash = "08880C088F83D8890128121"
+
+    init {
+        B.regCommand({ player: Player, _: Array<String> ->
+            player.setResourcePack(textureUrl, textureHash)
+            null
+        }, "rp", "resourcepack")
+    }
 
     private val prepares = listOf(
         ModLoader(),
         TutorialLoader(),
-        PrepareUser { it.player.setResourcePack(textureUrl, textureHash) },
+        PrepareUser { it.player.performCommand("rp") },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         PrepareUser { it.spawn() },
         SetupScoreBoard()
@@ -71,7 +78,13 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerRespawnEvent.handle() {
-        B.postpone(1) { app.getUser(player)!!.spawn() }
+        B.postpone(1) {
+            val tent = app.getUser(player)!!.tent
+            if (tent != null)
+                player.teleport(tent)
+            else
+                player.teleport(app.spawn)
+        }
     }
 
     @EventHandler
@@ -97,13 +110,13 @@ class PlayerListener : Listener {
             else if (
                 entityUser.tent != null &&
                 (entity.location.distanceSquared(entityUser.tent!!.location) < 10 ||
-                damageBy.location.distanceSquared(entityUser.tent!!.location) < 10)
+                        damageBy.location.distanceSquared(entityUser.tent!!.location) < 10)
             ) {
                 cancelled = true
             } else if (
                 damagerUser.tent != null &&
                 (damageBy.location.distanceSquared(damagerUser.tent!!.location) < 10 ||
-                entity.location.distanceSquared(damagerUser.tent!!.location) < 10)
+                        entity.location.distanceSquared(damagerUser.tent!!.location) < 10)
             )
                 cancelled = true
             cancelled = true
@@ -117,6 +130,10 @@ class PlayerListener : Listener {
         val stat = user.stat!!
         stat.heart--
 
+        val killer = player.killer
+        if (killer != null)
+            app.getUser(killer)!!.stat!!.kills++
+
         player.activePotionEffects.forEach {
             player.removePotionEffect(it.type)
         }
@@ -129,6 +146,7 @@ class PlayerListener : Listener {
             stat.place = null
             stat.placeInventory?.clear()
             user.homeInventory.clear()
+            stat.deaths++
             user.tent?.remove()
         } else {
             cancelled = true

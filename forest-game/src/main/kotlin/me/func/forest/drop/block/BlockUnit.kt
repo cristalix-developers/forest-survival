@@ -46,6 +46,11 @@ enum class BlockUnit (
         "Ракушка", 4, SHELL2,
         DropItem, DelayGenerator(SHELL2, 20), DropThenGenerate
     ),
+    IRON(
+        "Железо", 5, IRON2,
+        RandomItemDrop(2, BAD_IRON1),
+        DelayGenerator(BAD_IRON1, 60), DropThenGenerate
+    ),
     TOTEM(
         "Тотем", 7, SKULL1,
         RandomItemDrop(3, STICK1),

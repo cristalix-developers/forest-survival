@@ -23,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
 import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
+import ru.cristalix.core.math.V3
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.core.stats.IStatService
@@ -92,6 +93,10 @@ class Forest : JavaPlugin() {
                     user.stat!!.placeInventory = items.toList().toMutableList()
                     user.tent?.remove()
                 }
+
+                val dot = user.player.location
+                user.stat!!.exit = V3(dot.x, dot.y, dot.z)
+
                 user.stat!!.timeAlive += Date().time - user.stat!!.lastEntry
                 context.store(statScope, user.stat)
             }

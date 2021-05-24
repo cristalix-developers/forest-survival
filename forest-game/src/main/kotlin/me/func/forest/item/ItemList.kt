@@ -40,7 +40,8 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             it.basePotionData = PotionData(PotionType.POISON)
         }, null
     ),
-    IRON1(item("⭐⭐⭐ §aЖелезо", IRON_INGOT, "IRON1"), null),
+    BAD_IRON1(item("⭐⭐ §aМутное железо", IRON_INGOT, "IRON1"), null),
+    IRON1(item("⭐⭐⭐ §cЖелезо", IRON_INGOT, "IRON1"), null),
     IRON_SWORD1(item { type = IRON_SWORD }.text("⭐⭐⭐ §cЖелезный меч").build(), null),
     IRON_HELMET1(item("⭐⭐⭐ §cЖелезные шлем", CHAINMAIL_HELMET, "IRON_HELMET1"), null),
     IRON_CHEST1(item("⭐⭐⭐ §cЖелезные нагрудник", CHAINMAIL_CHESTPLATE, "IRON_CHEST1"), null),
@@ -160,6 +161,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
         )
     ),
     SHELL2(Items.builder().type(CARPET).displayName("⭐⭐ §aРакушка").damage(10).build(), null),
+    IRON2(Items.builder().type(CARPET).displayName("⭐⭐⭐ §cЖелезо").damage(5).build(), null),
     STONE2(Items.builder().type(CARPET).build(), null),
     FULL_BUSH2(Items.builder().type(CARPET).damage(1).build(), null),
     EMPTY_BUSH2(Items.builder().type(CARPET).damage(6).build(), null),
