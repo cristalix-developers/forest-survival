@@ -3,11 +3,13 @@ package me.func.forest.user.listener
 import clepto.bukkit.B
 import me.func.forest.app
 import me.func.forest.channel.ModTransfer
+import me.func.forest.item.ItemHelper
 import me.func.forest.user.listener.prepare.ModLoader
 import me.func.forest.user.listener.prepare.PrepareUser
 import me.func.forest.user.listener.prepare.SetupScoreBoard
 import me.func.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
@@ -18,8 +20,6 @@ import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerResourcePackStatusEvent
-import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.EquipmentSlot
 import kotlin.math.min
@@ -42,10 +42,10 @@ class PlayerListener : Listener {
 
     private val prepares = listOf(
         ModLoader(),
-        TutorialLoader(),
         PrepareUser { it.player.performCommand("rp") },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
         PrepareUser { it.spawn() },
+        TutorialLoader(),
         SetupScoreBoard()
     )
 
@@ -55,16 +55,13 @@ class PlayerListener : Listener {
     }
 
     @EventHandler
-    fun PlayerResourcePackStatusEvent.handle() {
-        if (status == SUCCESSFULLY_LOADED) {
-            B.postpone(20) { ModTransfer().send("guide", app.getUser(player)!!) }
-        }
-    }
-
-    @EventHandler
     fun FoodLevelChangeEvent.handle() {
-        if (entity is CraftPlayer)
-            ModTransfer().integer(min(20, foodLevel)).send("food-level", app.getUser(entity as CraftPlayer)!!)
+        val player = entity
+        if (player is CraftPlayer) {
+            ModTransfer().integer(min(20, foodLevel)).send("food-level", app.getUser(player)!!)
+            if (player.itemInHand.type0 == Material.BOWL)
+                ItemHelper.useItem(player)
+        }
     }
 
     @EventHandler

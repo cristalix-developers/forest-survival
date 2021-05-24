@@ -63,7 +63,7 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
 
     init {
         if (stat == null) {
-            stat = Stat(false, 1.0, 3,  0, 0, 0, 1, 1, null, null, null, 36.6, 3, 3, 0, mutableListOf())
+            stat = Stat(false, 1.0, 3,  0, 0, 0, 0, 1, null, null, null, 36.6, 3, 3, 0, mutableListOf())
         }
         level = LevelHelper.exp2level(stat!!.exp)
         stat!!.heart = max(1, stat!!.heart)
@@ -152,11 +152,13 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
     }
 
     fun spawn() {
-        val exit = stat!!.exit
-        if (exit != null)
-            player.teleport(Location(player.world, exit.x, exit.y, exit.z))
-        else
-            player.teleport(app.spawn)
+        if (watchTutorial()) {
+            val exit = stat!!.exit
+            if (exit != null)
+                player.teleport(Location(player.world, exit.x, exit.y, exit.z))
+            else
+                player.teleport(app.spawn)
+        }
     }
 
     fun showTent(location: Location) {

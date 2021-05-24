@@ -3,6 +3,8 @@ package ru.func.mod
 import dev.xdark.clientapi.entity.EntityArmorStand
 import dev.xdark.clientapi.entity.EntityLightningBolt
 import dev.xdark.clientapi.entity.EntityProvider
+import dev.xdark.clientapi.event.input.KeyPress
+import dev.xdark.clientapi.event.input.MousePress
 import dev.xdark.clientapi.event.network.PluginMessage
 import dev.xdark.clientapi.event.render.GuiOverlayRender
 import dev.xdark.clientapi.inventory.EntityEquipmentSlot
@@ -13,13 +15,51 @@ import dev.xdark.clientapi.nbt.NBTTagString
 import io.netty.buffer.Unpooled
 import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.uiengine.UIEngine
-import ru.cristalix.uiengine.utility.V3
+import ru.cristalix.uiengine.element.AbstractElement
+import ru.cristalix.uiengine.utility.*
 import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
 class Guide {
+
+    private var animation = false
+
+    private val wrapper = rectangle {
+        size = V3(1000.0, 1000.0, 0.0)
+        color = Color(0, 0, 0, 0.62)
+        origin = CENTER
+        align = CENTER
+        enabled = false
+        addChild(text {
+            origin = CENTER
+            align = CENTER
+            content = "Выжить в лесу"
+            color = WHITE
+            offset.y -= 40.0
+            scale = V3(3.0, 3.0, 3.0)
+            shadow = true
+        })
+    }
+
+    private val button = rectangle {
+        size = V3(200.0, 50.0, 0.0)
+        color = Color(70, 255, 70, 0.6)
+        origin = CENTER
+        align = CENTER
+        offset.y += 70
+        onHover = { element: AbstractElement, on: Boolean ->
+            element.color.alpha = if (on) 0.9 else 0.6
+        }
+        addChild(text {
+            origin = CENTER
+            align = CENTER
+            content = "Начать игру"
+            color = WHITE
+            shadow = true
+        })
+    }
 
     private val helicopterItem: ItemStack = ItemStack.of(
         NBTTagCompound.of(
@@ -48,33 +88,8 @@ class Guide {
     private var omega = 0.14
 
     init {
-        val player = clientApi.minecraft().player
-
-        UIEngine.registerHandler(PluginMessage::class.java) {
-            if (channel == "guide") {
-                helicopter = clientApi.entityProvider()
-                    .newEntity(EntityProvider.ARMOR_STAND, clientApi.minecraft().world) as EntityArmorStand
-
-                helicopter.setItemInSlot(EntityEquipmentSlot.HEAD, helicopterItem)
-
-                val local = clientApi.minecraft().player
-
-                helicopter.isInvisible = true
-                helicopter.setNoGravity(false)
-                helicopter.teleport(local.x, local.y, local.z)
-                //helicopter.headRotation = Rotations.of(Math.toRadians(-45.0).toFloat(), 0F, 0F)
-
-                helicopter.entityId = (-Math.random() * 1000).toInt()
-                helicopter.setUniqueId(UUID.randomUUID())
-
-                clientApi.minecraft().world.spawnEntity(helicopter)
-
-                player.startRiding(helicopter, true)
-
-                animationActive = true
-            }
-        }
-
+        wrapper.addChild(button)
+        UIEngine.overlayContext.addChild(wrapper)
         UIEngine.registerHandler(GuiOverlayRender::class.java) {
             if (!animationActive)
                 return@registerHandler
@@ -87,7 +102,11 @@ class Guide {
                 lastTime = now
                 seconds++
                 if (seconds in 9..11) {
-                    spawnBoltAt(helicopter.x + (Math.random() - 0.5) * 100, helicopter.y + 100, helicopter.z + (Math.random() - 0.5) * 100)
+                    spawnBoltAt(
+                        helicopter.x + (Math.random() - 0.5) * 100,
+                        helicopter.y + 100,
+                        helicopter.z + (Math.random() - 0.5) * 100
+                    )
                 }
 
                 if (seconds < 22) {
@@ -104,16 +123,17 @@ class Guide {
                         clientApi.minecraft().world.removeEntity(helicopter)
                         clientApi.clientConnection().sendPayload("guide-end", Unpooled.buffer())
                         GlowEffect.show(0.4, 255, 0, 0, 0.7)
+                        clientApi.minecraft().world.setRainStrength(0F)
                         seconds = 100
                     }
                 }
             }
             if (seconds < 12) {
-                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.07)
+                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.09)
                 clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
             } else if (seconds < 22) {
                 if (helicopterCenter == null) {
-                    spawnBoltAt(helicopter.x, helicopter.y - 2, helicopter.z)
+                    spawnBoltAt(helicopter.x, helicopter.y - 20, helicopter.z)
                     clientApi.minecraft().world.setRainStrength(1F)
 
                     helicopterCenter = V3(helicopter.x, helicopter.y, helicopter.z)
@@ -124,7 +144,7 @@ class Guide {
 
                 helicopter.teleport(
                     x,
-                    helicopter.y - 0.2,
+                    helicopter.y - 0.17,
                     z
                 )
                 helicopter.setYaw(
@@ -137,6 +157,54 @@ class Guide {
                 )
             }
         }
+
+        UIEngine.registerHandler(PluginMessage::class.java) {
+            if (channel == "lets-start") {
+                wrapper.enabled = true
+                clientApi.minecraft().setIngameNotInFocus()
+            }
+        }
+        UIEngine.registerHandler(MousePress::class.java) {
+            if (wrapper.enabled) {
+                animate()
+                wrapper.enabled = false
+                UIEngine.clientApi.minecraft().setIngameFocus()
+            }
+        }
+        UIEngine.registerHandler(KeyPress::class.java) {
+            if (wrapper.enabled) {
+                animate()
+                wrapper.enabled = false
+                UIEngine.clientApi.minecraft().setIngameFocus()
+            }
+        }
+    }
+
+    private fun animate() {
+        if (animation)
+            return
+
+        animation = true
+        helicopter = clientApi.entityProvider()
+            .newEntity(EntityProvider.ARMOR_STAND, clientApi.minecraft().world) as EntityArmorStand
+
+        helicopter.setItemInSlot(EntityEquipmentSlot.HEAD, helicopterItem)
+
+        val local = clientApi.minecraft().player
+
+        helicopter.isInvisible = true
+        helicopter.setNoGravity(false)
+        helicopter.teleport(local.x, local.y, local.z)
+        //helicopter.headRotation = Rotations.of(Math.toRadians(-45.0).toFloat(), 0F, 0F)
+
+        helicopter.entityId = (-Math.random() * 1000).toInt()
+        helicopter.setUniqueId(UUID.randomUUID())
+
+        clientApi.minecraft().world.spawnEntity(helicopter)
+
+        local.startRiding(helicopter, true)
+
+        animationActive = true
     }
 
     private fun spawnBoltAt(x: Double, y: Double, z: Double) {

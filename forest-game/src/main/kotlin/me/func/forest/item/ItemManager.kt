@@ -1,5 +1,10 @@
 package me.func.forest.item
 
+import clepto.bukkit.B
+import me.func.forest.app
+import me.func.forest.channel.ModTransfer
+import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -10,8 +15,15 @@ import org.bukkit.inventory.ItemStack
 
 class ItemManager : Listener {
 
+    private val startLocation: Location = app.worldMeta.getLabel("guide_start")
+
     @EventHandler
     fun PlayerInteractEvent.handle() {
+        if (blockClicked != null && blockClicked.type == Material.CAKE_BLOCK && !app.getUser(player)!!.watchTutorial()) {
+            player.teleport(startLocation)
+            isCancelled = true
+            B.postpone(10) { ModTransfer().send("lets-start", app.getUser(player)!!) }
+        }
         if (!hasItem())
             return
         isItem(item, this)

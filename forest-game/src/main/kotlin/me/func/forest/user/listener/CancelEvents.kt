@@ -39,7 +39,7 @@ class CancelEvents : Listener {
 
     @EventHandler
     fun disable(event: BlockPlaceEvent) {
-        //event.isCancelled = true
+        event.isCancelled = true
     }
 
     @EventHandler

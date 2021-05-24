@@ -9,7 +9,7 @@ enum class ZoneType(val title: String, val playerIn: Consumer<User>) {
         it.normalizeTemperature(0.002)
     }),
     COLD("§fМороз §b▼§7", {
-        it.changeTemperature(-0.007)
+        it.changeTemperature(-0.008)
         me.func.forest.knowledge.Knowledge.COLD.tryGive(it)
     }),
     HOT("§fЖара §c▲§7", {
@@ -23,6 +23,6 @@ enum class ZoneType(val title: String, val playerIn: Consumer<User>) {
         it.changeTemperature(-0.005)
     }),
     NIGHT("§fНочь §b▼§7", {
-        it.changeTemperature(-0.006)
+        it.changeTemperature(-0.007)
     }),;
 }

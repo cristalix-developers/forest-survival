@@ -43,6 +43,7 @@ class Forest : JavaPlugin() {
     lateinit var userManager: UserManager<User>
 
     lateinit var spawn: Location
+    lateinit var start: Location
 
     override fun onEnable() {
         B.plugin = this
@@ -52,6 +53,7 @@ class Forest : JavaPlugin() {
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
         spawn = worldMeta.getLabel("guide_end")
+        start = worldMeta.getLabel("guide_pre")
 
         // Конфигурация реалма
         val info = IRealmService.get().currentRealmInfo
