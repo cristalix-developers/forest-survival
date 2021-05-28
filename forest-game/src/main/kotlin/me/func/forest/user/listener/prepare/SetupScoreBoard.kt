@@ -9,7 +9,7 @@ class SetupScoreBoard : PrepareUser {
     override fun execute(user: User) {
         val objective = Cristalix.scoreboardService().getPlayerObjective(user.uuid, user.uuid.toString())
 
-        objective.displayName = "Выжить"
+        objective.displayName = "Тайга"
 
         objective.startGroup("Игрок")
             .record("Уровень") { "§b${user.level} §fур." }

@@ -35,16 +35,16 @@ class Guide {
         addChild(text {
             origin = CENTER
             align = CENTER
-            content = "Выжить в лесу"
+            content = "Выжить в тайге"
             color = WHITE
-            offset.y -= 40.0
-            scale = V3(3.0, 3.0, 3.0)
+            offset.y -= 60.0
+            scale = V3(4.0, 4.0, 4.0)
             shadow = true
         })
     }
 
     private val button = rectangle {
-        size = V3(200.0, 50.0, 0.0)
+        size = V3(130.0, 30.0, 0.0)
         color = Color(70, 255, 70, 0.6)
         origin = CENTER
         align = CENTER
@@ -119,6 +119,7 @@ class Guide {
                             helicopter.y.toInt() - 2,
                             helicopter.z.toInt()
                         )?.block?.id != 0
+                        || helicopter.y < 10
                     ) {
                         clientApi.minecraft().world.removeEntity(helicopter)
                         clientApi.clientConnection().sendPayload("guide-end", Unpooled.buffer())
@@ -129,7 +130,7 @@ class Guide {
                 }
             }
             if (seconds < 12) {
-                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.09)
+                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.01)
                 clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
             } else if (seconds < 22) {
                 if (helicopterCenter == null) {
@@ -144,7 +145,7 @@ class Guide {
 
                 helicopter.teleport(
                     x,
-                    helicopter.y - 0.17,
+                    helicopter.y - 0.13,
                     z
                 )
                 helicopter.setYaw(

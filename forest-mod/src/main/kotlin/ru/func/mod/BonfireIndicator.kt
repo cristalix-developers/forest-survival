@@ -15,13 +15,22 @@ import kotlin.collections.set
 
 class BonfireIndicator {
 
-    private val bonfires = HashMap<Context3D, Double>()
+    private val bonfires = HashMap<String, Pair<Context3D, Double>>()
     private var maxTime = -1.0
 
     init {
         UIEngine.registerHandler(PluginMessage::class.java) {
             if (channel == "bonfire-new") {
-                val context = Context3D(V3(data.readDouble(), data.readDouble(), data.readDouble()))
+                val v3 = V3(data.readDouble(), data.readDouble(), data.readDouble())
+                val v = "${v3.x} ${v3.y} ${v3.z}"
+                val pair = bonfires[v]
+                if (pair != null) {
+                    bonfires[v] = pair.first to data.readInt().toDouble()
+                    return@registerHandler
+                }
+
+                val context = Context3D(v3)
+
                 val bar = rectangle {
                     origin = Relative.LEFT
                     align = Relative.LEFT
@@ -40,19 +49,19 @@ class BonfireIndicator {
 
                 context.addChild(body)
                 maxTime = maxTime.coerceAtLeast(data.readInt().toDouble())
-                bonfires[context] = maxTime
+                bonfires[v] = context to maxTime
                 UIEngine.worldContexts.add(context)
             }
         }
 
         UIEngine.registerHandler(RenderTickPre::class.java) {
             if (bonfires.isNotEmpty()) {
-                val contextsToRemove = ArrayList<Context3D>()
+                val contextsToRemove = ArrayList<Map.Entry<String, Pair<Context3D, Double>>>()
                 bonfires.forEach {
                     val width = (maxTime * 2).coerceAtMost(20.0)
-                    val part = it.value / maxTime
+                    val part = minOf(it.value.second, maxTime) / maxTime
 
-                    val body = it.key.children[0] as RectangleElement
+                    val body = it.value.first.children[0] as RectangleElement
                     val bar = body.children[0] as RectangleElement
 
                     bar.size.x = width * part
@@ -62,7 +71,7 @@ class BonfireIndicator {
                     GL11.glEnable(GL11.GL_TEXTURE_2D)
                     GL11.glDepthMask(false)
 
-                    it.key.transformAndRender()
+                    it.value.first.transformAndRender()
 
                     GlStateManager.enableLighting()
                     GL11.glDepthMask(true)
@@ -81,15 +90,15 @@ class BonfireIndicator {
                         matrix,
                         matrix
                     )
-                    it.key.matrices[rotationMatrix] = matrix
-                    if (it.value < 0)
-                        contextsToRemove.add(it.key)
+                    it.value.first.matrices[rotationMatrix] = matrix
+                    if (it.value.second < 0)
+                        contextsToRemove.add(it)
                 }
                 contextsToRemove.forEach {
-                    UIEngine.worldContexts.remove(it)
-                    bonfires.remove(it)
+                    UIEngine.worldContexts.remove(it.value.first)
+                    bonfires.remove(it.key)
                 }
-                bonfires.replaceAll { _, timeLeft -> timeLeft - 0.05 }
+                bonfires.replaceAll { _, it -> it.first to it.second - 0.05 }
                 contextsToRemove.clear()
             }
         }

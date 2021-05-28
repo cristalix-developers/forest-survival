@@ -1,10 +1,13 @@
 package me.func.forest.item
 
+import clepto.bukkit.B
 import clepto.bukkit.Cycle
 import me.func.forest.app
 import me.func.forest.drop.dropper.DropItem
+import me.func.forest.drop.generator.BonfireGenerator
 import me.func.forest.knowledge.Knowledge
 import net.minecraft.server.v1_12_R1.EnumItemSlot
+import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
@@ -25,6 +28,52 @@ object StandardsHandlers {
         return Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>>(
             PlayerAttemptPickupItemEvent::class.java,
             BiConsumer { _, it -> knowledge.tryGive(app.getUser(it.player)!!) }
+        )
+    }
+
+    fun dropInFire(int: Int): Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>> {
+        return Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>>(
+            PlayerInteractEvent::class.java,
+            BiConsumer { _, it ->
+                val event = it as PlayerInteractEvent
+                if (event.hasBlock() && event.hasItem()) {
+                    val block = it.blockClicked.location.toBlockLocation()
+                    val fire = BonfireGenerator.BONFIRES[block]
+
+                    if (fire != null && fire > 0) {
+                        ItemHelper.useItem(it.player)
+                        val time = minOf(fire + int, BonfireGenerator.NORMAL_TICKS_FIRE * 3)
+                        BonfireGenerator.BONFIRES[block] = time
+
+                        Bukkit.getOnlinePlayers().forEach {
+                            me.func.forest.channel.ModTransfer()
+                                .double(block.x + 0.5)
+                                .double(block.y + 1.4)
+                                .double(block.z + 0.5)
+                                .integer(time)
+                                .send("bonfire-new", app.getUser(it)!!)
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    fun cookItem(drop: ItemList, duration: Int): Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>> {
+        return Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>>(
+            PlayerInteractEvent::class.java,
+            BiConsumer { _, it ->
+                val event = it as PlayerInteractEvent
+                if (event.hasBlock() && event.hasItem() && it.blockClicked.type == ItemList.BONFIRE_ON2.item.type0) {
+                    val block = it.blockClicked.location.toBlockLocation()
+                    val fire = BonfireGenerator.BONFIRES[block]
+
+                    if (fire != null && fire > 0) {
+                        ItemHelper.useItem(it.player)
+                        B.postpone(duration * 20) { DropItem.drop(drop, block, it.player) }
+                    }
+                }
+            }
         )
     }
 

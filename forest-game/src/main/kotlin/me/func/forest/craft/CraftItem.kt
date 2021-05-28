@@ -23,5 +23,8 @@ enum class CraftItem(val minLevel: Int, val to: ItemList, val from: Iterable<Pai
     TENT_START(3, TENT1, listOf(Pair(STRING1, 16), Pair(LEATHER1, 8), Pair(STICK1, 8))),
     TENT_MIDDLE(4, TENT2, listOf(Pair(TENT1, 1), Pair(STRING1, 32), Pair(LEATHER1, 32), Pair(STICK1, 32))),
     TENT_HIGH(5, TENT3, listOf(Pair(TENT2, 1), Pair(STRING1, 64), Pair(LEATHER1, 64), Pair(STICK1, 64))),
+    SPEAR(2, SPEAR1, listOf(Pair(STICK1, 4), Pair(STRING1, 4), Pair(STONE1, 1))),
+    ROD(2, ROD1, listOf(Pair(STICK1, 6), Pair(STRING1, 10))),
+    SPADE(2, SPADE1, listOf(Pair(STICK1, 10), Pair(STRING1, 8))),
     ;
 }

@@ -12,6 +12,8 @@ import me.func.forest.drop.mob.MobUnit
 import me.func.forest.item.ItemList
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -19,6 +21,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.player.PlayerFishEvent
 
 class ResourceManager : Listener {
 
@@ -27,6 +30,10 @@ class ResourceManager : Listener {
 
     private var mobUnit: Map<Location, MobUnit> = app.worldMeta.getLabels("mob")
         .associate { it.toBlockLocation() to MobUnit.valueOf(it.tag.toUpperCase()) }
+
+    private var fishLoot = arrayOf(
+        ItemList.STRING1, ItemList.STICK1, ItemList.ARROW1, ItemList.SHELL2, ItemList.POISONED_ARROW1
+    )
 
     init {
         blockUnit.forEach { (location, resource) -> resource.generate(location) }
@@ -49,10 +56,16 @@ class ResourceManager : Listener {
 
     @EventHandler
     fun ProjectileHitEvent.handle() {
-        if (hitBlock != null) {
+        if (hitBlock != null && entityType == EntityType.ARROW) {
             entity.remove()
             DropItem.drop(ItemList.STICK1, entity.location, null)
         }
+    }
+
+    @EventHandler
+    fun PlayerFishEvent.handle() {
+        if (state == PlayerFishEvent.State.CAUGHT_FISH)
+            (caught as Item).itemStack = ListUtils.random(fishLoot).item
     }
 
     @EventHandler

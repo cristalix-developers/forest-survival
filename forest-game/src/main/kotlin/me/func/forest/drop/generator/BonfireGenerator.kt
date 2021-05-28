@@ -11,26 +11,38 @@ import kotlin.math.pow
 
 object BonfireGenerator : Generator {
 
-    val BONFIRES: MutableMap<Location, Boolean> = mutableMapOf() // todo: load from disk
+    val BONFIRES: MutableMap<Location, Int> = mutableMapOf() // todo: load from disk
     val MARK_FIRING: MutableList<Zone> = arrayListOf()
-    const val TICKS_FIRE = 20 * 100
-    private const val HOT_RADIUS = 5.0
+    const val NORMAL_TICKS_FIRE = 20 * 120
+    private const val HOT_RADIUS = 4.0
 
     override fun generate(resource: BlockUnit, location: Location) {
         if (BONFIRES[location] == null) {
             BlockPlacer.place(ItemList.BONFIRE_OFF2, location)
-            BONFIRES[location] = false
+            BONFIRES[location] = 0
             return
         }
         BlockPlacer.place(ItemList.BONFIRE_ON2, location)
-        BONFIRES[location] = true
+        BONFIRES[location] = NORMAL_TICKS_FIRE
 
         val zone = Zone(location, HOT_RADIUS.pow(2), ZoneType.BONFIRE)
         MARK_FIRING.add(zone)
 
-        B.postpone(TICKS_FIRE) {
+        tryRemove(NORMAL_TICKS_FIRE, location, zone)
+    }
+
+    private fun tryRemove(wait: Int, location: Location, zone: Zone) {
+        B.postpone(wait) {
+            val time = BONFIRES[location]
+            if (time != null) {
+                BONFIRES[location] = time - wait
+            }
+            if (time != null && time > 0) {
+                tryRemove(time - wait + 1, location, zone)
+                return@postpone
+            }
             BlockPlacer.place(ItemList.BONFIRE_OFF2, location)
-            BONFIRES[location] = false
+            BONFIRES[location] = 0
             MARK_FIRING.remove(zone)
         }
     }

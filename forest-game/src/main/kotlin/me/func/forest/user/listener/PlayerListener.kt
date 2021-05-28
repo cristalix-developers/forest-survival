@@ -31,7 +31,7 @@ import kotlin.math.min
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
-    private val textureHash = "08880C088F83D8890128121"
+    private val textureHash = "01180C088F11D8890132122"
 
     init {
         B.regCommand({ player: Player, _: Array<String> ->
@@ -42,16 +42,17 @@ class PlayerListener : Listener {
 
     private val prepares = listOf(
         ModLoader(),
-        PrepareUser { it.player.performCommand("rp") },
+        //PrepareUser { it.player.performCommand("rp") },
         PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
-        PrepareUser { it.spawn() },
         TutorialLoader(),
         SetupScoreBoard()
     )
 
     @EventHandler
     fun PlayerJoinEvent.handle() {
-        prepares.forEach { it.execute(app.getUser(player)!!) }
+        val user = app.getUser(player)!!
+        user.spawn()
+        prepares.forEach { it.execute(user) }
     }
 
     @EventHandler
@@ -148,6 +149,7 @@ class PlayerListener : Listener {
         } else {
             cancelled = true
             user.player.health = 20.0
+            user.stat!!.exit = null
             user.spawn()
             ModTransfer()
                 .integer(stat.heart + 1)

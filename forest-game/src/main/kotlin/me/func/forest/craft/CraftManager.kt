@@ -38,13 +38,17 @@ class CraftManager {
 
                     if (locked) {
                         val meta = itemWithLore.itemMeta
-                        meta.displayName = "§c§m$title"
+                        meta.displayName = "§c$title"
                         itemWithLore.itemMeta = meta
 
                         val nms = CraftItemStack.asNMSCopy(itemWithLore)
                         nms.tag ?: NBTTagCompound()
                         nms.tag.setInt("color", -15658735)
                         itemWithLore = CraftItemStack.asCraftMirror(nms)
+
+                        contents.add('X', ClickableItem.empty(itemWithLore))
+                        contents.fillMask('X', ClickableItem.empty(ItemStack(Material.AIR)))
+                        return@forEach
                     }
 
                     itemWithLore.lore = listOf(

@@ -49,7 +49,7 @@ enum class BlockUnit (
     IRON(
         "Железо", 5, IRON2,
         RandomItemDrop(2, BAD_IRON1),
-        DelayGenerator(BAD_IRON1, 60), DropThenGenerate
+        DelayGenerator(IRON2, 60), DropThenGenerate
     ),
     TOTEM(
         "Тотем", 7, SKULL1,

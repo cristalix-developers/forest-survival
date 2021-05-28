@@ -10,7 +10,7 @@ object BonfireBooty : Booty {
     override fun get(resource: BlockUnit, location: Location, user: User) {
         val fire = BonfireGenerator.BONFIRES[location]
         if (fire != null) {
-            if (fire) {
+            if (fire > 0) {
                 user.player.fireTicks = 20 * 10
             } else {
                 resource.drop(location, user.player)

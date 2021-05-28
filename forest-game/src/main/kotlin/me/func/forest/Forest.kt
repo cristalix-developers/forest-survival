@@ -31,7 +31,9 @@ import ru.cristalix.core.stats.PlayerScope
 import ru.cristalix.core.stats.UserManager
 import ru.cristalix.core.stats.impl.StatService
 import ru.cristalix.core.stats.impl.network.StatServiceConnectionData
+import ru.cristalix.npcs.server.Npcs
 import java.util.*
+
 
 lateinit var app: Forest
 
@@ -49,6 +51,7 @@ class Forest : JavaPlugin() {
         B.plugin = this
         app = this
         Platforms.set(PlatformDarkPaper())
+        Npcs.init(this)
 
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
@@ -116,10 +119,10 @@ class Forest : JavaPlugin() {
             null
         }, "exp", "")
 
-
         // Регистрация меню крафтов
         CraftManager()
 
+        // Регистрация палаток
         TentManipulator()
 
         // Регистрация обработчиков событий
