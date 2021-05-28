@@ -7,7 +7,6 @@ import me.func.forest.drop.dropper.DropItem
 import me.func.forest.drop.generator.BonfireGenerator
 import me.func.forest.knowledge.Knowledge
 import net.minecraft.server.v1_12_R1.EnumItemSlot
-import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
@@ -45,14 +44,7 @@ object StandardsHandlers {
                         val time = minOf(fire + int, BonfireGenerator.NORMAL_TICKS_FIRE * 3)
                         BonfireGenerator.BONFIRES[block] = time
 
-                        Bukkit.getOnlinePlayers().forEach {
-                            me.func.forest.channel.ModTransfer()
-                                .double(block.x + 0.5)
-                                .double(block.y + 1.4)
-                                .double(block.z + 0.5)
-                                .integer(time)
-                                .send("bonfire-new", app.getUser(it)!!)
-                        }
+                        me.func.forest.channel.ModHelper.indicator(time, block.clone().add(0.5, 1.4, 0.5))
                     }
                 }
             }
@@ -70,7 +62,7 @@ object StandardsHandlers {
 
                     if (fire != null && fire > 0) {
                         ItemHelper.useItem(it.player)
-                        B.postpone(duration * 20) { DropItem.drop(drop, block, it.player) }
+                        B.postpone(duration * 20) { DropItem.drop(drop, block.toCenterLocation(), it.player) }
                     }
                 }
             }

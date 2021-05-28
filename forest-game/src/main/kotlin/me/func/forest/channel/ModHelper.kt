@@ -2,6 +2,7 @@ package me.func.forest.channel
 
 import clepto.bukkit.B
 import me.func.forest.user.User
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
@@ -19,6 +20,17 @@ object ModHelper {
             .string("Ошибка!")
             .string(message)
             .send("itemtitle", user)
+    }
+
+    fun indicator(int: Int, location: Location) {
+        org.bukkit.Bukkit.getOnlinePlayers().forEach {
+            ModTransfer()
+                .double(location.x)
+                .double(location.y)
+                .double(location.z)
+                .integer(int)
+                .send("bonfire-new", me.func.forest.app.getUser(it)!!)
+        }
     }
 
     fun highlight(user: User, message: String) {

@@ -13,5 +13,4 @@ object BlockPlacer {
 
         location.block.setTypeAndDataFast(item.item.typeId, realData)
     }
-
 }

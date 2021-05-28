@@ -9,6 +9,7 @@ import me.func.forest.knowledge.Knowledge
 import org.bukkit.Material.*
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerEvent
+import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
@@ -41,7 +42,12 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             it.basePotionData = PotionData(PotionType.POISON)
         }, null
     ),
-    BAD_IRON1(item("⭐⭐ §aМутное железо", IRON_INGOT, "IRON1"), null),
+    WORM1(item {
+        type = STRING
+        text("⭐ §7Червь")
+        nbt("code", "WORM1")
+        nbt("color", 1109533183)
+    }.build(), null),
     IRON1(item("⭐⭐⭐ §cЖелезо", IRON_INGOT, "IRON1"), null),
     IRON_SWORD1(item { type = IRON_SWORD }.text("⭐⭐⭐ §cЖелезный меч").build(), null),
     IRON_HELMET1(item("⭐⭐⭐ §cЖелезные шлем", CHAINMAIL_HELMET, "IRON_HELMET1"), null),
@@ -51,17 +57,15 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
     FLINT1(item { type = FLINT }.text("⭐ §7Кремень").build(), mapOf(StandardsHandlers.knowledgeItem(Knowledge.FLINT))),
     SPEAR1(item("⭐ §7Копьё", WOOD_SWORD, "SPEAR1"), mapOf(StandardsHandlers.throwableItem(SPEAR3, 3.0))),
     ROD1(item("⭐ §7Удочка", FISHING_ROD, "ROD1"), mapOf(
-        PlayerInteractEvent::class.java to BiConsumer { _, it ->
-            val event = it as PlayerInteractEvent
+        PlayerFishEvent::class.java to BiConsumer { _, it ->
+            val event = it as PlayerFishEvent
 
-            if (event.action != org.bukkit.event.block.Action.RIGHT_CLICK_AIR)
+            if (event.state != PlayerFishEvent.State.FISHING)
                 return@BiConsumer
 
-            if (event.player.inventory.contains(ItemList.WORM1.item)) {
-                event.player.inventory.removeItem(WORM1.item)
-            } else {
+            if (!ItemHelper.tryUseItem(event.player, WORM1)) {
                 it.isCancelled = true
-                me.func.forest.channel.ModHelper.error(app.getUser(it.player)!!, "Черви не разложены по одному")
+                me.func.forest.channel.ModHelper.error(app.getUser(it.player)!!, "Нет червей")
             }
         }
     )),
@@ -70,7 +74,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             val event = it as PlayerInteractEvent
 
             if (event.hasBlock() && event.blockClicked.type == GRASS) {
-                if (Math.random() < 0.05) {
+                if (Math.random() < 0.2) {
                     me.func.forest.drop.dropper.DropItem.drop(
                         WORM1,
                         event.blockClicked.location,
@@ -80,12 +84,6 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             }
         }
     )),
-    WORM1(item {
-        type = STRING
-        text("⭐ §7Червь")
-        nbt("code", "WORM1")
-        nbt("color", 1109533183)
-    }.build(), null),
     FLINT_AND_STEEL1(
         item {
             type = FLINT_AND_STEEL
@@ -100,14 +98,10 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                     if (fire != null && fire < 1) {
                         BlockUnit.FIRE.generate(location)
                         useItem(event.player)
-                        org.bukkit.Bukkit.getOnlinePlayers().forEach {
-                            me.func.forest.channel.ModTransfer()
-                                .double(location.x + 0.5)
-                                .double(location.y + 1.4)
-                                .double(location.z + 0.5)
-                                .integer(me.func.forest.drop.generator.BonfireGenerator.NORMAL_TICKS_FIRE)
-                                .send("bonfire-new", app.getUser(it)!!)
-                        }
+                        me.func.forest.channel.ModHelper.indicator(
+                            me.func.forest.drop.generator.BonfireGenerator.NORMAL_TICKS_FIRE,
+                            location.clone().add(0.5, 1.4, 0.5)
+                        )
                     }
                 }
             })
@@ -168,9 +162,27 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             }, StandardsHandlers.knowledgeItem(Knowledge.HEAL)
         )
     ),
-    RABBIT_MEAL1(item("⭐ §7Крольчатинка", RABBIT, "RABBIT_MEAL1"), mapOf(StandardsHandlers.cookItem(HEAL1, 5))),
-    WOLF_MEAL1(item("⭐⭐ §aВолчатинка", MUTTON, "WOLF_MEAL1"), mapOf(StandardsHandlers.cookItem(HEAL1, 5))),
-    BEAR_MEAL1(item("⭐⭐⭐ §cМедвежатинка", RAW_BEEF, "BEAR_MEAL1"), mapOf(StandardsHandlers.cookItem(HEAL1, 5))),
+    COOKED_RABBIT_MEAL1(
+        item("⭐⭐ §a Жареная крольчатина", COOKED_RABBIT, "COOKED_RABBIT_MEAL1"),
+        mapOf(StandardsHandlers.cookItem(FLINT1, 5))
+    ),
+    COOKED_WOLF_MEAL1(
+        item("⭐⭐ §aЖареная Волчатинка", COOKED_MUTTON, "COOKED_WOLF_MEAL1"),
+        mapOf(StandardsHandlers.cookItem(FLINT1, 5))
+    ),
+    COOKED_BEAR_MEAL1(
+        item("⭐⭐⭐ §cЖареная медвежатина", COOKED_BEEF, "COOKED_BEAR_MEAL1"),
+        mapOf(StandardsHandlers.cookItem(FLINT1, 5))
+    ),
+    RABBIT_MEAL1(
+        item("⭐ §7Крольчатинка", RABBIT, "RABBIT_MEAL1"),
+        mapOf(StandardsHandlers.cookItem(COOKED_RABBIT_MEAL1, 5))
+    ),
+    WOLF_MEAL1(item("⭐⭐ §aВолчатинка", MUTTON, "WOLF_MEAL1"), mapOf(StandardsHandlers.cookItem(COOKED_WOLF_MEAL1, 5))),
+    BEAR_MEAL1(
+        item("⭐⭐ §aМедвежатинка", RAW_BEEF, "BEAR_MEAL1"),
+        mapOf(StandardsHandlers.cookItem(COOKED_BEAR_MEAL1, 5))
+    ),
     SKULL1(item("⭐⭐⭐ §cЧереп", BONE, "SKULL1"), null),
     BOW1(item("⭐⭐ §aЛук", BOW, "BOW1"), null),
     LEATHER1(item("⭐ §7Кожа", LEATHER, "LEATHER1"), null),
@@ -198,8 +210,41 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             }, StandardsHandlers.knowledgeItem(Knowledge.TOXIC)
         )
     ),
-    SHELL2(Items.builder().type(CARPET).displayName("⭐⭐ §aРакушка").damage(10).build(), null),
-    IRON2(Items.builder().type(CARPET).displayName("⭐⭐⭐ §cЖелезо").damage(5).build(), null),
+    FURNACE2(item("⭐⭐⭐ §cПечь", FURNACE, "FURNACE2"), mapOf(
+        PlayerInteractEvent::class.java to BiConsumer { _, it ->
+            val event = it as PlayerInteractEvent
+
+            if (event.action == Action.RIGHT_CLICK_BLOCK) {
+                if (ItemHelper.tryUseItem(event.player, IRON2)) {
+                    useItem(event.player)
+
+                    val location = event.blockClicked.location.clone().add(0.0, 1.0, 0.0).toCenterLocation()
+                    location.block.type = org.bukkit.Material.FURNACE
+                    me.func.forest.channel.ModHelper.indicator(30 * 20, location.clone().add(0.0, 1.0, 0.0))
+                    clepto.bukkit.B.postpone(30 * 20) {
+                        location.block.type = AIR
+                        me.func.forest.drop.dropper.DropItem.drop(IRON1, location, null)
+                        me.func.forest.drop.dropper.DropItem.drop(FURNACE2, location, null)
+                    }
+                } else {
+                    it.isCancelled = true
+                    me.func.forest.channel.ModHelper.error(app.getUser(it.player)!!, "Нет металла")
+                }
+            }
+        }
+    )),
+    SHELL2(item {
+        type = CARPET
+        data = 10
+        text("⭐⭐ §aРакушка")
+        nbt("code", "SHELL2")
+    }.build(), null),
+    IRON2(item {
+        type = CARPET
+        data = 5
+        text("⭐⭐ §aМутное железо")
+        nbt("code", "IRON2")
+    }.build(), null),
     STONE2(Items.builder().type(CARPET).build(), null),
     FULL_BUSH2(Items.builder().type(CARPET).damage(1).build(), null),
     EMPTY_BUSH2(Items.builder().type(CARPET).damage(6).build(), null),

@@ -9,6 +9,7 @@ enum class CraftItem(val minLevel: Int, val to: ItemList, val from: Iterable<Pai
     ARROW(2, ARROW1, listOf(Pair(STRING1, 1), Pair(STICK1, 1), Pair(FLINT1, 1))),
     POISONED_ARROW(2, POISONED_ARROW1, listOf(Pair(ARROW1, 1), Pair(RED_MUSHROOM2, 1))),
     FIRE(3, BONFIRE_OFF2, listOf(Pair(STONE1, 8), Pair(STICK1, 8))),
+    FURNACE(4, FURNACE2, listOf(Pair(STONE1, 32), Pair(SHELL2, 16), Pair(FLINT_AND_STEEL1, 1))),
     FLINT_AND_STEEL(3, FLINT_AND_STEEL1, listOf(Pair(FLINT1, 2))),
     LEATHER_HELMET(2, LEATHER_HELMET1, listOf(Pair(STRING1, 8), Pair(LEATHER1, 5))),
     LEATHER_CHEST(2, LEATHER_CHEST1, listOf(Pair(STRING1, 10), Pair(LEATHER1, 8))),

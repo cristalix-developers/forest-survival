@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
 import org.bukkit.event.player.PlayerEvent
+import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
@@ -27,6 +28,11 @@ class ItemManager : Listener {
         if (!hasItem())
             return
         isItem(item, this)
+    }
+
+    @EventHandler
+    fun PlayerFishEvent.handle() {
+        isItem(player.inventory.itemInHand, this)
     }
 
     @EventHandler

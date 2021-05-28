@@ -27,7 +27,7 @@ enum class BlockUnit (
     STONE(
         "Камень", 1, STONE1,
         RandomItemDrop(1, FLINT1),
-        DelayGenerator(STONE2, 10), DropThenGenerate
+        DelayGenerator(STONE2, 20), DropThenGenerate
     ),
     BUSH(
         "Куст", 1, APPLE1,
@@ -40,21 +40,21 @@ enum class BlockUnit (
     ),
     TOXIC(
         "Мухомор", 2, RED_MUSHROOM2,
-        DropItem, DelayGenerator(RED_MUSHROOM2, 20), DropThenGenerate
+        DropItem, DelayGenerator(RED_MUSHROOM2, 60), DropThenGenerate
     ),
     SHELL(
         "Ракушка", 4, SHELL2,
-        DropItem, DelayGenerator(SHELL2, 20), DropThenGenerate
+        DropItem, DelayGenerator(SHELL2, 120), DropThenGenerate
     ),
     IRON(
         "Железо", 5, IRON2,
-        RandomItemDrop(2, BAD_IRON1),
-        DelayGenerator(IRON2, 60), DropThenGenerate
+        RandomItemDrop(2, IRON2),
+        DelayGenerator(IRON2, 20), DropThenGenerate
     ),
     TOTEM(
         "Тотем", 7, SKULL1,
         RandomItemDrop(3, STICK1),
-        DelayGenerator(TOTEM2, 20), DropThenGenerate
+        DelayGenerator(TOTEM2, 300), DropThenGenerate
     ),
     FIRE(
         "Костер", 0, BONFIRE_OFF2,

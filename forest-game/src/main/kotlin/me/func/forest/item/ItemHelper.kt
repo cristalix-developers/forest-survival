@@ -18,6 +18,14 @@ object ItemHelper {
         player.itemInHand = hand
     }
 
+    fun tryUseItem(player: Player, itemList: ItemList): Boolean {
+        if (player.inventory.containsAtLeast(itemList.item, 1)) {
+            player.inventory.removeItem(itemList.item)
+            return true
+        }
+        return false
+    }
+
     fun item(name: String, type: Material, color: Color): ItemStack {
         return Items.builder()
             .displayName(name)
