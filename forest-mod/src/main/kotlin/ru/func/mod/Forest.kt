@@ -45,7 +45,7 @@ class Forest : KotlinMod() {
             Banner()
 
             registerHandler<KeyPress> {
-                if (key == Keyboard.KEY_C)
+                if (key == Keyboard.KEY_H)
                     clientApi.chat().sendChatMessage("/craft")
             }
         }

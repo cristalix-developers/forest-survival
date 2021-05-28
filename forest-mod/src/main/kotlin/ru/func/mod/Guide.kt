@@ -114,11 +114,12 @@ class Guide {
                         helicopter.x.toInt() shr 4,
                         helicopter.z.toInt() shr 4
                     )
-                    if (chunk?.getBlockState(
-                            helicopter.x.toInt(),
-                            helicopter.y.toInt() - 2,
-                            helicopter.z.toInt()
-                        )?.block?.id != 0
+                    val under = chunk?.getBlockState(
+                        helicopter.x.toInt(),
+                        helicopter.y.toInt() - 2,
+                        helicopter.z.toInt()
+                    )?.block?.id
+                    if ((under != 0 && under != 166)
                         || helicopter.y < 10
                     ) {
                         clientApi.minecraft().world.removeEntity(helicopter)
@@ -130,7 +131,7 @@ class Guide {
                 }
             }
             if (seconds < 12) {
-                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.01)
+                helicopter.teleport(helicopter.x, helicopter.y + 0.01, helicopter.z + 0.015)
                 clientApi.minecraft().world.setRainStrength(0.1F * (seconds - 2))
             } else if (seconds < 22) {
                 if (helicopterCenter == null) {
@@ -145,7 +146,7 @@ class Guide {
 
                 helicopter.teleport(
                     x,
-                    helicopter.y - 0.13,
+                    helicopter.y - 0.11,
                     z
                 )
                 helicopter.setYaw(

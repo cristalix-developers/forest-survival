@@ -19,6 +19,7 @@ import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.EntityCombustEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerFishEvent
@@ -59,13 +60,22 @@ class ResourceManager : Listener {
         if (hitBlock != null && entityType == EntityType.ARROW) {
             entity.remove()
             DropItem.drop(ItemList.STICK1, entity.location, null)
-        }
+        } else if (entityType == EntityType.TIPPED_ARROW)
+            entity.remove()
     }
 
     @EventHandler
     fun PlayerFishEvent.handle() {
-        if (state == PlayerFishEvent.State.CAUGHT_FISH)
+        if (state == PlayerFishEvent.State.CAUGHT_FISH) {
             (caught as Item).itemStack = ListUtils.random(fishLoot).item
+            app.getUser(player)!!.giveExperience(5)
+        }
+    }
+
+    @EventHandler
+    fun EntityCombustEvent.handle() {
+        if (entityType == EntityType.STRAY)
+            cancel = true
     }
 
     @EventHandler

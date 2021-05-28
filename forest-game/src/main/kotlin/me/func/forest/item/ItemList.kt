@@ -219,7 +219,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                     useItem(event.player)
 
                     val location = event.blockClicked.location.clone().add(0.0, 1.0, 0.0).toCenterLocation()
-                    location.block.type = org.bukkit.Material.FURNACE
+                    location.block.type = FURNACE
                     me.func.forest.channel.ModHelper.indicator(30 * 20, location.clone().add(0.0, 1.0, 0.0))
                     clepto.bukkit.B.postpone(30 * 20) {
                         location.block.type = AIR

@@ -24,8 +24,8 @@ enum class MobUnit(
 
     RABBIT("⭐ §7Кролик", 2, 30, 5.0, EntityType.RABBIT, RandomItemDrop(2, ItemList.RABBIT_MEAL1)),
     WOLF("⭐⭐ §aВолк", 5, 300, 50.0, EntityType.WOLF, RandomItemDrop(2, ItemList.WOLF_MEAL1)),
-    ABO("⭐⭐ §aАбориген", 10, 1, 50.0, EntityType.STRAY, RandomItemDrop(2, ItemList.ARROW1)),
-    SPIDER("⭐⭐ §cПавук", 9, 200, 120.0, EntityType.SPIDER, RandomItemDrop(1, ItemList.STRING1)),
+    ABO("⭐⭐ §aАбориген", 10, 60, 50.0, EntityType.STRAY, RandomItemDrop(2, ItemList.ARROW1)),
+    SPIDER("⭐⭐ §aПавук", 9, 200, 120.0, EntityType.SPIDER, RandomItemDrop(1, ItemList.STRING1)),
     BEAR("⭐⭐⭐ §cМедведь", 20, 600, 120.0, EntityType.POLAR_BEAR, RandomItemDrop(1, ItemList.BEAR_MEAL1)),;
 
     fun spawn(location: Location) {
@@ -36,9 +36,8 @@ enum class MobUnit(
         mob.maxHealth = health
         mob.health = health
 
-        if (this == WOLF) {
+        if (this == WOLF)
             (mob as Wolf).isAngry = true
-        }
         if (this == BEAR)
             mob.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 100000, 2))
 
