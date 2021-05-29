@@ -20,8 +20,10 @@ import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.util.Vector
 import kotlin.math.min
 
 
@@ -32,6 +34,9 @@ class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("RESOURCE_PACK_URL")
     private val textureHash = "11180C188F11D8890132123"
+
+    private val mapPositive = app.worldMeta.getLabel("wall-negative")
+    private val mapNegative = app.worldMeta.getLabel("wall-positive")
 
     init {
         B.regCommand({ player: Player, _: Array<String> ->
@@ -156,5 +161,23 @@ class PlayerListener : Listener {
                 .send("player-dead", user)
         }
         stat.temperature = 36.6
+    }
+
+    @EventHandler
+    fun PlayerMoveEvent.handle() {
+        if (from.blockX != to.blockX || from.blockZ != to.blockZ) {
+            if (to.blockX < mapNegative.x) {
+                player.velocity = Vector(2.0, 0.7, 0.0)
+            }
+            if (to.blockZ < mapNegative.z) {
+                player.velocity = Vector(0.0, 0.7, 2.0)
+            }
+            if (to.blockX > mapPositive.x) {
+                player.velocity = Vector(-2.0, 0.7, 0.0)
+            }
+            if (to.blockZ > mapPositive.z) {
+                player.velocity = Vector(0.0, 0.7, -2.0)
+            }
+        }
     }
 }

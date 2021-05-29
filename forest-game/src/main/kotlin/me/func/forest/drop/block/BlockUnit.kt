@@ -44,7 +44,7 @@ enum class BlockUnit (
     ),
     SHELL(
         "Ракушка", 4, SHELL2,
-        DropItem, DelayGenerator(SHELL2, 120), DropThenGenerate
+        DropItem, DelayGenerator(SHELL2, 300), DropThenGenerate
     ),
     IRON(
         "Железо", 5, IRON2,

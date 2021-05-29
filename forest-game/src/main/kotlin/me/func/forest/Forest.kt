@@ -4,6 +4,7 @@ import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
 import dev.implario.bukkit.platform.Platforms
 import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
+import me.func.forest.clock.ClockInject
 import me.func.forest.clock.GameTimer
 import me.func.forest.craft.CraftManager
 import me.func.forest.drop.ResourceManager
@@ -14,6 +15,8 @@ import me.func.forest.user.User
 import me.func.forest.user.listener.CancelEvents
 import me.func.forest.user.listener.PlayerListener
 import me.func.forest.weather.ZoneManager
+import net.minecraft.server.v1_12_R1.MinecraftServer
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
@@ -129,7 +132,17 @@ class Forest : JavaPlugin() {
         B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
-        GameTimer(listOf(ZoneManager())).runTaskTimer(this, 0, 1)
+        GameTimer(listOf(ZoneManager(), object : ClockInject {
+            override fun run() {
+                Bukkit.getLogger().info("Total entities: " + getWorld().livingEntities.size)
+                Bukkit.getLogger().info("Total players: " + Bukkit.getOnlinePlayers().size)
+                Bukkit.getLogger().info("TPS: ${MinecraftServer.SERVER.tps1.average} ${MinecraftServer.SERVER.tps15.average}")
+            }
+
+            override fun doEvery(): Int {
+                return 100
+            }
+        })).runTaskTimer(this, 0, 1)
     }
 
     fun getUser(player: Player): User? {
