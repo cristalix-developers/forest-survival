@@ -1,25 +1,24 @@
+
 import dev.xdark.clientapi.event.input.KeyPress
 import org.lwjgl.input.Keyboard
 import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.ClickHandler
-import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.element.ContextGui
 import ru.cristalix.uiengine.utility.*
 
 class TentSettings {
 
-    private val wrapper = rectangle {
-        size = V3(1000.0, 1000.0, 0.0)
-        color = Color(0, 0, 0, 0.62)
-        origin = CENTER
-        align = CENTER
-        enabled = false
-    }
-
-    private var lock = false
+    private val gui = ContextGui()
 
     init {
+        val blackout = rectangle {
+            size = V3(2000.0, 2000.0, 0.0)
+            origin = CENTER
+            align = CENTER
+            color = Color(0, 0, 0, 0.86)
+        }
         val main = rectangle {
             size = V3(300.0, 160.0, 0.0)
             origin = CENTER
@@ -57,7 +56,7 @@ class TentSettings {
                 onHover {
                     this.color.alpha = if (hovered) 0.5 else 0.3
                 }
-                onClick = accept("")
+                onClick { gui.close() }
                 addChild(text {
                     origin = BOTTOM
                     align = BOTTOM
@@ -86,41 +85,28 @@ class TentSettings {
             })
         }
 
-        wrapper.addChild(main)
+        gui.addChild(blackout, main)
 
         App::class.mod.registerChannel("tent-open") {
-            wrapper.enabled = true
-            clientApi.minecraft().setIngameNotInFocus()
-            lock = true
-            UIEngine.schedule(1) {
-                lock = false
-            }
+            gui.open()
+            gui.enabled = true
         }
 
         registerHandler<KeyPress> {
-            if ((key == Keyboard.KEY_X || key == Keyboard.KEY_ESCAPE) && wrapper.enabled) {
-                wrapper.enabled = false
-                clientApi.minecraft().setIngameFocus()
-                lock = true
-                UIEngine.schedule(1) {
-                    lock = false
-                }
+            if (key == Keyboard.KEY_ESCAPE && gui.enabled) {
+                gui.close()
+                gui.enabled = false
             }
         }
-        UIEngine.overlayContext.addChild(wrapper)
     }
 
     private fun accept(command: String): ClickHandler {
         return {
-            if (wrapper.enabled && !lock) {
-                wrapper.enabled = false
+            if (gui.enabled) {
+                gui.enabled = false
                 clientApi.minecraft().setIngameFocus()
                 if (command.isNotEmpty())
                     clientApi.chat().sendChatMessage(command)
-                lock = true
-                UIEngine.schedule(1) {
-                    lock = false
-                }
             }
         }
     }

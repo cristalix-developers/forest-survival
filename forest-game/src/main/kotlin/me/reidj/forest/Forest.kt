@@ -109,40 +109,6 @@ class Forest : JavaPlugin() {
         kensuke.globalRealm = IRealmService.get().currentRealmInfo.realmId.realmName
         userManager.isOptional = true
 
-        /*userManager = statService.registerUserManager(
-            {
-                val user = User(it.uuid, it.name, it.getData(statScope))
-                user.stat!!.lastEntry = Date().time
-                user
-            },
-            { user: User, context ->
-                user.ifTent {
-                    user.stat!!.placeInventory?.clear()
-                    val items = mutableMapOf<ItemList, Int>()
-
-                    user.homeInventory.forEach {
-                        val nms = CraftItemStack.asNMSCopy(it)
-                        if (nms.tag!= null && nms.tag.hasKey("code")) {
-                            val type = ItemList.valueOf(nms.tag.getString("code"))
-                            if (items[type] != null)
-                                items.replace(type, items[type]?.plus(it.amount) ?: 0)
-                            else
-                                items[type] = it.amount
-                        }
-                    }
-
-                    user.stat!!.placeInventory = items.toList().toMutableList()
-                    user.tent?.remove()
-                }
-
-                val dot = user.player.location
-                user.stat!!.exit = V3(dot.x, dot.y, dot.z)
-
-                user.stat!!.timeAlive += Date().time - user.stat!!.lastEntry
-                context.store(statScope, user.stat)
-            }
-        )*/
-
         B.regCommand({ player, _ ->
             val mob = player.world.spawnEntity(player.location, EntityType.ZOMBIE)
             mob.customName = "1"
