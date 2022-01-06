@@ -23,6 +23,7 @@ object PlayerState {
     private var water = 0
 
     init {
+
         registerHandler<RenderTickPre> {
             val currentHealth = ceil(JavaMod.clientApi.minecraft().player.health).toInt()
             if (currentHealth != health) {

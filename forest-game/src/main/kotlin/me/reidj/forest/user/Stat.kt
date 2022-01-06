@@ -7,7 +7,9 @@ import java.util.*
 
 data class Stat (
     var uuid: UUID,
+
     var tutorial: Boolean,
+
     var health: Double,
     var heart: Int,
     var deaths: Int,
@@ -15,12 +17,15 @@ data class Stat (
     var killMobs: Int,
     var exp: Int,
     var placeLevel: Int,
-    var exit: V3?,
-    var place: V3?,
-    var placeInventory: MutableList<Pair<ItemList, Int>>?,
+    var waterAmount: Int,
     var temperature: Double,
     var maxHeart: Int,
     var lastEntry: Long,
     var timeAlive: Long,
+
+    var exit: V3?,
+    var place: V3?,
+
+    var placeInventory: MutableList<Pair<ItemList, Int>>?,
     var knowledge: MutableList<Knowledge>
 )

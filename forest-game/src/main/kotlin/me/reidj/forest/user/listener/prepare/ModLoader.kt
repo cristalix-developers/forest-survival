@@ -2,6 +2,7 @@ package me.reidj.forest.user.listener.prepare
 
 import clepto.bukkit.B
 import io.netty.buffer.Unpooled
+import me.reidj.forest.channel.ModHelper
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.user.LevelHelper
 import me.reidj.forest.user.User
@@ -39,9 +40,11 @@ class ModLoader : PrepareUser {
             B.postpone(5) {
                 ModTransfer()
                     .integer(user.level)
-                    .integer(user.stat!!.exp)
+                    .integer(user.stat.exp)
                     .integer(LevelHelper.level2exp(user.level))
                     .send("exp-level", user)
+                ModHelper.waterAmountUpdate(user)
+                ModHelper.updateTemperature(user)
             }
         }
     }

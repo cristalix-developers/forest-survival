@@ -15,6 +15,7 @@ import me.reidj.forest.drop.ResourceManager
 import me.reidj.forest.item.ItemManager
 import me.reidj.forest.user.Stat
 import me.reidj.forest.user.User
+import me.reidj.forest.user.WaterManager
 import me.reidj.forest.user.listener.CancelEvents
 import me.reidj.forest.user.listener.PlayerListener
 import me.reidj.forest.weather.ZoneManager
@@ -75,7 +76,7 @@ class Forest : JavaPlugin() {
         val kensuke = BukkitKensuke.setup(app)
         kensuke.addGlobalUserManager(userManager)
         kensuke.globalRealm = IRealmService.get().currentRealmInfo.realmId.realmName
-        userManager.setOptional(true)
+        userManager.isOptional = true
 
         /*userManager = statService.registerUserManager(
             {
@@ -133,7 +134,7 @@ class Forest : JavaPlugin() {
         B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
-        GameTimer(listOf(ZoneManager(), object : ClockInject {
+        GameTimer(listOf(ZoneManager(), WaterManager, object : ClockInject {
             override fun run() {
                 Bukkit.getLogger().info("Total entities: " + getWorld().livingEntities.size)
                 Bukkit.getLogger().info("Total players: " + Bukkit.getOnlinePlayers().size)
@@ -143,7 +144,7 @@ class Forest : JavaPlugin() {
             override fun doEvery(): Int {
                 return 100
             }
-        }) as List<ClockInject>).runTaskTimer(this, 0, 1)
+        })).runTaskTimer(this, 0, 1)
     }
 
     fun getUser(player: Player): User? {

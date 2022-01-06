@@ -62,7 +62,6 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
     lateinit var homeInventory: Inventory
     var tent: ArmorStand? = null
     var delayTicks = 0
-    var water = 20
 
     var stat: Stat
     private var player: Player? = null
@@ -78,32 +77,39 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
     override fun getPlayer() = player
 
     init {
-        this.stat = stat ?: Stat(
-            UUID.fromString(session.userId),
-            false,
-            1.0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            1,
-            null,
-            null,
-            null,
-            36.6,
-            3,
-            3,
-            0,
-            mutableListOf()
-        )
+        if (stat == null) {
+            this.stat = Stat(
+                UUID.fromString(session.userId),
+                false,
+                1.0,
+                3,
+                0,
+                0,
+                0,
+                0,
+                1,
+                20,
+                36.6,
+                3,
+                3,
+                0,
+                null,
+                null,
+                null,
+                mutableListOf()
+            )
+        } else {
+            if (stat.waterAmount == null)
+                stat.waterAmount = 20
+            this.stat = stat
+        }
         this.session = session
 
-        level = LevelHelper.exp2level(this.stat.exp)
-        this.stat.heart = max(1, this.stat.heart)
+        level = LevelHelper.exp2level(stat!!.exp)
+        stat.heart = max(1, stat.heart)
 
-        if (this.stat.placeInventory == null)
-            this.stat.placeInventory = arrayListOf()
+        if (stat.placeInventory == null)
+            stat.placeInventory = arrayListOf()
 
         B.postpone(1) {
             val placeLevel = this.stat.placeLevel

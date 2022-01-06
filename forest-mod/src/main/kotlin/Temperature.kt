@@ -57,7 +57,7 @@ class Temperature {
             hidden = false
         }
 
-        App::class.mod.registerChannel("weather-update") {weather.content = NetUtil.readUtf8(this)}
+        App::class.mod.registerChannel("weather-update") { weather.content = NetUtil.readUtf8(this) }
 
         registerHandler<RenderTickPre> {
             if (System.currentTimeMillis() - lastUpdate > 10_000 && !hidden) {
