@@ -195,7 +195,7 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         if (watchTutorial()) {
             val exit = stat.exit
             if (exit != null)
-                player?.teleport(Location(player?.world, exit.x, exit.y, exit.z))
+                player?.teleport(Location(app.getWorld(), exit.x, exit.y, exit.z))
             else
                 player?.teleport(app.spawn)
         }

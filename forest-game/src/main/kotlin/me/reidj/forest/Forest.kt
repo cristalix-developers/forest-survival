@@ -12,6 +12,7 @@ import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
+import me.reidj.forest.item.ItemList
 import me.reidj.forest.item.ItemManager
 import me.reidj.forest.user.Stat
 import me.reidj.forest.user.User
@@ -23,6 +24,7 @@ import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -32,6 +34,7 @@ import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.npcs.server.Npcs
+import java.util.*
 
 
 lateinit var app: Forest
@@ -41,8 +44,36 @@ class Forest : JavaPlugin() {
     private val statScope = Scope("forestt", Stat::class.java)
     private var userManager = BukkitUserManager(
         listOf(statScope),
-        { session: KensukeSession, context -> User(session, context.getData(statScope))},
-        { user, context -> context.store(statScope, user.stat) }
+        { session: KensukeSession, context -> User(session, context.getData(statScope)) },
+        { user, context ->
+            run {
+                user.ifTent {
+                    user.stat.placeInventory?.clear()
+                    val items = mutableMapOf<ItemList, Int>()
+
+                    user.homeInventory.forEach {
+                        val nms = CraftItemStack.asNMSCopy(it)
+                        if (nms.tag != null && nms.tag.hasKey("code")) {
+                            val type = ItemList.valueOf(nms.tag.getString("code"))
+                            if (items[type] != null)
+                                items.replace(type, items[type]?.plus(it.amount) ?: 0)
+                            else
+                                items[type] = it.amount
+                        }
+                    }
+
+                    user.stat.placeInventory = items.toList().toMutableList()
+                    user.tent?.remove()
+                }
+
+                val dot = user.player!!.location
+
+                user.stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
+
+                user.stat.timeAlive += Date().time - user.stat.lastEntry
+                context.store(statScope, user.stat)
+            }
+        }
     )
 
     lateinit var worldMeta: WorldMeta
@@ -138,7 +169,8 @@ class Forest : JavaPlugin() {
             override fun run() {
                 Bukkit.getLogger().info("Total entities: " + getWorld().livingEntities.size)
                 Bukkit.getLogger().info("Total players: " + Bukkit.getOnlinePlayers().size)
-                Bukkit.getLogger().info("TPS: ${MinecraftServer.SERVER.tps1.average} ${MinecraftServer.SERVER.tps15.average}")
+                Bukkit.getLogger()
+                    .info("TPS: ${MinecraftServer.SERVER.tps1.average} ${MinecraftServer.SERVER.tps15.average}")
             }
 
             override fun doEvery(): Int {

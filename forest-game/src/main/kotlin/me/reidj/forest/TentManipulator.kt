@@ -16,7 +16,7 @@ class TentManipulator {
                     when (args[0]) {
                         "chest" -> {
                             val chest = user.homeInventory
-                            val chestLevel = user.stat!!.placeLevel
+                            val chestLevel = user.stat.placeLevel
                             if (chest.size / 9 != chestLevel) {
                                 if (chest.size / 9 > chestLevel) {
                                     me.reidj.forest.channel.ModHelper.error(user, "Мелкая палатка")
@@ -31,8 +31,8 @@ class TentManipulator {
                         "hide" -> {
                             user.tent?.remove()
                             user.tent = null
-                            user.stat!!.place = null
-                            player.inventory.addItem(ItemList.valueOf("TENT" + user.stat!!.placeLevel).item)
+                            user.stat.place = null
+                            player.inventory.addItem(ItemList.valueOf("TENT" + user.stat.placeLevel).item)
                         }
                     }
                 }

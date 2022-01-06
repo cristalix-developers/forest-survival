@@ -58,8 +58,8 @@ class PlayerListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.handle() {
         val user = app.getUser(player)!!
-        user.spawn()
         prepares.forEach { it.execute(user) }
+        user.spawn()
     }
 
     private val maxWater = 20
