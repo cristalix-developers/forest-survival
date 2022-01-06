@@ -4,7 +4,10 @@ import clepto.bukkit.B
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.item.ItemHelper
-import me.reidj.forest.user.listener.prepare.*
+import me.reidj.forest.user.listener.prepare.ModLoader
+import me.reidj.forest.user.listener.prepare.PrepareUser
+import me.reidj.forest.user.listener.prepare.SetupScoreBoard
+import me.reidj.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
@@ -42,8 +45,8 @@ class PlayerListener : Listener {
 
     private val prepares = listOf(
         ModLoader(),
-        PrepareUser { it.player.performCommand("rp") },
-        PrepareUser { it.player.gameMode = GameMode.SURVIVAL },
+        PrepareUser { it.player!!.performCommand("rp") },
+        PrepareUser { it.player!!.gameMode = GameMode.SURVIVAL },
         TutorialLoader,
         SetupScoreBoard,
     )
@@ -125,12 +128,12 @@ class PlayerListener : Listener {
     fun PlayerDeathEvent.handle() {
         val player = getEntity()
         val user = app.getUser(player)!!
-        val stat = user.stat!!
+        val stat = user.stat
         stat.heart--
 
         val killer = player.killer
         if (killer != null)
-            app.getUser(killer)!!.stat!!.kills++
+            app.getUser(killer)!!.stat.kills++
 
         player.activePotionEffects.forEach {
             player.removePotionEffect(it.type)
@@ -148,8 +151,8 @@ class PlayerListener : Listener {
             user.tent?.remove()
         } else {
             cancelled = true
-            user.player.health = 20.0
-            user.stat!!.exit = null
+            user.player!!.health = 20.0
+            user.stat.exit = null
             user.spawn()
             ModTransfer()
                 .integer(stat.heart + 1)

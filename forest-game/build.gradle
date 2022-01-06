@@ -49,7 +49,7 @@ dependencies {
     compileOnly 'dev.xdark:feder:1.0-SNAPSHOT'
     implementation 'clepto:clepto-bukkit:3.4.2'
     implementation 'clepto:clepto-cristalix:3.0.2'
-    implementation 'ru.cristalix:stat-service-bukkit-api:21.02.28.1821'
+    implementation 'dev.implario:kensuke-client-bukkit:2.1.9'
 
     implementation 'dev.implario.bukkit:kotlin-api:1.0.0'
     implementation 'dev.implario.bukkit:dark-paper:1.0.0'

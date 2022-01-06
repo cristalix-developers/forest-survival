@@ -11,9 +11,9 @@ object BonfireBooty : Booty {
         val fire = BonfireGenerator.BONFIRES[location]
         if (fire != null) {
             if (fire > 0) {
-                user.player.fireTicks = 20 * 10
+                user.player!!.fireTicks = 20 * 10
             } else {
-                resource.drop(location, user.player)
+                resource.drop(location, user.player!!)
                 BonfireGenerator.BONFIRES.remove(location)
                 location.block.type = Material.AIR
             }

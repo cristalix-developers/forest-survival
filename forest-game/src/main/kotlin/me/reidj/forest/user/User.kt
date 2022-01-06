@@ -1,6 +1,8 @@
 package me.reidj.forest.user
 
 import clepto.bukkit.B
+import dev.implario.kensuke.KensukeSession
+import dev.implario.kensuke.impl.bukkit.IBukkitKensukeUser
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModHelper
 import me.reidj.forest.channel.ModTransfer
@@ -12,15 +14,14 @@ import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.metadata.FixedMetadataValue
-import ru.cristalix.core.stats.player.PlayerWrapper
 import java.util.*
 import java.util.function.Consumer
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.properties.Delegates
 
 object LevelHelper {
     fun exp2level(exp: Int): Int {
@@ -54,29 +55,60 @@ const val MIN_TEMPERATURE = 29.0
 const val CRITICAL_MIN_TEMPERATURE = 31.0
 const val CRITICAL_MAX_TEMPERATURE = 39.0
 
-class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name) {
+class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
 
     private var connection: PlayerConnection? = null
-    var level by Delegates.notNull<Int>()
+    var level = 0
     lateinit var homeInventory: Inventory
     var tent: ArmorStand? = null
     var delayTicks = 0
     var water = 20
 
-    init {
-        if (stat == null) {
-            stat = Stat(false, 1.0, 3,  0, 0, 0, 0, 1, null, null, null, 36.6, 3, 3, 0, mutableListOf())
+    var stat: Stat
+    private var player: Player? = null
+    override fun setPlayer(p0: Player?) {
+        if (p0 != null) {
+            player = p0
         }
-        level = LevelHelper.exp2level(stat!!.exp)
-        stat!!.heart = max(1, stat!!.heart)
+    }
 
-        if (stat!!.placeInventory == null)
-            stat!!.placeInventory = arrayListOf()
+    private var session: KensukeSession
+    override fun getSession() = session
+
+    override fun getPlayer() = player
+
+    init {
+        this.stat = stat ?: Stat(
+            UUID.fromString(session.userId),
+            false,
+            1.0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            1,
+            null,
+            null,
+            null,
+            36.6,
+            3,
+            3,
+            0,
+            mutableListOf()
+        )
+        this.session = session
+
+        level = LevelHelper.exp2level(this.stat.exp)
+        this.stat.heart = max(1, this.stat.heart)
+
+        if (this.stat.placeInventory == null)
+            this.stat.placeInventory = arrayListOf()
 
         B.postpone(1) {
-            val placeLevel = stat!!.placeLevel
+            val placeLevel = this.stat.placeLevel
             homeInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
-            stat!!.placeInventory?.forEach {
+            this.stat.placeInventory?.forEach {
                 val node = it.first.item.clone()
                 node.amount = it.second
                 homeInventory.addItem(node)
@@ -86,7 +118,7 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
     }
 
     fun watchTutorial(): Boolean {
-        return stat?.tutorial!!
+        return stat.tutorial
     }
 
     fun sendPacket(packet: Packet<*>) {
@@ -96,12 +128,12 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
     }
 
     fun giveExperience(exp: Int) {
-        stat!!.exp += exp
-        val currentLevel = LevelHelper.exp2level(stat!!.exp)
+        stat.exp += exp
+        val currentLevel = LevelHelper.exp2level(stat.exp)
 
         ModTransfer()
             .integer(currentLevel)
-            .integer(LevelHelper.level2exp(currentLevel) - (LevelHelper.level2exp(currentLevel) - stat!!.exp))
+            .integer(LevelHelper.level2exp(currentLevel) - (LevelHelper.level2exp(currentLevel) - stat.exp))
             .integer(LevelHelper.level2exp(currentLevel))
             .send("exp-level", this)
 
@@ -118,28 +150,28 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
     }
 
     fun changeTemperature(dx: Double) {
-        stat!!.temperature += dx
+        stat.temperature += dx
 
-        val temperature = stat!!.temperature
+        val temperature = stat.temperature
 
         if (abs(temperature - AVR_TEMPERATURE) < 0.05)
             return
 
         if (temperature < CRITICAL_MIN_TEMPERATURE)
-            player.damage(0.06)
+            player?.damage(0.06)
         if (temperature > CRITICAL_MAX_TEMPERATURE)
-            player.damage(0.07)
+            player?.damage(0.07)
 
         ModHelper.updateTemperature(this)
 
         if (temperature < MIN_TEMPERATURE || temperature > MAX_TEMPERATURE) {
-            stat!!.temperature = min(max(MIN_TEMPERATURE, temperature), MAX_TEMPERATURE)
+            stat.temperature = min(max(MIN_TEMPERATURE, temperature), MAX_TEMPERATURE)
             return
         }
     }
 
     fun normalizeTemperature(step: Double) {
-        val temperature = stat!!.temperature
+        val temperature = stat.temperature
 
         if (temperature < AVR_TEMPERATURE)
             changeTemperature(step)
@@ -148,18 +180,18 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
     }
 
     fun ifTent(consumer: Consumer<Location>) {
-        val tent = stat!!.place
+        val tent = stat.place
         if (tent != null)
             consumer.accept(Location(app.getWorld(), tent.x, tent.y + 2, tent.z))
     }
 
     fun spawn() {
         if (watchTutorial()) {
-            val exit = stat!!.exit
+            val exit = stat.exit
             if (exit != null)
-                player.teleport(Location(player.world, exit.x, exit.y, exit.z))
+                player?.teleport(Location(player?.world, exit.x, exit.y, exit.z))
             else
-                player.teleport(app.spawn)
+                player?.teleport(app.spawn)
         }
     }
 
@@ -167,8 +199,8 @@ class User(uuid: UUID, name: String, var stat: Stat?) : PlayerWrapper(uuid, name
         val spawnLocation = location.clone().add(0.0, 2.0, 0.0)
         spawnLocation.yaw = (Math.random() * 180).toFloat()
         tent = location.world.spawnEntity(spawnLocation, EntityType.ARMOR_STAND) as ArmorStand
-        tent!!.setMetadata("owner", FixedMetadataValue(app, uuid.toString()))
-        tent!!.helmet = ItemList.valueOf("TENT" + stat!!.placeLevel).item
+        tent!!.setMetadata("owner", FixedMetadataValue(app, stat.uuid.toString()))
+        tent!!.helmet = ItemList.valueOf("TENT" + stat.placeLevel).item
         tent!!.isVisible = false
     }
 }

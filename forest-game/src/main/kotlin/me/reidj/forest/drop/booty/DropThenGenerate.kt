@@ -8,7 +8,7 @@ import org.bukkit.Material
 
 object DropThenGenerate : Booty {
     override fun get(resource: BlockUnit, location: Location, user: User) {
-        resource.drop(location, user.player)
+        resource.drop(location, user.player!!)
         resource.generate(location)
         location.block.type = Material.AIR
         user.giveExperience(resource.exp)

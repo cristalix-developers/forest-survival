@@ -3,12 +3,15 @@ package me.reidj.forest
 import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
 import dev.implario.bukkit.platform.Platforms
+import dev.implario.kensuke.KensukeSession
+import dev.implario.kensuke.Scope
+import dev.implario.kensuke.impl.bukkit.BukkitKensuke
+import dev.implario.kensuke.impl.bukkit.BukkitUserManager
 import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
 import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
-import me.reidj.forest.item.ItemList
 import me.reidj.forest.item.ItemManager
 import me.reidj.forest.user.Stat
 import me.reidj.forest.user.User
@@ -19,33 +22,29 @@ import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
 import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
-import ru.cristalix.core.math.V3
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
-import ru.cristalix.core.stats.IStatService
-import ru.cristalix.core.stats.PlayerScope
-import ru.cristalix.core.stats.UserManager
-import ru.cristalix.core.stats.impl.StatService
-import ru.cristalix.core.stats.impl.network.StatServiceConnectionData
 import ru.cristalix.npcs.server.Npcs
-import java.util.*
 
 
 lateinit var app: Forest
 
 class Forest : JavaPlugin() {
 
-    private val statScope = PlayerScope("forest", Stat::class.java)
+    private val statScope = Scope("forestt", Stat::class.java)
+    private var userManager = BukkitUserManager(
+        listOf(statScope),
+        { session: KensukeSession, context -> User(session, context.getData(statScope))},
+        { user, context -> context.store(statScope, user.stat) }
+    )
 
     lateinit var worldMeta: WorldMeta
-    lateinit var userManager: UserManager<User>
 
     lateinit var spawn: Location
     lateinit var start: Location
@@ -71,12 +70,14 @@ class Forest : JavaPlugin() {
         val core = CoreApi.get()
 
         CoreApi.get().registerService(IInventoryService::class.java, InventoryService())
-        val statService = StatService(core.platformServer, StatServiceConnectionData.fromEnvironment())
-        core.registerService(IStatService::class.java, statService)
 
-        statService.useScopes(statScope)
+        // Подключение к сервису статистики
+        val kensuke = BukkitKensuke.setup(app)
+        kensuke.addGlobalUserManager(userManager)
+        kensuke.globalRealm = IRealmService.get().currentRealmInfo.realmId.realmName
+        userManager.setOptional(true)
 
-        userManager = statService.registerUserManager(
+        /*userManager = statService.registerUserManager(
             {
                 val user = User(it.uuid, it.name, it.getData(statScope))
                 user.stat!!.lastEntry = Date().time
@@ -108,7 +109,7 @@ class Forest : JavaPlugin() {
                 user.stat!!.timeAlive += Date().time - user.stat!!.lastEntry
                 context.store(statScope, user.stat)
             }
-        )
+        )*/
 
         B.regCommand({ player, _ ->
             val mob = player.world.spawnEntity(player.location, EntityType.ZOMBIE)

@@ -14,7 +14,7 @@ object ModHelper {
     private val delay = ArrayList<UUID>()
 
     fun error(user: User, message: String) {
-        user.player.closeInventory()
+        user.player?.closeInventory()
         ModTransfer()
             .item(BARRIER)
             .string("Ошибка!")
@@ -39,12 +39,12 @@ object ModHelper {
 
     fun updateTemperature(user: User) {
         ModTransfer()
-            .double(user.stat!!.temperature)
+            .double(user.stat.temperature)
             .send("temperature-update", user)
     }
 
     fun banner(user: User, path: String, content: String) {
-        val uuid = user.uuid
+        val uuid = user.stat.uuid
         if (delay.contains(uuid)) {
             B.postpone(10 * 20) { banner(user, path, content) }
             return

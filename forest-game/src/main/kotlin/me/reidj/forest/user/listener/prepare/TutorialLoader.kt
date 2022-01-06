@@ -19,7 +19,7 @@ object TutorialLoader : PrepareUser {
             player.saturation = 5F
             val user = app.getUser(player)!!
             user.giveExperience(1)
-            user.stat!!.tutorial = true
+            user.stat.tutorial = true
         }
 
         val faelan = me.reidj.forest.UrlSkinData(UUID.fromString("6f3f4a2e-7f84-11e9-8374-1cb72caa35fd"))
@@ -59,6 +59,6 @@ object TutorialLoader : PrepareUser {
 
     override fun execute(user: User) {
         if (!user.watchTutorial())
-            user.player.teleport(app.start)
+            user.player!!.teleport(app.start)
     }
 }
