@@ -19,10 +19,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
-import org.bukkit.event.player.PlayerItemConsumeEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerRespawnEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionType
@@ -61,6 +58,9 @@ class PlayerListener : Listener {
         prepares.forEach { it.execute(user) }
         user.spawn()
     }
+
+    @EventHandler
+    fun PlayerQuitEvent.handle() = app.getUser(player)!!.lastPosition()
 
     private val maxWater = 20
 

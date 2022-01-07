@@ -34,7 +34,6 @@ import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.npcs.server.Npcs
-import java.util.*
 
 
 lateinit var app: Forest
@@ -61,16 +60,8 @@ class Forest : JavaPlugin() {
                                 items[type] = it.amount
                         }
                     }
-
                     user.stat.placeInventory = items.toList().toMutableList()
-                    user.tent?.remove()
                 }
-
-                val dot = user.player!!.location
-
-                user.stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
-
-                user.stat.timeAlive += Date().time - user.stat.lastEntry
                 context.store(statScope, user.stat)
             }
         }
@@ -140,6 +131,12 @@ class Forest : JavaPlugin() {
                 return 100
             }
         })).runTaskTimer(this, 0, 1)
+    }
+
+    override fun onDisable() {
+        Bukkit.getOnlinePlayers()
+            .map { getUser(it) }
+            .forEach { it!!.lastPosition() }
     }
 
     fun getUser(player: Player): User? {

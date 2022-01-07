@@ -123,6 +123,16 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         }
     }
 
+    fun lastPosition() {
+        tent?.remove()
+
+        val dot = player!!.location
+
+        stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
+
+        stat.timeAlive += Date().time - stat.lastEntry
+    }
+
     fun watchTutorial(): Boolean {
         return stat.tutorial
     }
