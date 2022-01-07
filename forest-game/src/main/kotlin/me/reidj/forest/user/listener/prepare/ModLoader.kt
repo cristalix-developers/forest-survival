@@ -43,7 +43,6 @@ class ModLoader : PrepareUser {
                     .integer(user.stat.exp)
                     .integer(LevelHelper.level2exp(user.level))
                     .send("exp-level", user)
-                ModHelper.waterAmountUpdate(user)
                 ModHelper.updateTemperature(user)
             }
         }

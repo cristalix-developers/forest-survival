@@ -56,10 +56,4 @@ object ModHelper {
             .string(content)
             .send("banner-new", user)
     }
-
-    fun waterAmountUpdate(user: User) {
-        ModTransfer()
-            .integer(user.stat.waterAmount)
-            .send("water-level", user)
-    }
 }

@@ -2,7 +2,6 @@ package me.reidj.forest.user.listener
 
 import clepto.bukkit.B
 import me.reidj.forest.app
-import me.reidj.forest.channel.ModHelper
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.item.ItemHelper
 import me.reidj.forest.user.listener.prepare.ModLoader
@@ -19,10 +18,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.meta.PotionMeta
-import org.bukkit.potion.PotionType
 import kotlin.math.min
 
 
@@ -63,23 +63,6 @@ class PlayerListener : Listener {
     fun PlayerQuitEvent.handle() = app.getUser(player)!!.lastPosition()
 
     private val maxWater = 20
-
-    @EventHandler
-    fun PlayerItemConsumeEvent.handle() {
-        val user = app.getUser(player)!!
-        val itemHand = player.itemInHand
-        if (itemHand.getType() == Material.POTION) {
-            val potionMeta = itemHand.itemMeta as PotionMeta
-            if (itemHand.getType() == Material.POTION && potionMeta.basePotionData.type == PotionType.WATER) {
-                if (user.stat.waterAmount == 20) {
-                    isCancelled = true
-                    return
-                }
-                user.stat.waterAmount = maxWater - maxOf(0, maxWater - user.stat.waterAmount - 5)
-                ModHelper.waterAmountUpdate(user)
-            }
-        }
-    }
 
     @EventHandler
     fun FoodLevelChangeEvent.handle() {

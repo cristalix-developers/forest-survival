@@ -88,7 +88,6 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
                 0,
                 0,
                 1,
-                20,
                 36.6,
                 3,
                 3,
@@ -99,8 +98,6 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
                 mutableListOf()
             )
         } else {
-            if (stat.waterAmount == null)
-                stat.waterAmount = 20
             if (stat.placeInventory == null)
                 stat.placeInventory = arrayListOf()
             this.stat = stat

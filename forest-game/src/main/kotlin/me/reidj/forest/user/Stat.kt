@@ -17,7 +17,6 @@ data class Stat (
     var killMobs: Int,
     var exp: Int,
     var placeLevel: Int,
-    var waterAmount: Int,
     var temperature: Double,
     var maxHeart: Int,
     var lastEntry: Long,

@@ -16,7 +16,6 @@ import me.reidj.forest.item.ItemList
 import me.reidj.forest.item.ItemManager
 import me.reidj.forest.user.Stat
 import me.reidj.forest.user.User
-import me.reidj.forest.user.WaterManager
 import me.reidj.forest.user.listener.CancelEvents
 import me.reidj.forest.user.listener.PlayerListener
 import me.reidj.forest.weather.ZoneManager
@@ -118,7 +117,7 @@ class Forest : JavaPlugin() {
         B.events(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager())
 
         // Начало игрового времени и добавление временных собитий
-        GameTimer(listOf(ZoneManager(), WaterManager, object : ClockInject {
+        GameTimer(listOf(ZoneManager(), object : ClockInject {
             override fun run() {
                 Bukkit.getLogger().info("Total entities: " + getWorld().livingEntities.size)
                 Bukkit.getLogger().info("Total players: " + Bukkit.getOnlinePlayers().size)

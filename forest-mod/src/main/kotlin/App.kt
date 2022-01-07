@@ -42,7 +42,7 @@ class App : KotlinMod() {
             load("forest/water.png", "09880C088F53D8890028153"),
             load("forest/food.png", "09880C088F53D8890028154")
         ).thenRun {
-            PlayerState
+            BarManager
             Highlight()
             Banner()
 
