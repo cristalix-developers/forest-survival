@@ -112,9 +112,9 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
             stat.placeInventory = arrayListOf()
 
         B.postpone(1) {
-            val placeLevel = this.stat.placeLevel
+            val placeLevel = stat.placeLevel
             homeInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
-            this.stat.placeInventory?.forEach {
+            stat.placeInventory?.forEach {
                 val node = it.first.item.clone()
                 node.amount = it.second
                 homeInventory.addItem(node)

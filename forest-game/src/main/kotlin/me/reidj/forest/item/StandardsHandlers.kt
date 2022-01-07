@@ -78,7 +78,7 @@ object StandardsHandlers {
                     return@BiConsumer
 
                 val user = app.getUser(it.player)!!
-                val stat = user.stat!!
+                val stat = user.stat
 
                 if (stat.place != null) {
                     me.reidj.forest.channel.ModHelper.error(

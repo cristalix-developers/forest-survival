@@ -13,9 +13,9 @@ enum class Knowledge(private val picture: String, private val message: String) {
     HOT("hot", "Новая земля"),;
 
     fun tryGive(user: User) {
-        if (user.stat!!.knowledge.contains(this))
+        if (user.stat.knowledge.contains(this))
             return
         me.reidj.forest.channel.ModHelper.banner(user, picture, message)
-        user.stat!!.knowledge.add(this)
+        user.stat.knowledge.add(this)
     }
 }

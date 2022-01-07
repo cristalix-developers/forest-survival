@@ -98,9 +98,6 @@ class Forest : JavaPlugin() {
         info.readableName = "Лес"
         info.groupName = "Лес"
 
-        // Регистрация сервисов
-        val core = CoreApi.get()
-
         CoreApi.get().registerService(IInventoryService::class.java, InventoryService())
 
         // Подключение к сервису статистики
