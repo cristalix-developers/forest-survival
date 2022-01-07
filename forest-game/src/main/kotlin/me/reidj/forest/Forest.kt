@@ -45,25 +45,24 @@ class Forest : JavaPlugin() {
         listOf(statScope),
         { session: KensukeSession, context -> User(session, context.getData(statScope)) },
         { user, context ->
-            run {
-                user.ifTent {
-                    user.stat.placeInventory?.clear()
-                    val items = mutableMapOf<ItemList, Int>()
+            user.ifTent {
+                user.stat.placeInventory?.clear()
+                val items = mutableMapOf<ItemList, Int>()
 
-                    user.homeInventory.forEach {
-                        val nms = CraftItemStack.asNMSCopy(it)
-                        if (nms.tag != null && nms.tag.hasKey("code")) {
-                            val type = ItemList.valueOf(nms.tag.getString("code"))
-                            if (items[type] != null)
-                                items.replace(type, items[type]?.plus(it.amount) ?: 0)
-                            else
-                                items[type] = it.amount
-                        }
+                user.homeInventory.forEach {
+                    val nms = CraftItemStack.asNMSCopy(it)
+                    if (nms.tag != null && nms.tag.hasKey("code")) {
+                        val type = ItemList.valueOf(nms.tag.getString("code"))
+                        if (items[type] != null)
+                            items.replace(type, items[type]?.plus(it.getAmount()) ?: 0)
+                        else
+                            items[type] = it.getAmount()
                     }
-                    user.stat.placeInventory = items.toList().toMutableList()
                 }
-                context.store(statScope, user.stat)
+                items.toList().forEach { println("" + it.first + " " + it.second) }
+                user.stat.placeInventory = items.toList().toMutableList()
             }
+            context.store(statScope, user.stat)
         }
     )
 

@@ -101,6 +101,8 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         } else {
             if (stat.waterAmount == null)
                 stat.waterAmount = 20
+            if (stat.placeInventory == null)
+                stat.placeInventory = arrayListOf()
             this.stat = stat
         }
         this.session = session
@@ -108,15 +110,12 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         level = LevelHelper.exp2level(stat!!.exp)
         stat.heart = max(1, stat.heart)
 
-        if (stat.placeInventory == null)
-            stat.placeInventory = arrayListOf()
-
         B.postpone(1) {
             val placeLevel = stat.placeLevel
             homeInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
             stat.placeInventory?.forEach {
                 val node = it.first.item.clone()
-                node.amount = it.second
+                node.setAmount(it.second)
                 homeInventory.addItem(node)
             }
             ifTent { showTent(it) }
