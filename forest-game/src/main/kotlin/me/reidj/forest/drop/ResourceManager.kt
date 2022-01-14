@@ -44,14 +44,17 @@ class ResourceManager : Listener {
     @EventHandler
     fun BlockBreakEvent.handle() {
         val resource = blockUnit[block.location]
-        val item = resource?.generator!!.getStand().item
+        if (resource == null) {
+            cancel = true
+            return
+        }
+        val item = resource.generator.getStand().item
         if (block.typeId == item.typeId && block.data == item.data.data)
             resource.booty(block.location, player)
 
         val bonfire = BonfireGenerator.BONFIRES[block.location]
         if (bonfire != null)
             BonfireBooty.get(BlockUnit.FIRE, block.location, app.getUser(player)!!)
-
         cancel = true
     }
 
