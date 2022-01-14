@@ -17,7 +17,6 @@ class App : KotlinMod() {
         Indicator()
         BonfireIndicator()
         ItemTitle()
-        LoseHeart()
         Temperature()
         TentSettings()
 

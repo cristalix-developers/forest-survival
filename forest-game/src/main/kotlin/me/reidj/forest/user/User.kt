@@ -88,10 +88,8 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
                 0,
                 0,
                 0,
-                0,
                 1,
                 36.6,
-                3,
                 3,
                 0,
                 null,
@@ -110,7 +108,6 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         this.session = session
 
         level = LevelHelper.exp2level(stat!!.exp)
-        stat.heart = max(1, stat.heart)
 
         B.postpone(5) {
             val placeLevel = stat.placeLevel
