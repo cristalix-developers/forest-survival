@@ -61,9 +61,7 @@ class PlayerListener : Listener {
     }
 
     @EventHandler
-    fun PlayerQuitEvent.handle() = app.getUser(player)!!.lastPosition()
-
-    private val maxWater = 20
+    fun PlayerQuitEvent.handle() = app.getUser(player)!!.tent!!.remove()
 
     @EventHandler
     fun FoodLevelChangeEvent.handle() {

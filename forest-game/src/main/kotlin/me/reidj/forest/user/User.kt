@@ -78,24 +78,30 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
     override fun getPlayer() = player
 
     init {
-        this.stat = stat ?: Stat(
-            UUID.fromString(session.userId),
-            false,
-            20.0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            36.6,
-            3,
-            0,
-            null,
-            null,
-            null,
-            mutableListOf(),
-            mutableListOf()
-        )
+        if (stat == null) {
+            this.stat = Stat(
+                UUID.fromString(session.userId),
+                false,
+                20.0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                36.6,
+                3,
+                0,
+                null,
+                null,
+                mutableListOf(),
+                mutableListOf(),
+                mutableListOf()
+            )
+        } else {
+            if (stat.tentInventory == null)
+                stat.tentInventory = mutableListOf()
+            this.stat = stat
+        }
         this.session = session
 
         level = LevelHelper.exp2level(this.stat.exp)
@@ -111,23 +117,11 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
     }
 
     fun saveInventory(items: MutableList<Item>, inventory: Inventory) {
-        for (slot in 0..inventory.size) {
-            val nms = CraftItemStack.asNMSCopy(player!!.inventory.getItem(slot))
+        for (slot in 0 until inventory.size) {
+            val nms = CraftItemStack.asNMSCopy(inventory.getItem(slot))
             if (nms.tag != null && nms.tag.hasKey("code"))
                 items.add(Item(ItemList.valueOf(nms.tag.getString("code")), nms.asBukkitMirror().getAmount(), slot))
         }
-    }
-
-    fun lastPosition() {
-        tent?.remove()
-
-        val dot = player!!.location
-
-        saveInventory(stat.playerInventory, player!!.inventory)
-
-        stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
-
-        stat.timeAlive += Date().time - stat.lastEntry
     }
 
     fun watchTutorial(): Boolean {
@@ -140,8 +134,8 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         connection?.sendPacket(packet)
     }
 
-    fun putItem(inventory: MutableList<Item>?, toPut: Inventory) {
-        inventory?.forEach {
+    private fun putItem(inventory: MutableList<Item>, toPut: Inventory) {
+        inventory.forEach {
             val node = it.itemList.item.clone()
             node.setAmount(it.amount)
             toPut.setItem(it.slot, node)

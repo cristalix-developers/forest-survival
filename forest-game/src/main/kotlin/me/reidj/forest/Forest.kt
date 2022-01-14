@@ -32,20 +32,21 @@ import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
+import java.util.*
 
 
 lateinit var app: Forest
 
 class Forest : JavaPlugin() {
 
-    private val statScope = Scope("forestttt", Stat::class.java)
+    private val statScope = Scope("foresttttt", Stat::class.java)
     private var userManager = BukkitUserManager(
         listOf(statScope),
         { session: KensukeSession, context -> User(session, context.getData(statScope)) },
         { user, context ->
             user.ifTent {
-                user.stat.tentInventory?.clear()
-                user.saveInventory(user.stat.tentInventory!!, user.tentInventory)
+                user.stat.tentInventory.clear()
+                user.saveInventory(user.stat.tentInventory, user.tentInventory)
             }
             user.stat.playerInventory.clear()
             user.saveInventory(user.stat.playerInventory, user.player!!.inventory)
@@ -124,7 +125,19 @@ class Forest : JavaPlugin() {
     override fun onDisable() {
         Bukkit.getOnlinePlayers()
             .map { getUser(it) }
-            .forEach { it!!.lastPosition() }
+            .forEach {
+                val dot = it!!.player!!.location
+
+                it.ifTent { _ ->
+                    it.saveInventory(it.stat.tentInventory, it.tentInventory)
+                    it.tent!!.remove()
+                }
+                it.saveInventory(it.stat.playerInventory, it.player!!.inventory)
+
+                it.stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
+
+                it.stat.timeAlive += Date().time - it.stat.lastEntry
+            }
     }
 
     fun getUser(player: Player): User? {
