@@ -90,7 +90,6 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
                 0,
                 36.6,
                 3,
-                0,
                 null,
                 null,
                 mutableListOf(),

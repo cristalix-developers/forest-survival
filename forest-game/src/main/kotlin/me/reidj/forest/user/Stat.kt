@@ -18,7 +18,6 @@ data class Stat (
     var placeLevel: Int,
     var temperature: Double,
     var lastEntry: Long,
-    var timeAlive: Long,
 
     var exit: V3?,
     var place: V3?,

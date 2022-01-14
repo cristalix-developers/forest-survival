@@ -12,7 +12,6 @@ object SetupScoreBoard : PrepareUser {
 
         objective.startGroup("Игрок")
             .record("Уровень") { "§b${user.level} §fур." }
-            .record("Часов") { "§a${(user.stat.timeAlive / 1000 / 3600).toInt()}" }
             .record("У/С") { "§c${user.stat.kills}§f/${user.stat.deaths}" }
             .record("Жертв") { "${user.stat.killMobs}" }
         objective.startGroup("Мир")

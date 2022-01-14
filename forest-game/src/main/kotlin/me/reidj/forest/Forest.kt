@@ -135,8 +135,6 @@ class Forest : JavaPlugin() {
                 it.saveInventory(it.stat.playerInventory, it.player!!.inventory)
 
                 it.stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
-
-                it.stat.timeAlive += Date().time - it.stat.lastEntry
             }
     }
 
