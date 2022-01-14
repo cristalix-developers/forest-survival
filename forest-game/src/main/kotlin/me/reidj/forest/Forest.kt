@@ -8,6 +8,8 @@ import dev.implario.kensuke.Scope
 import dev.implario.kensuke.impl.bukkit.BukkitKensuke
 import dev.implario.kensuke.impl.bukkit.BukkitUserManager
 import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
+import me.func.mod.Anime
+import me.func.mod.Kit
 import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.craft.CraftManager
@@ -31,7 +33,6 @@ import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
-import ru.cristalix.npcs.server.Npcs
 import java.util.*
 
 
@@ -76,7 +77,8 @@ class Forest : JavaPlugin() {
         B.plugin = this
         app = this
         Platforms.set(PlatformDarkPaper())
-        Npcs.init(this)
+
+        Anime.include(Kit.STANDARD)
 
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!

@@ -1,6 +1,7 @@
 package me.reidj.forest.user.listener
 
 import clepto.bukkit.B
+import me.func.mod.Anime
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.item.ItemHelper
@@ -135,35 +136,24 @@ class PlayerListener : Listener {
         val player = getEntity()
         val user = app.getUser(player)!!
         val stat = user.stat
-        stat.heart--
+        val location = player.location
 
         val killer = player.killer
         if (killer != null)
             app.getUser(killer)!!.stat.kills++
 
-        player.activePotionEffects.forEach {
-            player.removePotionEffect(it.type)
-        }
+        player.activePotionEffects.forEach { player.removePotionEffect(it.type) }
+        player.inventory.clear()
 
-        if (stat.heart < 1) {
-            stat.exp = 0
-            user.giveExperience(0)
-            stat.heart = 3
-            stat.timeAlive = 0
-            stat.place = null
-            stat.tentInventory?.clear()
-            user.tentInventory.clear()
-            stat.deaths++
-            user.tent?.remove()
-        } else {
-            cancelled = true
-            user.player!!.health = 20.0
-            user.stat.exit = null
-            user.spawn()
-            ModTransfer()
-                .integer(stat.heart + 1)
-                .send("player-dead", user)
-        }
+        Anime.corpse(player, null, player.uniqueId, location.x, location.y, location.z, 600)
+        Anime.title(player, "§cВы погибли")
+
+        cancelled = true
+        stat.deaths++
         stat.temperature = 36.6
+        stat.playerInventory.clear()
+        user.player!!.health = 20.0
+        user.stat.exit = null
+        user.spawn()
     }
 }
