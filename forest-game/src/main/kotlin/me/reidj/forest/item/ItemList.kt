@@ -259,6 +259,8 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
         }.build(), mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
+                if (event.blockClicked == null)
+                    return@BiConsumer
                 val location = event.blockClicked.location
                 if (event.action == Action.RIGHT_CLICK_BLOCK && me.reidj.forest.Postulates.isGround(location)) {
                     useItem(event.player)
