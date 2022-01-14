@@ -14,7 +14,6 @@ import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
-import me.reidj.forest.item.ItemList
 import me.reidj.forest.item.ItemManager
 import me.reidj.forest.user.Stat
 import me.reidj.forest.user.User
@@ -33,36 +32,23 @@ import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
-import java.util.*
 
 
 lateinit var app: Forest
 
 class Forest : JavaPlugin() {
 
-    private val statScope = Scope("forestt", Stat::class.java)
+    private val statScope = Scope("forestttt", Stat::class.java)
     private var userManager = BukkitUserManager(
         listOf(statScope),
         { session: KensukeSession, context -> User(session, context.getData(statScope)) },
         { user, context ->
-            user.ifTent { _ ->
+            user.ifTent {
                 user.stat.tentInventory?.clear()
-
-                val tentItems = mutableMapOf<ItemList, Int>()
-
-                user.tentInventory
-                    .filter { Objects.nonNull(it) }
-                    .forEach { user.saveInventory(tentItems, it) }
-
-                user.stat.tentInventory = tentItems.toList().toMutableList()
+                user.saveInventory(user.stat.tentInventory!!, user.tentInventory)
             }
             user.stat.playerInventory.clear()
-            val playerItems = mutableMapOf<ItemList, Int>()
-
-            user.player!!.inventory
-                .filter { Objects.nonNull(it) }
-                .forEach { user.saveInventory(playerItems, it) }
-            user.stat.playerInventory = playerItems.toList().toMutableList()
+            user.saveInventory(user.stat.playerInventory, user.player!!.inventory)
 
             context.store(statScope, user.stat)
         }

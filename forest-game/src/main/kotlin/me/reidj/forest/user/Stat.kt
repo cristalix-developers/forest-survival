@@ -1,6 +1,6 @@
 package me.reidj.forest.user
 
-import me.reidj.forest.item.ItemList
+import me.reidj.forest.item.Item
 import me.reidj.forest.knowledge.Knowledge
 import ru.cristalix.core.math.V3
 import java.util.*
@@ -23,7 +23,7 @@ data class Stat (
     var exit: V3?,
     var place: V3?,
 
-    var tentInventory: MutableList<Pair<ItemList, Int>>?,
-    var playerInventory: MutableList<Pair<ItemList, Int>>,
+    var tentInventory: MutableList<Item>?,
+    var playerInventory: MutableList<Item>,
     var knowledge: MutableList<Knowledge>
 )
