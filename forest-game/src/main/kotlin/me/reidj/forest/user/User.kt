@@ -12,10 +12,12 @@ import net.minecraft.server.v1_12_R1.PlayerConnection
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
 import java.util.function.Consumer
@@ -59,7 +61,7 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
 
     private var connection: PlayerConnection? = null
     var level = 0
-    lateinit var homeInventory: Inventory
+    lateinit var tentInventory: Inventory
     var tent: ArmorStand? = null
     var delayTicks = 0
 
@@ -95,11 +97,14 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
                 null,
                 null,
                 null,
+                mutableListOf(),
                 mutableListOf()
             )
         } else {
-            if (stat.placeInventory == null)
-                stat.placeInventory = arrayListOf()
+            if (stat.tentInventory == null)
+                stat.tentInventory = arrayListOf()
+            if (stat.playerInventory == null)
+                stat.playerInventory = mutableListOf()
             this.stat = stat
         }
         this.session = session
@@ -107,15 +112,31 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         level = LevelHelper.exp2level(stat!!.exp)
         stat.heart = max(1, stat.heart)
 
-        B.postpone(1) {
+        B.postpone(5) {
             val placeLevel = stat.placeLevel
-            homeInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
-            stat.placeInventory?.forEach {
+            tentInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
+            stat.tentInventory?.forEach {
                 val node = it.first.item.clone()
                 node.setAmount(it.second)
-                homeInventory.addItem(node)
+                tentInventory.addItem(node)
+            }
+            stat.playerInventory.forEach {
+                val node = it.first.item.clone()
+                node.setAmount(it.second)
+                player!!.inventory.addItem(node)
             }
             ifTent { showTent(it) }
+        }
+    }
+
+    fun saveInventory(items: MutableMap<ItemList, Int>, item: ItemStack) {
+        val nms = CraftItemStack.asNMSCopy(item)
+        if (nms.tag != null && nms.tag.hasKey("code")) {
+            val type = ItemList.valueOf(nms.tag.getString("code"))
+            if (items[type] != null)
+                items.replace(type, items[type]?.plus(item.getAmount()) ?: 0)
+            else
+                items[type] = item.getAmount()
         }
     }
 
@@ -123,6 +144,13 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
         tent?.remove()
 
         val dot = player!!.location
+        val playerItems = mutableMapOf<ItemList, Int>()
+
+        player!!.inventory
+            .filter { Objects.nonNull(it) }
+            .forEach { saveInventory(playerItems, it) }
+
+        stat.playerInventory = playerItems.toList().toMutableList()
 
         stat.exit = ru.cristalix.core.math.V3(dot.x, dot.y, dot.z)
 

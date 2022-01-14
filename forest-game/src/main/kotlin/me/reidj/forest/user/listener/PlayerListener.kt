@@ -151,8 +151,8 @@ class PlayerListener : Listener {
             stat.heart = 3
             stat.timeAlive = 0
             stat.place = null
-            stat.placeInventory?.clear()
-            user.homeInventory.clear()
+            stat.tentInventory?.clear()
+            user.tentInventory.clear()
             stat.deaths++
             user.tent?.remove()
         } else {

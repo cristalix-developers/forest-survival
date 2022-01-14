@@ -25,6 +25,7 @@ data class Stat (
     var exit: V3?,
     var place: V3?,
 
-    var placeInventory: MutableList<Pair<ItemList, Int>>?,
+    var tentInventory: MutableList<Pair<ItemList, Int>>?,
+    var playerInventory: MutableList<Pair<ItemList, Int>>,
     var knowledge: MutableList<Knowledge>
 )

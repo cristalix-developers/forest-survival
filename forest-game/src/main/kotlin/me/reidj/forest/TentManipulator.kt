@@ -15,7 +15,7 @@ class TentManipulator {
                 user.ifTent {
                     when (args[0]) {
                         "chest" -> {
-                            val chest = user.homeInventory
+                            val chest = user.tentInventory
                             val chestLevel = user.stat.placeLevel
                             if (chest.size / 9 != chestLevel) {
                                 if (chest.size / 9 > chestLevel) {
@@ -24,9 +24,9 @@ class TentManipulator {
                                 }
                                 val newInventory = Bukkit.createInventory(chest.holder, chestLevel * 9)
                                 newInventory.contents = chest.contents
-                                user.homeInventory = newInventory
+                                user.tentInventory = newInventory
                             }
-                            player.openInventory(user.homeInventory)
+                            player.openInventory(user.tentInventory)
                         }
                         "hide" -> {
                             user.tent?.remove()

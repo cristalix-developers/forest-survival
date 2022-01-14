@@ -72,5 +72,4 @@ enum class BlockUnit (
     fun generate(location: Location) {
         generator.generate(this, location)
     }
-
 }

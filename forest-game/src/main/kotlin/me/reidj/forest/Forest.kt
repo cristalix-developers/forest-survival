@@ -23,7 +23,6 @@ import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -33,6 +32,7 @@ import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.npcs.server.Npcs
+import java.util.*
 
 
 lateinit var app: Forest
@@ -44,23 +44,25 @@ class Forest : JavaPlugin() {
         listOf(statScope),
         { session: KensukeSession, context -> User(session, context.getData(statScope)) },
         { user, context ->
-            user.ifTent {
-                user.stat.placeInventory?.clear()
-                val items = mutableMapOf<ItemList, Int>()
+            user.ifTent { _ ->
+                user.stat.tentInventory?.clear()
 
-                user.homeInventory.forEach {
-                    val nms = CraftItemStack.asNMSCopy(it)
-                    if (nms.tag != null && nms.tag.hasKey("code")) {
-                        val type = ItemList.valueOf(nms.tag.getString("code"))
-                        if (items[type] != null)
-                            items.replace(type, items[type]?.plus(it.getAmount()) ?: 0)
-                        else
-                            items[type] = it.getAmount()
-                    }
-                }
-                items.toList().forEach { println("" + it.first + " " + it.second) }
-                user.stat.placeInventory = items.toList().toMutableList()
+                val tentItems = mutableMapOf<ItemList, Int>()
+
+                user.tentInventory
+                    .filter { Objects.nonNull(it) }
+                    .forEach { user.saveInventory(tentItems, it) }
+
+                user.stat.tentInventory = tentItems.toList().toMutableList()
             }
+            user.stat.playerInventory.clear()
+            val playerItems = mutableMapOf<ItemList, Int>()
+
+            user.player!!.inventory
+                .filter { Objects.nonNull(it) }
+                .forEach { user.saveInventory(playerItems, it) }
+            user.stat.playerInventory = playerItems.toList().toMutableList()
+
             context.store(statScope, user.stat)
         }
     )
