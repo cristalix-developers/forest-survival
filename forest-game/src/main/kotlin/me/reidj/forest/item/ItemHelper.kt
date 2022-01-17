@@ -50,7 +50,7 @@ object ItemHelper {
             text(name)
             type = material
             nbt("code", code)
-        }.build()
+        }
     }
 
 }

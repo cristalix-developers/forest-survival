@@ -30,7 +30,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
         type = ARROW
         text("⭐ §7Стрела")
         nbt("code", "ARROW1")
-    }.build(), null),
+    }, null),
     POISONED_ARROW1(
         item(
             "⭐⭐ §aОтравленная стрела",
@@ -47,14 +47,23 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
         text("⭐ §7Червь")
         nbt("code", "WORM1")
         nbt("color", 1109533183)
-    }.build(), null),
+    }, null),
     IRON1(item("⭐⭐⭐ §cЖелезо", IRON_INGOT, "IRON1"), null),
-    IRON_SWORD1(item { type = IRON_SWORD }.text("⭐⭐⭐ §cЖелезный меч").build(), null),
+    IRON_SWORD1(item {
+        type = IRON_SWORD
+        text("⭐⭐⭐ §cЖелезный меч")
+    }, null),
     IRON_HELMET1(item("⭐⭐⭐ §cЖелезные шлем", CHAINMAIL_HELMET, "IRON_HELMET1"), null),
     IRON_CHEST1(item("⭐⭐⭐ §cЖелезные нагрудник", CHAINMAIL_CHESTPLATE, "IRON_CHEST1"), null),
     IRON_LEGGINGS1(item("⭐⭐⭐ §cЖелезные поножи", CHAINMAIL_LEGGINGS, "IRON_LEGGINGS1"), null),
     IRON_BOOTS1(item("⭐⭐⭐ §cЖелезные ботинки", CHAINMAIL_BOOTS, "IRON_BOOTS1"), null),
-    FLINT1(item { type = FLINT }.text("⭐ §7Кремень").build(), mapOf(StandardsHandlers.knowledgeItem(Knowledge.FLINT))),
+    FLINT1(
+        item {
+            type = FLINT
+            text("⭐ §7Кремень")
+        },
+        mapOf(StandardsHandlers.knowledgeItem(Knowledge.FLINT))
+    ),
     SPEAR1(item("⭐ §7Копьё", WOOD_SWORD, "SPEAR1"), mapOf(StandardsHandlers.throwableItem(SPEAR3, 3.0))),
     ROD1(item("⭐ §7Удочка", FISHING_ROD, "ROD1"), mapOf(
         PlayerFishEvent::class.java to BiConsumer { _, it ->
@@ -89,7 +98,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             type = FLINT_AND_STEEL
             text("⭐⭐ §aПоджег костра")
             nbt("code", "FLINT_AND_STEEL1")
-        }.build(), mapOf(
+        }, mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_BLOCK) {
@@ -111,23 +120,26 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
     TENT1(
         item {
             type = EMERALD
+            text("⭐ §7Палатка 1УР.")
             nbt("forest", "p2")
             nbt("code", "TENT1")
-        }.text("⭐ §7Палатка 1УР.").build(), mapOf(StandardsHandlers.tentItem(1))
+        }, mapOf(StandardsHandlers.tentItem(1))
     ),
     TENT2(
         item {
             type = EMERALD
+            text("⭐⭐ §aПалатка 2УР.")
             nbt("forest", "p3")
             nbt("code", "TENT2")
-        }.text("⭐⭐ §aПалатка 2УР.").build(), mapOf(StandardsHandlers.tentItem(2))
+        }, mapOf(StandardsHandlers.tentItem(2))
     ),
     TENT3(
         item {
             type = EMERALD
+            text("⭐⭐⭐ §cПалатка 3УР.")
             nbt("forest", "p1")
             nbt("code", "TENT3")
-        }.text("⭐⭐⭐ §cПалатка 3УР.").build(), mapOf(StandardsHandlers.tentItem(3))
+        }, mapOf(StandardsHandlers.tentItem(3))
     ),
     STONE1(
         item("⭐ §7Камень", FIREWORK_CHARGE, "STONE1"),
@@ -149,7 +161,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             type = INK_SACK
             data = 5
             nbt("code", "HEAL1")
-        }.build(), mapOf(
+        }, mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.action == Action.RIGHT_CLICK_AIR) {
@@ -238,13 +250,13 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
         data = 10
         text("⭐⭐ §aРакушка")
         nbt("code", "SHELL2")
-    }.build(), null),
+    }, null),
     IRON2(item {
         type = CARPET
         data = 5
         text("⭐⭐ §aМутное железо")
         nbt("code", "IRON2")
-    }.build(), null),
+    }, null),
     STONE2(Items.builder().type(CARPET).build(), null),
     FULL_BUSH2(Items.builder().type(CARPET).damage(1).build(), null),
     EMPTY_BUSH2(Items.builder().type(CARPET).damage(6).build(), null),
@@ -256,7 +268,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
             data = 14
             text("⭐⭐ §aПотухший костер")
             nbt("code", "BONFIRE_OFF2")
-        }.build(), mapOf(
+        }, mapOf(
             PlayerInteractEvent::class.java to BiConsumer { _, it ->
                 val event = it as PlayerInteractEvent
                 if (event.blockClicked == null)

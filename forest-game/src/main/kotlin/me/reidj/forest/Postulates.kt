@@ -7,5 +7,4 @@ object Postulates {
     fun isGround(location: Location): Boolean {
         return true // todo: define this
     }
-
 }

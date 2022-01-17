@@ -80,6 +80,7 @@ class PlayerListener : Listener {
         val entity = clickedEntity
         if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString())
             ModTransfer().send("tent-open", app.getUser(player)!!)
+
     }
 
     @EventHandler
@@ -142,7 +143,7 @@ class PlayerListener : Listener {
 
         player.activePotionEffects.forEach { player.removePotionEffect(it.type) }
         player.inventory.clear()
-
+        
         Anime.corpse(player, null, player.uniqueId, location.x, location.y, location.z, 600)
         Anime.title(player, "§cВы погибли")
 
