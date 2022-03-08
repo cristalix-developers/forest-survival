@@ -6,7 +6,6 @@ import me.func.mod.Anime
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.item.ItemHelper
-import me.reidj.forest.user.User
 import me.reidj.forest.user.listener.prepare.ModLoader
 import me.reidj.forest.user.listener.prepare.PrepareUser
 import me.reidj.forest.user.listener.prepare.SetupScoreBoard
@@ -159,7 +158,23 @@ class PlayerListener : Listener {
         if (killer != null)
             app.getUser(killer)!!.stat.kills++
 
-        createCorpse(user)
+        val playerLocation = player.location
+        val uuid = UUID.randomUUID()
+        Bukkit.getOnlinePlayers().forEach {
+            ModTransfer()
+                .string(uuid.toString())
+                .string("")
+                .string("")
+                .string("")
+                .double(playerLocation.x)
+                .double(playerLocation.y + 3)
+                .double(playerLocation.z)
+                .integer(20)
+                .send("forest:corpse", app.getUser(it)!!)
+        }
+        user.inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Труп ${player.name}")
+        player.inventory.filter { Objects.nonNull(it) }.forEach { user.inventory.addItem(it) }
+        corpses[uuid] = playerLocation to user.inventory
 
         player.activePotionEffects.forEach { player.removePotionEffect(it.type) }
         player.inventory.clear()
@@ -173,26 +188,5 @@ class PlayerListener : Listener {
         user.player!!.health = 20.0
         user.stat.exit = null
         user.spawn()
-    }
-
-    private fun createCorpse(user: User) {
-        val player = user.player!!
-        val playerLocation = player.location
-        val uuid = UUID.randomUUID()
-        Bukkit.getOnlinePlayers().forEach {
-            ModTransfer()
-                .string(uuid.toString())
-                .string("")
-                .string("")
-                .string("")
-                .double(playerLocation.x)
-                .double(playerLocation.y + 0.5)
-                .double(playerLocation.z)
-                .integer(20)
-                .send("forest:corpse", app.getUser(it)!!)
-        }
-        user.inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Труп ${player.name}")
-        player.inventory.filter { Objects.nonNull(it) }.forEach { user.inventory.addItem(it) }
-        corpses[uuid] = playerLocation to user.inventory
     }
 }
