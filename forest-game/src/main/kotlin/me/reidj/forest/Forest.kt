@@ -24,7 +24,6 @@ import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import ru.cristalix.core.CoreApi
@@ -64,7 +63,7 @@ class Forest : JavaPlugin() {
         app = this
         Platforms.set(PlatformDarkPaper())
 
-        Anime.include(Kit.STANDARD)
+        Anime.include(Kit.STANDARD, Kit.NPC)
 
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
@@ -84,13 +83,6 @@ class Forest : JavaPlugin() {
         kensuke.addGlobalUserManager(userManager)
         kensuke.globalRealm = IRealmService.get().currentRealmInfo.realmId.realmName
         userManager.isOptional = true
-
-        B.regCommand({ player, _ ->
-            val mob = player.world.spawnEntity(player.location, EntityType.ZOMBIE)
-            mob.customName = "1"
-            mob.isCustomNameVisible = true
-            null
-        }, "f", "")
 
         B.regCommand({ player, args ->
             getUser(player)?.giveExperience(args[0].toInt())

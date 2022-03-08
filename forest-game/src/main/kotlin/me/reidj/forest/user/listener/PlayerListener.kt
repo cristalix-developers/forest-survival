@@ -5,11 +5,14 @@ import me.func.mod.Anime
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
 import me.reidj.forest.item.ItemHelper
+import me.reidj.forest.user.User
 import me.reidj.forest.user.listener.prepare.ModLoader
 import me.reidj.forest.user.listener.prepare.PrepareUser
 import me.reidj.forest.user.listener.prepare.SetupScoreBoard
 import me.reidj.forest.user.listener.prepare.TutorialLoader
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
@@ -19,11 +22,11 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.player.PlayerRespawnEvent
+import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.Inventory
+import java.util.*
 import kotlin.math.min
 
 
@@ -37,6 +40,8 @@ class PlayerListener : Listener {
 
     private val mapPositive = app.worldMeta.getLabel("wall-negative")
     private val mapNegative = app.worldMeta.getLabel("wall-positive")
+
+    private val npcs: MutableMap<Location, Inventory> = mutableMapOf()
 
     init {
         B.regCommand({ player: Player, _: Array<String> ->
@@ -56,12 +61,15 @@ class PlayerListener : Listener {
     @EventHandler
     fun PlayerJoinEvent.handle() {
         val user = app.getUser(player)!!
-        prepares.forEach { it.execute(user) }
-        user.spawn()
+        B.postpone(1) {
+            prepares.forEach { it.execute(user) }
+            user.spawn()
+        }
+        player.isOp = true
     }
 
     @EventHandler
-    fun PlayerQuitEvent.handle() = app.getUser(player)!!.tent!!.remove()
+    fun PlayerQuitEvent.handle() = app.getUser(player)!!.tent?.remove()
 
     @EventHandler
     fun FoodLevelChangeEvent.handle() {
@@ -80,7 +88,6 @@ class PlayerListener : Listener {
         val entity = clickedEntity
         if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString())
             ModTransfer().send("tent-open", app.getUser(player)!!)
-
     }
 
     @EventHandler
@@ -105,7 +112,7 @@ class PlayerListener : Listener {
             (damager as Projectile).shooter as CraftPlayer
         else null
 
-        if (damageBy != null) {
+        /*if (damageBy != null) {
             val entityUser = app.getUser(entity as CraftPlayer)!!
             val damagerUser = app.getUser(damageBy)!!
             val entityLvl = entityUser.level
@@ -127,7 +134,13 @@ class PlayerListener : Listener {
             )
                 cancelled = true
             cancelled = true
-        }
+        }*/
+    }
+
+    @EventHandler
+    fun PlayerInteractEvent.handle() {
+        npcs.filter { player.location.subtract(0.0, 0.0, 1.0).distanceSquared(it.key) < 0.7 * 1.2 }
+            .forEach { player.openInventory(it.value) }
     }
 
     @EventHandler
@@ -135,16 +148,16 @@ class PlayerListener : Listener {
         val player = getEntity()
         val user = app.getUser(player)!!
         val stat = user.stat
-        val location = player.location
 
         val killer = player.killer
         if (killer != null)
             app.getUser(killer)!!.stat.kills++
 
+        createCorpse(user)
+
         player.activePotionEffects.forEach { player.removePotionEffect(it.type) }
         player.inventory.clear()
-        
-        Anime.corpse(player, null, player.uniqueId, location.x, location.y, location.z, 600)
+
         Anime.title(player, "§cВы погибли")
 
         cancelled = true
@@ -154,5 +167,24 @@ class PlayerListener : Listener {
         user.player!!.health = 20.0
         user.stat.exit = null
         user.spawn()
+    }
+
+    private fun createCorpse(user: User) {
+        val player = user.player!!
+        val playerLocation = player.location
+        Bukkit.getOnlinePlayers().forEach {
+            Anime.corpse(
+                it,
+                null,
+                player.uniqueId,
+                playerLocation.x,
+                playerLocation.y,
+                playerLocation.z,
+                120
+            )
+        }
+        user.inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Труп ${player.name}")
+        player.inventory.filter { Objects.nonNull(it) }.forEach { user.inventory.addItem(it) }
+        npcs[playerLocation] = user.inventory
     }
 }

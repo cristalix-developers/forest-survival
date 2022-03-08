@@ -59,9 +59,11 @@ const val CRITICAL_MAX_TEMPERATURE = 39.0
 
 class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
 
+    lateinit var tentInventory: Inventory
+    lateinit var inventory: Inventory
+
     private var connection: PlayerConnection? = null
     var level = 0
-    lateinit var tentInventory: Inventory
     var tent: ArmorStand? = null
 
     var stat: Stat
@@ -200,13 +202,13 @@ class User(session: KensukeSession, stat: Stat?) : IBukkitKensukeUser {
     }
 
     fun spawn() {
-        if (watchTutorial()) {
+        //if (watchTutorial()) {
             val exit = stat.exit
             if (exit != null)
                 player?.teleport(Location(app.getWorld(), exit.x, exit.y, exit.z))
             else
                 player?.teleport(app.spawn)
-        }
+        //}
     }
 
     fun showTent(location: Location) {
