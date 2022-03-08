@@ -1,6 +1,7 @@
 package me.reidj.forest.user.listener
 
 import clepto.bukkit.B
+import io.netty.buffer.Unpooled
 import me.func.mod.Anime
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
@@ -33,6 +34,7 @@ import kotlin.math.min
 /**
  * Временный класс
  */
+
 class PlayerListener : Listener {
 
     private val textureUrl = System.getenv("http://51.38.128.132/new.zip")
@@ -41,13 +43,17 @@ class PlayerListener : Listener {
     private val mapPositive = app.worldMeta.getLabel("wall-negative")
     private val mapNegative = app.worldMeta.getLabel("wall-positive")
 
-    private val npcs: MutableMap<Location, Inventory> = mutableMapOf()
+    private val corpses: MutableMap<UUID, Pair<Location, Inventory>> = mutableMapOf()
 
     init {
         B.regCommand({ player: Player, _: Array<String> ->
             player.setResourcePack("http://51.38.128.132/new.zip", textureHash)
             null
         }, "rp", "resourcepack")
+
+        Bukkit.getMessenger().registerIncomingPluginChannel(app, "corpse:remove") { _, _, bytes ->
+            corpses.remove(UUID.fromString(Unpooled.wrappedBuffer(bytes).toString(Charsets.UTF_8)))
+        }
     }
 
     private val prepares = listOf(
@@ -139,8 +145,8 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerInteractEvent.handle() {
-        npcs.filter { player.location.subtract(0.0, 0.0, 1.0).distanceSquared(it.key) < 0.7 * 1.2 }
-            .forEach { player.openInventory(it.value) }
+        corpses.values.filter { player.location.subtract(0.0, 0.0, 1.0).distanceSquared(it.first) < 0.7 * 1.2 }
+            .forEach { player.openInventory(it.second) }
     }
 
     @EventHandler
@@ -172,19 +178,21 @@ class PlayerListener : Listener {
     private fun createCorpse(user: User) {
         val player = user.player!!
         val playerLocation = player.location
+        val uuid = UUID.randomUUID()
         Bukkit.getOnlinePlayers().forEach {
-            Anime.corpse(
-                it,
-                null,
-                player.uniqueId,
-                playerLocation.x,
-                playerLocation.y,
-                playerLocation.z,
-                120
-            )
+            ModTransfer()
+                .string(uuid.toString())
+                .string("")
+                .string("")
+                .string("")
+                .double(playerLocation.x)
+                .double(playerLocation.y + 0.5)
+                .double(playerLocation.z)
+                .integer(20)
+                .send("forest:corpse", app.getUser(it)!!)
         }
         user.inventory = Bukkit.createInventory(null, InventoryType.PLAYER, "Труп ${player.name}")
         player.inventory.filter { Objects.nonNull(it) }.forEach { user.inventory.addItem(it) }
-        npcs[playerLocation] = user.inventory
+        corpses[uuid] = playerLocation to user.inventory
     }
 }

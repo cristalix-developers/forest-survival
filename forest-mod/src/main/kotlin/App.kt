@@ -20,6 +20,7 @@ class App : KotlinMod() {
         ItemTitle()
         Temperature()
         TentSettings()
+        CorpseManager
 
         loadTextures(
             load("health_bar.png", "08880C088F83D8890128127"),
