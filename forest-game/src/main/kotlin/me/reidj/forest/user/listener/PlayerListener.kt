@@ -5,7 +5,6 @@ import io.netty.buffer.Unpooled
 import me.func.mod.Anime
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModTransfer
-import me.reidj.forest.item.ItemHelper
 import me.reidj.forest.user.listener.prepare.ModLoader
 import me.reidj.forest.user.listener.prepare.PrepareUser
 import me.reidj.forest.user.listener.prepare.SetupScoreBoard
@@ -13,21 +12,18 @@ import me.reidj.forest.user.listener.prepare.TutorialLoader
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import java.util.*
-import kotlin.math.min
 
 
 /**
@@ -75,16 +71,6 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun PlayerQuitEvent.handle() = app.getUser(player)!!.tent?.remove()
-
-    @EventHandler
-    fun FoodLevelChangeEvent.handle() {
-        val player = entity
-        if (player is CraftPlayer) {
-            ModTransfer().integer(min(20, foodLevel)).send("food-level", app.getUser(player)!!)
-            if (player.itemInHand.type0 == Material.BOWL)
-                ItemHelper.useItem(player)
-        }
-    }
 
     @EventHandler
     fun PlayerInteractAtEntityEvent.handle() {

@@ -31,9 +31,11 @@ import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.realm.IRealmService
 import ru.cristalix.core.realm.RealmStatus
-
+import ru.cristalix.core.scoreboard.IScoreboardService
+import ru.cristalix.core.scoreboard.ScoreboardService
 
 lateinit var app: Forest
+const val PROJECT_NAME = "Лес"
 
 class Forest : JavaPlugin() {
 
@@ -63,6 +65,11 @@ class Forest : JavaPlugin() {
         app = this
         Platforms.set(PlatformDarkPaper())
 
+        // Регистрация Core сервисов
+        val core = CoreApi.get()
+        core.registerService(IInventoryService::class.java, InventoryService())
+        core.registerService(IScoreboardService::class.java, ScoreboardService())
+
         Anime.include(Kit.STANDARD, Kit.NPC)
 
         // Загрузка карты
@@ -72,16 +79,14 @@ class Forest : JavaPlugin() {
 
         // Конфигурация реалма
         val info = IRealmService.get().currentRealmInfo
-        info.status = RealmStatus.GAME_STARTED_CAN_JOIN
-        info.readableName = "Лес"
-        info.groupName = "Лес"
-
-        CoreApi.get().registerService(IInventoryService::class.java, InventoryService())
+        info.status = RealmStatus.WAITING_FOR_PLAYERS
+        info.groupName = PROJECT_NAME
+        IScoreboardService.get().serverStatusBoard.displayName = "§fЛес"
 
         // Подключение к сервису статистики
         val kensuke = BukkitKensuke.setup(app)
         kensuke.addGlobalUserManager(userManager)
-        kensuke.globalRealm = IRealmService.get().currentRealmInfo.realmId.realmName
+        kensuke.globalRealm = info.realmId.realmName
         userManager.isOptional = true
 
         B.regCommand({ player, args ->
