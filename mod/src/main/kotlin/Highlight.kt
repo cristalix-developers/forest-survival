@@ -1,7 +1,7 @@
+
 import dev.xdark.clientapi.event.lifecycle.GameLoop
 import dev.xdark.feder.NetUtil
 import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
@@ -14,7 +14,7 @@ class Highlight {
     init {
         val hints = ArrayList<Pair<Long, AbstractElement>>()
 
-        App::class.mod.registerChannel("highlight") {
+        mod.registerChannel("highlight") {
             val string = NetUtil.readUtf8(this)
             val hint = rectangle {
                 offset = Relative.CENTER

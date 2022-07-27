@@ -1,5 +1,6 @@
 package me.reidj.forest
 
+import me.func.mod.Anime
 import me.func.mod.util.command
 import me.reidj.forest.channel.item.ItemList
 import org.bukkit.Bukkit
@@ -19,7 +20,7 @@ class TentManipulator {
                             val chestLevel = user.stat.placeLevel
                             if (chest.size / 9 != chestLevel) {
                                 if (chest.size / 9 > chestLevel) {
-                                    me.reidj.forest.channel.ModHelper.error(player, "Мелкая палатка")
+                                    Anime.itemTitle(player, BARRIER, "Мелкая палатка", null)
                                     return@ifTent
                                 }
                                 val newInventory = Bukkit.createInventory(chest.holder, chestLevel * 9)

@@ -1,7 +1,9 @@
 package me.reidj.forest.channel.item
 
 import clepto.bukkit.Cycle
+import me.func.mod.Anime
 import me.func.mod.util.after
+import me.reidj.forest.BARRIER
 import me.reidj.forest.app
 import me.reidj.forest.data.Knowledge
 import me.reidj.forest.drop.dropper.DropItem
@@ -81,9 +83,11 @@ object StandardsHandlers {
                 val stat = user.stat
 
                 if (stat.place != null) {
-                    me.reidj.forest.channel.ModHelper.error(
+                    Anime.itemTitle(
                         it.player,
-                        "Уже на ${stat.place!!.x.toInt()} ${stat.place!!.z.toInt()}"
+                        BARRIER,
+                        "Уже на ${stat.place!!.x.toInt()} ${stat.place!!.z.toInt()}",
+                        null
                     )
                     return@BiConsumer
                 }
@@ -100,7 +104,7 @@ object StandardsHandlers {
     }
 
     fun throwableItem(icon: ItemList, damage: Double): Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>> {
-        return Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>> (
+        return Pair<Class<out PlayerEvent>, BiConsumer<ItemList, PlayerEvent>>(
             PlayerInteractEvent::class.java,
             BiConsumer { drop, it ->
                 val event = it as PlayerInteractEvent
@@ -129,7 +133,14 @@ object StandardsHandlers {
 
                     collision(player, it, stand, 2.3, damage) { killStone(drop, stand) }
 
-                    if ((stand.isOnGround || it == ticksLive - 1) && !collision(player, it, stand, 3.2, damage) { killStone(drop, stand) })
+                    if ((stand.isOnGround || it == ticksLive - 1) && !collision(
+                            player,
+                            it,
+                            stand,
+                            3.2,
+                            damage
+                        ) { killStone(drop, stand) }
+                    )
                         killStone(drop, stand)
                 }
             }
@@ -146,9 +157,16 @@ object StandardsHandlers {
         Cycle.exit()
     }
 
-    private fun collision(sender: Player, tick: Int, stand: CraftArmorStand, radiusSquared: Double, damage: Double, doWith: Consumer<CraftArmorStand>): Boolean {
+    private fun collision(
+        sender: Player,
+        tick: Int,
+        stand: CraftArmorStand,
+        radiusSquared: Double,
+        damage: Double,
+        doWith: Consumer<CraftArmorStand>
+    ): Boolean {
         for (living in sender.world.livingEntities) {
-           if (living is Wolf || living is PolarBear || living is CraftPlayer) {
+            if (living is Wolf || living is PolarBear || living is CraftPlayer) {
                 if (living is CraftPlayer && living.player == sender && tick < 40)
                     continue
                 if (stand.location.distanceSquared(living.location) < radiusSquared) {

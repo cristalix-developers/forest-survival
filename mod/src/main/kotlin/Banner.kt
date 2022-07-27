@@ -1,9 +1,9 @@
+
 import dev.xdark.clientapi.event.input.KeyPress
 import dev.xdark.clientapi.resource.ResourceLocation
 import dev.xdark.feder.NetUtil
 import io.netty.buffer.ByteBuf
 import org.lwjgl.input.Keyboard
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.eventloop.animate
@@ -50,7 +50,7 @@ class Banner {
     init {
         UIEngine.overlayContext.addChild(block)
 
-        App::class.mod.registerChannel("banner-new") {
+        mod.registerChannel("banner-new") {
             start(this)
         }
         registerHandler<KeyPress> {

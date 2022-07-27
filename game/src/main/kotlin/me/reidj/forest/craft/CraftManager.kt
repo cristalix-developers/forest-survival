@@ -1,8 +1,9 @@
 package me.reidj.forest.craft
 
+import me.func.mod.Anime
 import me.func.mod.util.command
+import me.reidj.forest.BARRIER
 import me.reidj.forest.app
-import me.reidj.forest.channel.ModHelper
 import net.minecraft.server.v1_12_R1.NBTTagCompound
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -65,9 +66,11 @@ class CraftManager {
 
                         pairs.forEach {
                             if (!inventory.contains(it.first.item.getType(), it.second)) {
-                                ModHelper.error(
+                                Anime.itemTitle(
                                     player,
-                                    "Нет `§c${ChatColor.stripColor(it.first.item.itemMeta.displayName)}§f`!"
+                                    BARRIER,
+                                    "Нет `§c${ChatColor.stripColor(it.first.item.itemMeta.displayName)}§f`!",
+                                    null
                                 )
                                 return@of
                             }

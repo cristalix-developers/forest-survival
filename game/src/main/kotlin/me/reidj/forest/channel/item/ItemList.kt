@@ -1,5 +1,6 @@
 package me.reidj.forest.channel.item
 
+import me.func.mod.Anime
 import me.func.mod.util.after
 import me.func.mod.util.nbt
 import me.reidj.forest.channel.item.ItemHelper.item
@@ -58,7 +59,7 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
 
             if (!ItemHelper.tryUseItem(event.player, WORM1)) {
                 it.isCancelled = true
-                me.reidj.forest.channel.ModHelper.error(event.player, "Нет червей")
+                Anime.itemTitle(event.player, me.reidj.forest.BARRIER, "Нет червей", null)
             }
         }
     )),
@@ -198,12 +199,12 @@ enum class ItemList(val item: ItemStack, val on: Map<Class<out PlayerEvent>, BiC
                     me.reidj.forest.channel.ModHelper.indicator(30 * 20, location.clone().add(0.0, 1.0, 0.0))
                     after(30 * 20) {
                         location.block.type = org.bukkit.Material.AIR
-                        me.reidj.forest.drop.dropper.DropItem.drop(me.reidj.forest.channel.item.ItemList.IRON1, location, null)
-                        me.reidj.forest.drop.dropper.DropItem.drop(me.reidj.forest.channel.item.ItemList.FURNACE2, location, null)
+                        me.reidj.forest.drop.dropper.DropItem.drop(ItemList.IRON1, location, null)
+                        me.reidj.forest.drop.dropper.DropItem.drop(ItemList.FURNACE2, location, null)
                     }
                 } else {
                     it.isCancelled = true
-                    me.reidj.forest.channel.ModHelper.error(it.player, "Нет металла")
+                    Anime.itemTitle(it.player, me.reidj.forest.BARRIER, "Нет металла", null)
                 }
             }
         }

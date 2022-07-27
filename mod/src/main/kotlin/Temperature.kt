@@ -1,6 +1,6 @@
+
 import dev.xdark.clientapi.event.render.RenderTickPre
 import dev.xdark.feder.NetUtil
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.eventloop.animate
@@ -33,7 +33,7 @@ class Temperature {
 
         var prevTemp = 36.6
 
-        App::class.mod.registerChannel("temperature-update") {
+        mod.registerChannel("temperature-update") {
             val original = readDouble()
             val temp = (original * 10).toInt() / 10.0
 
@@ -57,7 +57,7 @@ class Temperature {
             hidden = false
         }
 
-        App::class.mod.registerChannel("weather-update") { weather.content = NetUtil.readUtf8(this) }
+        mod.registerChannel("weather-update") { weather.content = NetUtil.readUtf8(this) }
 
         registerHandler<RenderTickPre> {
             if (System.currentTimeMillis() - lastUpdate > 10_000 && !hidden) {

@@ -2,22 +2,28 @@ package me.reidj.forest.user.listener
 
 import io.netty.buffer.Unpooled
 import me.func.mod.Anime
+import me.func.mod.Glow
+import me.func.mod.conversation.ModLoader
 import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.after
-import me.func.mod.util.command
+import me.func.protocol.Indicators.*
 import me.reidj.forest.app
-import me.reidj.forest.user.listener.prepare.ModLoader
+import me.reidj.forest.channel.ModHelper
+import me.reidj.forest.user.LevelHelper
 import me.reidj.forest.user.listener.prepare.PrepareUser
 import me.reidj.forest.user.listener.prepare.SetupScoreBoard
 import me.reidj.forest.user.listener.prepare.TutorialLoader
+import me.reidj.forest.util.Images
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
@@ -34,26 +40,18 @@ import kotlin.math.min
 
 class PlayerListener : Listener {
 
-    private val textureUrl = System.getenv("http://51.38.128.132/new.zip")
-    private val textureHash = "11180C188F11D8890132123"
-
     private val mapPositive = app.worldMeta.getLabel("wall-negative")
     private val mapNegative = app.worldMeta.getLabel("wall-positive")
 
     private val corpses: MutableMap<UUID, Pair<Location, Inventory>> = mutableMapOf()
 
     init {
-        command("rp") { player, args ->
-            player.setResourcePack("http://51.38.128.132/new.zip", textureHash)
-        }
-
         Bukkit.getMessenger().registerIncomingPluginChannel(app, "corpse:remove") { _, _, bytes ->
             corpses.remove(UUID.fromString(Unpooled.wrappedBuffer(bytes).toString(Charsets.UTF_8)))
         }
     }
 
     private val prepares = listOf(
-        ModLoader(),
         PrepareUser { it.player!!.performCommand("rp") },
         PrepareUser { it.player!!.gameMode = GameMode.SURVIVAL },
         TutorialLoader,
@@ -65,8 +63,13 @@ class PlayerListener : Listener {
         val user = app.getUser(player)!!
         user.player = player
         after {
+            ModLoader.send("mod-bundle-1.0-SNAPSHOT.jar", player)
+            ModTransfer(user.level, user.stat.exp, LevelHelper.level2exp(user.level)).send("exp-level", user.player)
+            ModHelper.updateTemperature(user)
             prepares.forEach { it.execute(user) }
             user.spawn()
+            Anime.hideIndicator(player, HEALTH, EXP, HUNGER, ARMOR, AIR_BAR, VEHICLE)
+            Anime.loadTextures(player, *Images.values().map { it.path() }.toTypedArray())
         }
         player.isOp = true
     }
@@ -92,6 +95,12 @@ class PlayerListener : Listener {
             else
                 player.teleport(app.spawn)
         }
+    }
+
+    @EventHandler
+    fun EntityDamageEvent.handle() {
+        if (entity is Player)
+            Glow.animate(entity as Player, 0.6, 255, 0, 0)
     }
 
     @EventHandler

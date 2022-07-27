@@ -7,12 +7,14 @@ import dev.implario.bukkit.platform.Platforms
 import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
 import me.func.mod.Anime
 import me.func.mod.Kit
+import me.func.mod.conversation.ModLoader
 import me.func.mod.util.command
 import me.func.mod.util.listener
 import me.reidj.forest.channel.item.ItemManager
 import me.reidj.forest.client.ClientSocket
 import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
+import me.reidj.forest.command.PlayerCommands
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
 import me.reidj.forest.user.User
@@ -74,6 +76,8 @@ class App : JavaPlugin() {
 
         Anime.include(Kit.STANDARD, Kit.NPC)
 
+        ModLoader.loadAll("mods")
+
         // Загрузка карты
         worldMeta = MapLoader().load("prod")!!
         spawn = worldMeta.getLabel("guide_end")
@@ -88,6 +92,9 @@ class App : JavaPlugin() {
         command("exp") { player, args ->
             getUser(player)?.giveExperience(args[0].toInt())
         }
+
+        // Регистрация команд
+        PlayerCommands
 
         // Регистрация меню крафтов
         CraftManager()

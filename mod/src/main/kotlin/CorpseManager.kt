@@ -8,7 +8,6 @@ import dev.xdark.clientapi.util.EnumFacing
 import dev.xdark.feder.NetUtil
 import io.netty.buffer.Unpooled
 import ru.cristalix.clientapi.JavaMod
-import ru.cristalix.clientapi.mod
 import ru.cristalix.uiengine.UIEngine
 import java.util.*
 
@@ -17,12 +16,12 @@ object CorpseManager {
     private val corpses = mutableListOf<AbstractClientPlayer>()
 
     init {
-        App::class.mod.registerChannel("func:corpse-clear") {
+        mod.registerChannel("func:corpse-clear") {
             corpses.forEach { JavaMod.clientApi.minecraft().world.removeEntity(it) }
             corpses.clear()
         }
 
-        App::class.mod.registerChannel("forest:corpse") {
+        mod.registerChannel("forest:corpse") {
             val uuid = UUID.fromString(NetUtil.readUtf8(this))
             val name = NetUtil.readUtf8(this)
 

@@ -1,10 +1,10 @@
+
 import dev.xdark.clientapi.event.render.RenderTickPre
 import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.opengl.GL11
 import org.lwjgl.util.vector.Matrix4f
 import org.lwjgl.util.vector.Vector3f
 import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.Context3D
@@ -18,7 +18,7 @@ class BonfireIndicator {
     private var maxTime = -1.0
 
     init {
-        App::class.mod.registerChannel("bonfire-new") {
+        mod.registerChannel("bonfire-new") {
             val v3 = V3(readDouble(), readDouble(), readDouble())
             val v = "${v3.x} ${v3.y} ${v3.z}"
             val pair = bonfires[v]

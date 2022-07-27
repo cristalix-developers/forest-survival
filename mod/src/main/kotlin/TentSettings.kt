@@ -2,7 +2,6 @@
 import dev.xdark.clientapi.event.input.KeyPress
 import org.lwjgl.input.Keyboard
 import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.ClickHandler
 import ru.cristalix.uiengine.element.ContextGui
@@ -87,7 +86,7 @@ class TentSettings {
 
         gui.addChild(blackout, main)
 
-        App::class.mod.registerChannel("tent-open") {
+        mod.registerChannel("tent-open") {
             gui.open()
             gui.enabled = true
         }

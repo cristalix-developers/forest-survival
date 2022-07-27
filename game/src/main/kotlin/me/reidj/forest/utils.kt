@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack
  * @author : Рейдж
  **/
 
+val BARRIER = ItemStack(Material.BARRIER)
+
 fun ItemStack.text(value: String) = apply {
     val strings = value.replace('&', '§').split("\n")
     val meta = itemMeta
@@ -18,7 +20,7 @@ fun ItemStack.text(value: String) = apply {
 }
 
 fun ItemStack.data(value: Short) = apply { durability = value }
-fun item(material: Material): ItemStack = ItemStack(material)
+fun item(material: Material) = ItemStack(material)
 
-fun item(itemStack: ItemStack, apply: ItemStack.() -> Unit): Unit = apply.invoke(itemStack)
-fun item(apply: ItemStack.() -> Unit): ItemStack = ItemStack(Material.CLAY_BALL).apply { apply.invoke(this) }
+fun item(itemStack: ItemStack, apply: ItemStack.() -> Unit) = apply.invoke(itemStack)
+fun item(apply: ItemStack.() -> Unit) = ItemStack(Material.CLAY_BALL).apply { apply.invoke(this) }

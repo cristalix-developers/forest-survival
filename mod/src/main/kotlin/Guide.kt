@@ -1,3 +1,4 @@
+
 import dev.xdark.clientapi.entity.EntityArmorStand
 import dev.xdark.clientapi.entity.EntityLightningBolt
 import dev.xdark.clientapi.entity.EntityProvider
@@ -11,7 +12,6 @@ import dev.xdark.clientapi.nbt.NBTTagCompound
 import dev.xdark.clientapi.nbt.NBTTagString
 import io.netty.buffer.Unpooled
 import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.utility.*
@@ -120,7 +120,6 @@ class Guide {
                     ) {
                         clientApi.minecraft().world.removeEntity(helicopter)
                         clientApi.clientConnection().sendPayload("guide-end", Unpooled.buffer())
-                        GlowEffect.show(0.4, 255, 0, 0, 0.7)
                         clientApi.minecraft().world.setRainStrength(0F)
                         seconds = 100
                     }
@@ -156,7 +155,7 @@ class Guide {
             }
         }
 
-        App::class.mod.registerChannel("lets-start") {
+        mod.registerChannel("lets-start") {
             wrapper.enabled = true
             clientApi.minecraft().setIngameNotInFocus()
         }

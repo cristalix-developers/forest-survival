@@ -2,7 +2,6 @@
 import dev.xdark.clientapi.event.render.*
 import dev.xdark.clientapi.resource.ResourceLocation
 import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.mod
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.RectangleElement
@@ -56,10 +55,6 @@ object BarManager {
 
             val currentHealth = ceil(clientApi.minecraft().player.health).toInt()
             if (currentHealth != health) {
-
-                if (currentHealth < health)
-                    GlowEffect.show(0.1, 255, 0, 0, (20 - currentHealth) * 0.05)
-
                 health = currentHealth
                 healthIndicator?.updatePercentage(currentHealth, 20)
             }
@@ -67,7 +62,7 @@ object BarManager {
 
         display()
 
-        App::class.mod.registerChannel("food-level") {
+        mod.registerChannel("food-level") {
             val foodLevel = readInt()
 
             if (foodLevel != hunger) {
@@ -76,7 +71,7 @@ object BarManager {
             }
         }
 
-        App::class.mod.registerChannel("exp-level") {
+        mod.registerChannel("exp-level") {
             val actualLevel = readInt()
             val haveExp = readInt()
             val needExp = readInt()
