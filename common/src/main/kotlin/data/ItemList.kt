@@ -1,10 +1,10 @@
-package me.reidj.forest.data;
+package data
 
 /**
- * @author : Рейдж
  * @project : forest
+ * @author : Рейдж
  **/
-public enum ItemList {
+enum class ItemList {
     STONE3,
     APPLE3,
     SPEAR3,

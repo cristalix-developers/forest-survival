@@ -1,8 +1,7 @@
 package stat
 
-import me.reidj.forest.data.Item
-import me.reidj.forest.data.Knowledge
-import me.reidj.forest.data.Unique
+import data.Item
+import data.Knowledge
 import ru.cristalix.core.math.V3
 import java.util.*
 
@@ -26,7 +25,4 @@ data class Stat(
     var tentInventory: MutableList<Item>,
     var playerInventory: MutableList<Item>,
     var knowledge: MutableList<Knowledge>,
-) : Unique {
-
-    override fun getUniqueId(): UUID = uuid
-}
+)

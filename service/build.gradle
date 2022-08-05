@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id "com.github.johnrengelman.shadow" version '6.1.0'
 }
 
@@ -7,22 +6,12 @@ shadowJar {
     archiveBaseName.set 'forest-service'
 }
 
-dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    implementation 'org.projectlombok:lombok:1.18.18'
-    implementation 'org.slf4j:slf4j-simple:1.7.30'
-    implementation 'io.javalin:javalin:4.1.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation project(":common")
-    compileOnly 'org.mongodb:mongodb-driver-async:3.7.1'
-    compileOnly 'cristalix:microservice:20.11.04'
-    compileOnly 'com.google.guava:guava:21.0'
-    compileOnly 'io.netty:netty-all:4.1.37.Final'
-    compileOnly 'ru.cristalix:waterfall:1.2'
+repositories {
+    mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes "Main-Class": "me.reidj.forest.ForestService"
-    }
+dependencies {
+    compileOnly 'org.mongodb:mongodb-driver-async:3.7.1'
+    compileOnly 'cristalix:microservice:20.11.04'
+    implementation project(":common")
 }

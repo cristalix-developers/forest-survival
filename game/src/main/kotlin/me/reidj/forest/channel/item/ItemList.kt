@@ -1,12 +1,12 @@
 package me.reidj.forest.channel.item
 
+import data.Knowledge
 import me.func.mod.Anime
 import me.func.mod.util.after
 import me.func.mod.util.nbt
 import me.reidj.forest.channel.item.ItemHelper.item
 import me.reidj.forest.channel.item.ItemHelper.useItem
 import me.reidj.forest.data
-import me.reidj.forest.data.Knowledge
 import me.reidj.forest.drop.block.BlockUnit
 import me.reidj.forest.text
 import org.bukkit.Material.*

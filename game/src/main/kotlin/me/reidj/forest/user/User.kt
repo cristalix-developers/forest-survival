@@ -1,12 +1,12 @@
 package me.reidj.forest.user
 
+import data.Item
+import data.Knowledge
 import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.after
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModHelper
 import me.reidj.forest.channel.item.ItemList
-import me.reidj.forest.data.Item
-import me.reidj.forest.data.Knowledge
 import net.minecraft.server.v1_12_R1.Packet
 import net.minecraft.server.v1_12_R1.PlayerConnection
 import org.bukkit.Bukkit
@@ -90,7 +90,7 @@ class User(stat: Stat) {
             if (nms.tag != null && nms.tag.hasKey("code"))
                 items.add(
                     Item(
-                        me.reidj.forest.data.ItemList.valueOf(nms.tag.getString("code")),
+                        data.ItemList.valueOf(nms.tag.getString("code")),
                         nms.asBukkitMirror().getAmount(),
                         slot
                     )

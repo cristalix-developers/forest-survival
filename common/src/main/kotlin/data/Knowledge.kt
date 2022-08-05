@@ -1,16 +1,10 @@
-package me.reidj.forest.data;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package data
 
 /**
- * @author : Рейдж
  * @project : forest
+ * @author : Рейдж
  **/
-
-@AllArgsConstructor
-@Getter
-public enum Knowledge {
+enum class Knowledge(val picture: String, val message: String) {
     APPLE("apple", "Новый предмет"),
     FLINT("flint", "Новый предмет"),
     HEAL("heal", "Новый предмет"),
@@ -19,7 +13,4 @@ public enum Knowledge {
     COLD("cold", "Новая земля"),
     HOT("hot", "Новая земля"),
     ;
-
-    private final String picture;
-    private final String message;
 }

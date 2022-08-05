@@ -1,5 +1,6 @@
 package me.reidj.forest.weather
 
+import data.Knowledge
 import me.reidj.forest.user.User
 import java.util.function.Consumer
 
@@ -10,11 +11,11 @@ enum class ZoneType(val title: String, val playerIn: Consumer<User>) {
     }),
     COLD("§fМороз §b▼§7", {
         it.changeTemperature(-0.008)
-        it.knowledgeTryGive(me.reidj.forest.data.Knowledge.COLD)
+        it.knowledgeTryGive(Knowledge.COLD)
     }),
     HOT("§fЖара §c▲§7", {
         it.changeTemperature(0.01)
-        it.knowledgeTryGive(me.reidj.forest.data.Knowledge.HOT)
+        it.knowledgeTryGive(Knowledge.HOT)
     }),
     BONFIRE("§fКостер §c▲§7", {
         it.changeTemperature(0.022)
