@@ -5,7 +5,6 @@ import me.reidj.forest.text
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import ru.cristalix.core.formatting.Color
 import ru.cristalix.core.item.Items
@@ -13,27 +12,15 @@ import java.util.function.Consumer
 
 object ItemHelper {
 
-    fun useItem(player: Player) {
-        val hand = player.itemInHand
-        hand.setAmount(hand.getAmount() - 1)
-        player.itemInHand = hand
-    }
+    fun useItem(player: Player) = player.itemInHand.run { setAmount(getAmount() - 1) }
 
-    fun tryUseItem(player: Player, itemList: ItemList): Boolean {
-        if (player.inventory.containsAtLeast(itemList.item, 1)) {
-            player.inventory.removeItem(itemList.item)
-            return true
-        }
-        return false
-    }
+    fun tryUseItem(player: Player, itemList: ItemList) = player.inventory.run { toMutableList().removeIf { containsAtLeast(itemList.item, 1) } }
 
-    fun item(name: String, type: Material, color: Color): ItemStack {
-        return Items.builder()
-            .displayName(name)
-            .type(type)
-            .color(color)
-            .build()
-    }
+    fun item(name: String, type: Material, color: Color) = Items.builder()
+        .displayName(name)
+        .type(type)
+        .color(color)
+        .build()
 
     fun <T : ItemMeta> item(
         name: String,
@@ -51,7 +38,5 @@ object ItemHelper {
         .lore(mutableListOf("").plus(lore))
         .build()
 
-
-    fun item(name: String, material: Material, code: String) =
-        me.reidj.forest.item(material).text(name).nbt("code", code)
+    fun item(name: String, material: Material, code: String) = me.reidj.forest.item(material).text(name).nbt("code", code)
 }

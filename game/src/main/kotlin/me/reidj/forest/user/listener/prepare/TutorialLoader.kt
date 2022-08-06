@@ -10,7 +10,7 @@ object TutorialLoader : PrepareUser {
     init {
         // При завершении туториала
         Bukkit.getMessenger().registerIncomingPluginChannel(app, "guide-end") { _, player, _ ->
-            Glow.animate(player, 0.4, 255 , 0, 0)
+            Glow.animate(player, 0.4, 255, 0, 0)
             player.teleport(app.spawn)
             player.health = 10.0
             player.saturation = 5F
@@ -20,8 +20,5 @@ object TutorialLoader : PrepareUser {
         }
     }
 
-    override fun execute(user: User) {
-        if (!user.watchTutorial())
-            user.player!!.teleport(app.start)
-    }
+    override fun execute(user: User) { user.player!!.teleport(app.start) }
 }

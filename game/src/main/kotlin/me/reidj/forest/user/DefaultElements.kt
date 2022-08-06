@@ -1,6 +1,6 @@
 package me.reidj.forest.user
 
-import stat.Stat
+import me.reidj.forest.data.Stat
 import java.util.*
 
 /**

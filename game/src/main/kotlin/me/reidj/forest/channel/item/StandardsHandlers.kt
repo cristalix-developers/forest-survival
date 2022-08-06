@@ -1,11 +1,11 @@
 package me.reidj.forest.channel.item
 
 import clepto.bukkit.Cycle
-import data.Knowledge
 import me.func.mod.Anime
 import me.func.mod.util.after
 import me.reidj.forest.BARRIER
 import me.reidj.forest.app
+import me.reidj.forest.data.Knowledge
 import me.reidj.forest.drop.dropper.DropItem
 import me.reidj.forest.drop.generator.BonfireGenerator
 import net.minecraft.server.v1_12_R1.EnumItemSlot

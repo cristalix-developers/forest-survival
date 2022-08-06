@@ -9,9 +9,9 @@ import com.mongodb.client.model.UpdateOneModel
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.WriteModel
 import com.mongodb.session.ClientSession
+import me.reidj.forest.data.Stat
 import org.bson.Document
 import ru.cristalix.core.GlobalSerializers
-import stat.Stat
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap

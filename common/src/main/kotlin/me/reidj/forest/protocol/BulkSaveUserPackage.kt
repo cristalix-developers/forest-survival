@@ -1,4 +1,4 @@
-package protocol
+package me.reidj.forest.protocol
 
 import ru.cristalix.core.network.CorePackage
 

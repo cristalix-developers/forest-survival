@@ -1,7 +1,7 @@
-package stat
+package me.reidj.forest.data
 
-import data.Item
-import data.Knowledge
+import me.reidj.forest.data.Item
+import me.reidj.forest.data.Knowledge
 import ru.cristalix.core.math.V3
 import java.util.*
 

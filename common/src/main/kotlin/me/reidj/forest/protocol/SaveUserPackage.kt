@@ -1,7 +1,7 @@
-package protocol
+package me.reidj.forest.protocol
 
 import ru.cristalix.core.network.CorePackage
-import stat.Stat
+import me.reidj.forest.data.Stat
 import java.util.*
 
 /**

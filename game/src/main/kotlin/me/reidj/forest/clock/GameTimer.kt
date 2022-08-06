@@ -13,7 +13,7 @@ interface ClockInject {
 
 class GameTimer(private val injects: List<ClockInject>) : BukkitRunnable() {
 
-    var tick = 0
+    private var tick = 0
     private val maxTick = 1000000000
 
     override fun run() {
@@ -23,9 +23,8 @@ class GameTimer(private val injects: List<ClockInject>) : BukkitRunnable() {
             tick = 0
 
         injects.forEach {
-            if (tick % it.doEvery() == 0) {
+            if (tick % it.doEvery() == 0)
                 it.run()
-            }
         }
     }
 }

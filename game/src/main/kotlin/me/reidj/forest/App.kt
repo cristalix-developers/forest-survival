@@ -16,7 +16,7 @@ import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
 import me.reidj.forest.listener.JoinEvent
 import me.reidj.forest.user.User
-import me.reidj.forest.user.listener.CancelEvents
+import me.reidj.forest.listener.CancelEvents
 import me.reidj.forest.user.listener.PlayerListener
 import me.reidj.forest.weather.ZoneManager
 import net.minecraft.server.v1_12_R1.MinecraftServer
@@ -90,7 +90,7 @@ class App : JavaPlugin() {
         TentManipulator()
 
         // Регистрация обработчиков событий
-        listener(PlayerListener(), CancelEvents(), ItemManager(), ResourceManager(), JoinEvent)
+        listener(PlayerListener(), CancelEvents, ItemManager(), ResourceManager(), JoinEvent)
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf(ZoneManager(), object : ClockInject {

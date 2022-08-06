@@ -17,6 +17,7 @@ import ru.cristalix.core.inventory.InventoryProvider
 
 class CraftManager {
 
+    // TODO Переписать на модовые гуи
     private val menu = ControlledInventory.builder()
         .title("Крафты")
         .rows(3)

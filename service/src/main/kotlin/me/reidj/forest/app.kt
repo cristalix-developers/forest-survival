@@ -1,8 +1,8 @@
 package me.reidj.forest
 
-import protocol.BulkSaveUserPackage
-import protocol.SaveUserPackage
-import protocol.StatPackage
+import me.reidj.forest.protocol.BulkSaveUserPackage
+import me.reidj.forest.protocol.SaveUserPackage
+import me.reidj.forest.protocol.StatPackage
 import ru.cristalix.core.CoreApi
 import ru.cristalix.core.microservice.MicroServicePlatform
 import ru.cristalix.core.microservice.MicroserviceBootstrap

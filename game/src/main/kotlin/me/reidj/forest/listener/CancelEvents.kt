@@ -1,4 +1,4 @@
-package me.reidj.forest.user.listener
+package me.reidj.forest.listener
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent
 import me.func.mod.util.after
@@ -15,15 +15,12 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.spigotmc.event.entity.EntityDismountEvent
 
-class CancelEvents : Listener {
+object CancelEvents : Listener {
 
     @EventHandler
-    fun dismountEvent(event: EntityDismountEvent) {
-        val entity = event.entity
-        val dismounted = event.dismounted
-
+    fun EntityDismountEvent.handle() {
         if (entity is CraftPlayer) {
-            val user = app.getUser(entity) ?: return
+            val user = app.getUser(entity.uniqueId) ?: return
 
             // Если игрок находится в состоянии просмотра туториала,
             // не давать слезть с вертолета
@@ -38,67 +35,41 @@ class CancelEvents : Listener {
     }
 
     @EventHandler
-    fun disable(event: BlockPlaceEvent) {
-        event.isCancelled = true
-    }
+    fun BlockPlaceEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: CraftItemEvent) {
-        event.isCancelled = true
-    }
+    fun CraftItemEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: PlayerInteractEntityEvent) {
-        event.isCancelled = true
-    }
+    fun PlayerInteractEntityEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: BlockFadeEvent) {
-        event.isCancelled = true
-    }
+    fun BlockFadeEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: BlockSpreadEvent) {
-        event.isCancelled = true
-    }
+    fun BlockSpreadEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: BlockGrowEvent) {
-        event.isCancelled = true
-    }
+    fun BlockGrowEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: BlockFromToEvent) {
-        event.isCancelled = true
-    }
+    fun BlockFromToEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: HangingBreakByEntityEvent) {
-        event.isCancelled = true
-    }
+    fun HangingBreakByEntityEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: BlockBurnEvent) {
-        event.isCancelled = true
-    }
+    fun BlockBurnEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: EntityExplodeEvent) {
-        event.isCancelled = true
-    }
+    fun EntityExplodeEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: PlayerArmorStandManipulateEvent) {
-        event.isCancelled = true
-    }
+    fun PlayerArmorStandManipulateEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: PlayerAdvancementCriterionGrantEvent) {
-        event.isCancelled = true
-    }
+    fun PlayerAdvancementCriterionGrantEvent.handle() { isCancelled = true }
 
     @EventHandler
-    fun disable(event: PlayerSwapHandItemsEvent) {
-        event.isCancelled = true
-    }
+    fun PlayerSwapHandItemsEvent.handle() { isCancelled = true }
 }

@@ -1,6 +1,6 @@
 package me.reidj.forest.weather
 
-import data.Knowledge
+import me.reidj.forest.data.Knowledge
 import me.reidj.forest.user.User
 import java.util.function.Consumer
 

@@ -1,6 +1,5 @@
 package me.reidj.forest.channel.item
 
-import clepto.bukkit.B
 import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.after
 import me.reidj.forest.app
@@ -32,19 +31,14 @@ class ItemManager : Listener {
     }
 
     @EventHandler
-    fun PlayerFishEvent.handle() {
-        isItem(player.inventory.itemInHand, this)
-    }
+    fun PlayerFishEvent.handle() { isItem(player.inventory.itemInHand, this) }
 
     @EventHandler
-    fun PlayerAttemptPickupItemEvent.handle() {
-        isItem(item.itemStack, this)
-    }
+    fun PlayerAttemptPickupItemEvent.handle() { isItem(item.itemStack, this) }
 
     private fun isItem(itemStack: ItemStack, on: PlayerEvent) {
-        val tag = CraftItemStack.asNMSCopy(itemStack).tag
-
-        if (tag != null && tag.hasKey("code")) {
+        val tag = CraftItemStack.asNMSCopy(itemStack).tag ?: return
+        if (tag.hasKeyOfType("code", 8)) {
             val item = ItemList.valueOf(tag.getString("code"))
             if (item.on != null)
                 item.on[on::class.java]?.accept(item, on)
