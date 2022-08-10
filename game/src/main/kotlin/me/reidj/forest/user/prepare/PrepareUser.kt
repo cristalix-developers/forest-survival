@@ -1,4 +1,4 @@
-package me.reidj.forest.user.listener.prepare
+package me.reidj.forest.user.prepare
 
 import me.reidj.forest.user.User
 

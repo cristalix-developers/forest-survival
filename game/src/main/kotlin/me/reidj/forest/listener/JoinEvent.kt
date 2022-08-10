@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
  * @project : forest
  * @author : Рейдж
  **/
-object JoinEvent : Listener {
+class JoinEvent : Listener {
 
     @EventHandler
     fun AsyncPlayerPreLoginEvent.handle() {

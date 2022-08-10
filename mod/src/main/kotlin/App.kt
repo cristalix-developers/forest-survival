@@ -16,11 +16,10 @@ class App : KotlinMod() {
         mod = this
 
         Guide()
-        Indicator()
         BonfireIndicator()
         Temperature()
         TentSettings()
-        CorpseManager
+        CorpseManager()
 
         BarManager
         Highlight()

@@ -5,8 +5,6 @@ package me.reidj.forest.util
  * @author : Рейдж
  **/
 enum class Images {
-    HEALTH_BAR,
-    XP_BAR,
     ENERGY,
     FIRST,
     SECOND,
@@ -21,7 +19,7 @@ enum class Images {
     RED_MUSHROOM,
     HEAL,
     HEALTH,
-    WATER,
+    CARTRIDGE,
     FOOD,
     ;
 

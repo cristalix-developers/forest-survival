@@ -14,10 +14,10 @@ import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.command.PlayerCommands
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
-import me.reidj.forest.listener.JoinEvent
-import me.reidj.forest.user.User
 import me.reidj.forest.listener.CancelEvents
-import me.reidj.forest.user.listener.PlayerListener
+import me.reidj.forest.listener.JoinEvent
+import me.reidj.forest.listener.TentManipulator
+import me.reidj.forest.user.User
 import me.reidj.forest.weather.ZoneManager
 import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
@@ -61,7 +61,7 @@ class App : JavaPlugin() {
             registerService(IScoreboardService::class.java, ScoreboardService())
         }
 
-        Anime.include(Kit.STANDARD, Kit.NPC)
+        Anime.include(Kit.STANDARD, Kit.NPC, Kit.DEBUG)
 
         ModLoader.loadAll("mods")
 
@@ -86,11 +86,8 @@ class App : JavaPlugin() {
         // Регистрация меню крафтов
         CraftManager()
 
-        // Регистрация палаток
-        TentManipulator()
-
         // Регистрация обработчиков событий
-        listener(PlayerListener(), CancelEvents, ItemManager(), ResourceManager(), JoinEvent)
+        listener(CancelEvents, ItemManager(), ResourceManager(), JoinEvent(), TentManipulator())
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf(ZoneManager(), object : ClockInject {

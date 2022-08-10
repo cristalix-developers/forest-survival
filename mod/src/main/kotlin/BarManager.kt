@@ -1,66 +1,53 @@
 
-import dev.xdark.clientapi.event.render.*
+import dev.xdark.clientapi.event.render.RenderTickPre
 import dev.xdark.clientapi.resource.ResourceLocation
-import ru.cristalix.clientapi.JavaMod.clientApi
-import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
+import ru.cristalix.uiengine.element.CarvedRectangle
 import ru.cristalix.uiengine.element.RectangleElement
-import ru.cristalix.uiengine.element.TextElement
 import ru.cristalix.uiengine.eventloop.animate
 import ru.cristalix.uiengine.utility.*
 import kotlin.math.ceil
-import kotlin.math.max
 import kotlin.math.min
 
 object BarManager {
 
     private var healthIndicator: HealthIndicator? = null
     private var energyIndicator: EnergyIndicator? = null
-    private var lvlIndicator: LevelIndicator? = null
-    private var airBar: RectangleElement? = null
-
-    private var airHide: Boolean = false
+    private var ammoIndicator: AmmoIndicator? = null
+    private var airBar: CarvedRectangle? = null
 
     private var health = 0
     private var hunger = 0
-    private var exp = 0
-    private var level = 0
 
     init {
-        registerHandler<HealthRender> { isCancelled = true }
-        registerHandler<ExpBarRender> { isCancelled = true }
-        registerHandler<HungerRender> { isCancelled = true }
-        registerHandler<ArmorRender> { isCancelled = true }
-        registerHandler<AirBarRender> { isCancelled = true }
-        registerHandler<VehicleHealthRender> { isCancelled = true }
+        healthIndicator = HealthIndicator()
+        energyIndicator = EnergyIndicator()
+        ammoIndicator = AmmoIndicator()
 
-        registerHandler<RenderTickPre> {
-            if (airBar != null) {
-                var air = clientApi.minecraft().player.air
-                air = max(0, air)
+        airBar = carved {
+            size = V3(130.0, 60.0)
+            color.alpha = 0.68
+            origin = Relative.BOTTOM
+            align = Relative.BOTTOM
+            offset = V3(413.0, -15.0)
+            addChild(healthIndicator!!, energyIndicator!!, ammoIndicator!!)
+        }
 
-                if (!airHide)
-                    airBar!!.children[0].size.x = air.toDouble() / 300 * 260.0
+        energyIndicator!!.updateEnergy(1, 1)
+        ammoIndicator!!.updateAmmo(29, 30)
+        ammoIndicator!!.updateAmmoInfo("5.56", 135)
 
-                if (air == 300 && !airHide) {
-                    airHide = true
-                    UIEngine.overlayContext.removeChild(airBar!!)
-                }
+        UIEngine.overlayContext.addChild(airBar!!)
 
-                if (air < 300 && airHide) {
-                    airHide = false
-                    UIEngine.overlayContext.addChild(airBar!!)
-                }
-            }
-
-            val currentHealth = ceil(clientApi.minecraft().player.health).toInt()
+        mod.registerHandler<RenderTickPre> {
+            val currentHealth = ceil(UIEngine.clientApi.minecraft().player.health).toInt()
             if (currentHealth != health) {
                 health = currentHealth
-                healthIndicator?.updatePercentage(currentHealth, 20)
+                healthIndicator?.updateHealth(health, 20)
             }
         }
 
-        display()
+        /*display()
 
         mod.registerChannel("food-level") {
             val foodLevel = readInt()
@@ -69,164 +56,166 @@ object BarManager {
                 hunger = foodLevel
                 energyIndicator?.updatePercentage(foodLevel, 20)
             }
-        }
-
-        mod.registerChannel("exp-level") {
-            val actualLevel = readInt()
-            val haveExp = readInt()
-            val needExp = readInt()
-
-            if (actualLevel != level || haveExp != exp) {
-                exp = haveExp
-                level = actualLevel
-                lvlIndicator?.updatePercentage(level, exp, needExp)
-            }
-        }
-    }
-
-    private fun display() {
-        lvlIndicator = LevelIndicator()
-        healthIndicator = HealthIndicator()
-        energyIndicator = EnergyIndicator()
-
-        healthIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "health_bar.png")
-        energyIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "xp_bar.png")
-        lvlIndicator!!.bar.textureLocation = ResourceLocation.of(NAMESPACE, "energy.png")
-
-        val parent = rectangle {
-            origin = Relative.BOTTOM
-            align = Relative.BOTTOM
-            offset.y = -14.0
-        }
-        parent.addChild(lvlIndicator!!, healthIndicator!!, energyIndicator!!)
-
-        UIEngine.overlayContext.addChild(parent)
-
-        lvlIndicator!!.updatePercentage(1, 0, 0)
-        healthIndicator!!.updatePercentage(20, 20)
-        energyIndicator!!.updatePercentage(20, 20)
-
-        airBar = rectangle {
-            size = V3(260.0, 3.0)
-            color.alpha = 0.68
-            origin = Relative.BOTTOM
-            align = Relative.BOTTOM
-            offset.y = -51.0
-            addChild(rectangle {
-                size = V3(260.0, 3.0)
-                color = WHITE
-            })
-        }
-        UIEngine.overlayContext.addChild(airBar!!)
+        }*/
     }
 
 
-    class HealthIndicator : RectangleElement() {
+    class HealthIndicator : CarvedRectangle() {
 
-        val bar: RectangleElement
-        private val text: TextElement = text {
+        private val bar: CarvedRectangle
+
+        private val text = text {
             origin = Relative.CENTER
             align = Relative.CENTER
-            offset.x = 4.0
+            scale = V3(0.9, 0.9, 0.9)
+            offset.x = 54.0
+        }
+
+        private val icon = rectangle {
+            textureLocation = ResourceLocation.of(NAMESPACE,"health.png")
+            origin = Relative.CENTER
+            align = Relative.CENTER
+            size = V3(9.0, 9.0, 9.0)
+            offset.x -= 49.0
+            color = WHITE
         }
 
         private val maxX: Double
 
         init {
             color = Color(0, 0, 0, 0.68)
-            offset = V3(-1.0, -30.0)
+            offset = V3(35.0, -20.0)
             align = Relative.CENTER
             origin = Relative.RIGHT
-            size = V3(99.0, 10.0)
+            size = V3(80.0, 7.0)
 
             val parentSize = size
-            bar = rectangle {
-                color = WHITE
+            bar = carved {
+                color = Color(160, 47, 37)
                 size = parentSize
             }
             this.maxX = bar.size.x
 
-            addChild(bar, text)
+            addChild(icon, bar, text)
         }
 
-        fun updatePercentage(current: Int, max: Int) {
+        fun updateHealth(current: Int, max: Int) {
             bar.animate(0.1, Easings.CUBIC_OUT) {
                 bar.size.x = maxX * min(1.0, current / max.toDouble())
             }
-            this.text.content = "§f$current/$max ❤"
+            this.text.content = "${current * 100 / max}%"
         }
     }
 
-    class EnergyIndicator : RectangleElement() {
+    class EnergyIndicator : CarvedRectangle() {
 
-        val bar: RectangleElement
-        private val text: TextElement = text {
+        private val bar: CarvedRectangle
+
+        private val text = text {
             origin = Relative.CENTER
             align = Relative.CENTER
-            offset.x = 4.0
+            scale = V3(0.9, 0.9, 0.9)
+            offset.x = 54.0
+        }
+
+        private val icon = rectangle {
+            textureLocation = ResourceLocation.of(NAMESPACE,"energy.png")
+            origin = Relative.CENTER
+            align = Relative.CENTER
+            size = V3(9.0, 9.0, 9.0)
+            offset.x -= 49.0
+            color = WHITE
         }
 
         private val maxX: Double
 
         init {
             color = Color(0, 0, 0, 0.68)
-            offset = V3(1.0, -30.0)
+            offset = V3(35.0, -8.0)
             align = Relative.CENTER
-            origin = Relative.LEFT
-            size = V3(99.0, 10.0)
+            origin = Relative.RIGHT
+            size = V3(80.0, 7.0)
 
             val parentSize = size
 
-            bar = rectangle {
-                color = WHITE
+            bar = carved {
+                color = Color(94, 85, 65)
                 size = parentSize
             }
             this.maxX = bar.size.x
 
-            addChild(bar, text)
+            addChild(icon, bar, text)
         }
 
-        fun updatePercentage(energy: Int, maxEnergy: Int) {
+        fun updateEnergy(current: Int, max: Int) {
             bar.animate(0.1, Easings.CUBIC_OUT) {
-                bar.size.x = maxX * min(1.0, energy / maxEnergy.toDouble())
+                bar.size.x = maxX * min(1.0, current / max.toDouble())
             }
-            this.text.content = "§f$energy/$maxEnergy"
+            this.text.content = "${current * 100 / max}%"
         }
     }
 
-    class LevelIndicator : RectangleElement() {
+    class AmmoIndicator: RectangleElement() {
 
-        val bar: RectangleElement
-        private val text: TextElement = text {
+        private val icon = rectangle {
+            textureLocation = ResourceLocation.of(NAMESPACE,"cartridge.png")
             origin = Relative.CENTER
             align = Relative.CENTER
-            offset.x = 4.0
+            size = V3(21.0, 21.0, 21.0)
+            color = WHITE
         }
 
-        private val maxX: Double
+        private val ammo = text {
+            origin = CENTER
+            align = CENTER
+            shadow = true
+            scale = V3(2.0, 2.0, 2.0)
+            offset = V3(21.0, 3.5)
+        }
+
+        private val maxAmmo = text {
+            origin = CENTER
+            align = CENTER
+            shadow = true
+            scale = V3(1.3, 1.3, 1.3)
+            offset = V3(41.0, 5.9)
+        }
+
+
+        private val ammoName = text {
+            origin = CENTER
+            align = CENTER
+            shadow = true
+            scale = V3(1.2, 1.2, 1.2)
+            offset = V3(-27.0, -6.5)
+        }
+
+        private val ammoValues = text {
+            origin = CENTER
+            align = CENTER
+            shadow = true
+            scale = V3(1.2, 1.2, 1.2)
+            offset = V3(-34.0, 6.5)
+        }
 
         init {
-            color = Color(0, 0, 0, 0.68)
-            offset.y = -18.0
+            color = TRANSPARENT
             align = Relative.CENTER
-            origin = Relative.CENTER
-            size = V3(200.0, 10.0)
+            origin = Relative.RIGHT
+            size = V3(50.0, 30.0)
+            offset = V3(24.9, 15.0)
 
-            val parentSize = size
-            bar = rectangle {
-                color = WHITE
-                size = parentSize
-            }
-            this.maxX = bar.size.x
-
-            addChild(bar, text)
+            addChild(icon, ammo, maxAmmo, ammoName, ammoValues)
         }
 
-        fun updatePercentage(level: Int, exp: Int, needExp: Int) {
-            bar.animate(0.1, Easings.CUBIC_OUT) {
-                bar.size.x = maxX * min(1.0, exp / needExp.toDouble())
-            }
-            this.text.content = "§f$level ур. ${if (needExp == 0) "Макс. уровень" else "§b$exp/$needExp"}"
+        fun updateAmmo(ammo: Int, maxAmmo: Int) {
+            this.ammo.content = "$ammo"
+            this.maxAmmo.content = "$maxAmmo"
+        }
+
+        fun updateAmmoInfo(name: String, values: Int) {
+            ammoName.content = "$name C"
+            ammoValues.content = "$values"
         }
     }
 }

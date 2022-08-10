@@ -72,7 +72,7 @@ class Banner {
     }
 
     private fun start(data: ByteBuf) {
-        photo.textureLocation = ResourceLocation.of(NAMESPACE, "forest/${NetUtil.readUtf8(data)}.png")
+        photo.textureLocation = ResourceLocation.of(NAMESPACE, "${NetUtil.readUtf8(data)}.png")
         block.enabled = true
         leftText.content = NetUtil.readUtf8(data)
         block.animate(0.2) {

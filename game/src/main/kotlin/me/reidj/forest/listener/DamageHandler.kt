@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled
 import me.func.mod.Anime
 import me.func.mod.Glow
 import me.func.mod.conversation.ModTransfer
+import me.func.mod.util.after
 import me.reidj.forest.app
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -17,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.Inventory
 import java.util.*
 
@@ -38,6 +40,11 @@ object DamageHandler : Listener {
     fun PlayerInteractEvent.handle() {
         corpses.values.filter { player.location.subtract(0.0, 0.0, 1.0).distanceSquared(it.first) < 0.7 * 1.2 }
             .forEach { player.openInventory(it.second) }
+    }
+
+    @EventHandler
+    fun PlayerRespawnEvent.handle() {
+        after { app.getUser(player)!!.tent.run { player.teleport(if (this != null) location else app.spawn) } }
     }
 
     @EventHandler

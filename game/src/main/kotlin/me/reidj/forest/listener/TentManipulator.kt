@@ -1,11 +1,18 @@
-package me.reidj.forest
+package me.reidj.forest.listener
 
 import me.func.mod.Anime
+import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.command
+import me.reidj.forest.BARRIER
+import me.reidj.forest.app
 import me.reidj.forest.channel.item.ItemList
 import org.bukkit.Bukkit
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.inventory.EquipmentSlot
 
-class TentManipulator {
+class TentManipulator : Listener {
 
     init {
         command("tent") { player, args ->
@@ -39,5 +46,14 @@ class TentManipulator {
                 }
             }
         }
+    }
+
+    @EventHandler
+    fun PlayerInteractAtEntityEvent.handle() {
+        if (hand == EquipmentSlot.OFF_HAND)
+            return
+        val entity = clickedEntity
+        if (entity.hasMetadata("owner") && entity.getMetadata("owner")[0].asString() == player.uniqueId.toString())
+            ModTransfer().send("tent-open", player)
     }
 }

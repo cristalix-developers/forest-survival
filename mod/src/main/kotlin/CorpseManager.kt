@@ -11,7 +11,7 @@ import ru.cristalix.clientapi.JavaMod
 import ru.cristalix.uiengine.UIEngine
 import java.util.*
 
-object CorpseManager {
+class CorpseManager {
 
     private val corpses = mutableListOf<AbstractClientPlayer>()
 
