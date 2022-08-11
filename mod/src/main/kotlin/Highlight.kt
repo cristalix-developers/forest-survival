@@ -1,7 +1,5 @@
 
 import dev.xdark.clientapi.event.lifecycle.GameLoop
-import dev.xdark.feder.NetUtil
-import ru.cristalix.clientapi.JavaMod.clientApi
 import ru.cristalix.clientapi.registerHandler
 import ru.cristalix.uiengine.UIEngine
 import ru.cristalix.uiengine.element.AbstractElement
@@ -15,16 +13,14 @@ class Highlight {
         val hints = ArrayList<Pair<Long, AbstractElement>>()
 
         mod.registerChannel("highlight") {
-            val string = NetUtil.readUtf8(this)
             val hint = rectangle {
                 offset = Relative.CENTER
                 align = Relative.CENTER
                 scale = V3(1.1, 1.1, 1.1)
                 addChild(text {
-                    offset.x -= clientApi.fontRenderer().getStringWidth(string) / 2 * (1.15) // 1 + половина %30
+                    offset.x -= 2 * 1.15
                     offset.y += 5
                     scale = V3(1.0, 1.0, 1.0)
-                    content = string
                     color = WHITE
                 })
             }

@@ -6,7 +6,6 @@ import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
 import me.func.mod.Anime
 import me.func.mod.Kit
 import me.func.mod.conversation.ModLoader
-import me.func.mod.util.command
 import me.func.mod.util.listener
 import me.reidj.forest.channel.item.ItemManager
 import me.reidj.forest.clock.ClockInject
@@ -15,6 +14,7 @@ import me.reidj.forest.command.PlayerCommands
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
 import me.reidj.forest.listener.CancelEvents
+import me.reidj.forest.listener.DamageHandler
 import me.reidj.forest.listener.JoinEvent
 import me.reidj.forest.listener.TentManipulator
 import me.reidj.forest.user.User
@@ -76,10 +76,6 @@ class App : JavaPlugin() {
         info.groupName = PROJECT_NAME
         IScoreboardService.get().serverStatusBoard.displayName = "§fЛес"
 
-        command("exp") { player, args ->
-            getUser(player)?.giveExperience(args[0].toInt())
-        }
-
         // Регистрация команд
         PlayerCommands
 
@@ -87,7 +83,7 @@ class App : JavaPlugin() {
         CraftManager()
 
         // Регистрация обработчиков событий
-        listener(CancelEvents, ItemManager(), ResourceManager(), JoinEvent(), TentManipulator())
+        listener(CancelEvents(), DamageHandler(), ItemManager(), ResourceManager(), JoinEvent(), TentManipulator())
 
         // Начало игрового времени и добавление временных собитий
         GameTimer(listOf(ZoneManager(), object : ClockInject {

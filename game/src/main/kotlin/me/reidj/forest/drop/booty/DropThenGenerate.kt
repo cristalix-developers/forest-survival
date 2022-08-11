@@ -11,7 +11,6 @@ object DropThenGenerate : Booty {
         resource.drop(location, user.player!!)
         resource.generate(location)
         location.block.type = Material.AIR
-        user.giveExperience(resource.exp)
-        ModHelper.highlight(user.player!!, "§f§l+${resource.exp} §bexp")
+        ModHelper.highlight(user.player!!)
     }
 }

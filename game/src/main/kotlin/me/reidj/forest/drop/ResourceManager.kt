@@ -71,7 +71,6 @@ class ResourceManager : Listener {
     fun PlayerFishEvent.handle() {
         if (state == PlayerFishEvent.State.CAUGHT_FISH) {
             (caught as Item).itemStack = ListUtils.random(fishLoot).item
-            app.getUser(player)!!.giveExperience(5)
         }
     }
 
@@ -102,9 +101,8 @@ class ResourceManager : Listener {
 
                 val user = app.getUser(player)!!
 
-                user.giveExperience(mob.exp)
                 user.stat.killMobs++
-                ModHelper.highlight(player, "§f§l+${mob.exp} §bexp")
+                ModHelper.highlight(player)
             }
         }
     }

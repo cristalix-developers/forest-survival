@@ -17,7 +17,7 @@ object BarManager {
     private var airBar: CarvedRectangle? = null
 
     private var health = 0
-    private var hunger = 0
+    private var foodLevel = 0
 
     init {
         healthIndicator = HealthIndicator()
@@ -39,24 +39,21 @@ object BarManager {
 
         UIEngine.overlayContext.addChild(airBar!!)
 
+
         mod.registerHandler<RenderTickPre> {
-            val currentHealth = ceil(UIEngine.clientApi.minecraft().player.health).toInt()
+            val player = UIEngine.clientApi.minecraft().player
+            val currentHealth = ceil(player.health).toInt()
             if (currentHealth != health) {
                 health = currentHealth
                 healthIndicator?.updateHealth(health, 20)
             }
-        }
+            val currentFood = ceil(player.foodStats.foodLevel.toDouble()).toInt()
 
-        /*display()
-
-        mod.registerChannel("food-level") {
-            val foodLevel = readInt()
-
-            if (foodLevel != hunger) {
-                hunger = foodLevel
-                energyIndicator?.updatePercentage(foodLevel, 20)
+            if (currentHealth != foodLevel) {
+                foodLevel = currentFood
+                energyIndicator!!.updateEnergy(foodLevel, 20)
             }
-        }*/
+        }
     }
 
 
@@ -158,10 +155,10 @@ object BarManager {
     class AmmoIndicator: RectangleElement() {
 
         private val icon = rectangle {
-            textureLocation = ResourceLocation.of(NAMESPACE,"cartridge.png")
+            textureLocation = ResourceLocation.of(NAMESPACE,"magazine.png")
             origin = Relative.CENTER
             align = Relative.CENTER
-            size = V3(21.0, 21.0, 21.0)
+            size = V3(16.0, 16.0, 16.0)
             color = WHITE
         }
 
@@ -169,18 +166,9 @@ object BarManager {
             origin = CENTER
             align = CENTER
             shadow = true
-            scale = V3(2.0, 2.0, 2.0)
-            offset = V3(21.0, 3.5)
+            scale = V3(1.5, 1.5, 1.5)
+            offset = V3(29.0, 0.5)
         }
-
-        private val maxAmmo = text {
-            origin = CENTER
-            align = CENTER
-            shadow = true
-            scale = V3(1.3, 1.3, 1.3)
-            offset = V3(41.0, 5.9)
-        }
-
 
         private val ammoName = text {
             origin = CENTER
@@ -205,12 +193,11 @@ object BarManager {
             size = V3(50.0, 30.0)
             offset = V3(24.9, 15.0)
 
-            addChild(icon, ammo, maxAmmo, ammoName, ammoValues)
+            addChild(icon, ammo, ammoName, ammoValues)
         }
 
         fun updateAmmo(ammo: Int, maxAmmo: Int) {
-            this.ammo.content = "$ammo"
-            this.maxAmmo.content = "$maxAmmo"
+            this.ammo.content = "$ammo/$maxAmmo"
         }
 
         fun updateAmmoInfo(name: String, values: Int) {

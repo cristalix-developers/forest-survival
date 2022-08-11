@@ -1,6 +1,5 @@
 package me.reidj.forest.user
 
-import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.after
 import me.reidj.forest.app
 import me.reidj.forest.channel.ModHelper
@@ -22,32 +21,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-object LevelHelper {
-    fun exp2level(exp: Int): Int {
-        return when (exp) {
-            0 -> 0
-            in 1..4 -> 1
-            in 5..99 -> 2
-            in 100..999 -> 3
-            in 1000..4999 -> 4
-            in 5000..999999 -> 5
-            else -> 6
-        }
-    }
-
-    fun level2exp(level: Int): Int {
-        return when (level) {
-            0 -> 0
-            1 -> 5
-            2 -> 100
-            3 -> 1000
-            4 -> 5000
-            5 -> 100000
-            else -> 10000000
-        }
-    }
-}
-
 const val MAX_TEMPERATURE = 41.2
 const val AVR_TEMPERATURE = 36.6
 const val MIN_TEMPERATURE = 29.0
@@ -68,8 +41,6 @@ class User(stat: Stat) {
 
     init {
         this.stat = stat
-
-        level = LevelHelper.exp2level(this.stat.exp)
 
         // Выдача вещей игроку
         after(5) {
@@ -111,25 +82,6 @@ class User(stat: Stat) {
         val node = ItemList.valueOf(it.itemList.name).item.clone()
         node.setAmount(it.amount)
         toPut.setItem(it.slot, node)
-    }
-
-
-    fun giveExperience(exp: Int) {
-        stat.exp += exp
-        val currentLevel = LevelHelper.exp2level(stat.exp)
-
-        ModTransfer(
-            currentLevel,
-            LevelHelper.level2exp(currentLevel) - (LevelHelper.level2exp(currentLevel) - stat.exp),
-            LevelHelper.level2exp(currentLevel)
-        ).send("exp-level", player)
-
-        if (currentLevel != level) {
-            level = currentLevel
-            if (level < 1)
-                return
-            ModHelper.banner(this, currentLevel.toString(), "Получен $level уровень")
-        }
     }
 
     fun hasLevel(level: Int) = level <= this.level

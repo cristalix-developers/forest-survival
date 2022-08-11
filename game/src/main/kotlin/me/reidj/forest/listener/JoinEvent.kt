@@ -2,7 +2,6 @@ package me.reidj.forest.listener
 
 import me.func.mod.Anime
 import me.func.mod.conversation.ModLoader
-import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.after
 import me.func.protocol.Indicators
 import me.reidj.forest.app
@@ -11,7 +10,6 @@ import me.reidj.forest.clientSocket
 import me.reidj.forest.protocol.SaveUserPackage
 import me.reidj.forest.protocol.StatPackage
 import me.reidj.forest.user.DefaultElements
-import me.reidj.forest.user.LevelHelper
 import me.reidj.forest.user.User
 import me.reidj.forest.util.Images
 import org.bukkit.GameMode
@@ -53,7 +51,6 @@ class JoinEvent : Listener {
 
         after {
             ModLoader.send("mod-bundle-1.0-SNAPSHOT.jar", player)
-            ModTransfer(user.level, user.stat.exp, LevelHelper.level2exp(user.level)).send("exp-level", user.player)
             ModHelper.updateTemperature(user)
 
             Anime.hideIndicator(player, Indicators.HEALTH, Indicators.EXP, Indicators.HUNGER, Indicators.ARMOR, Indicators.AIR_BAR, Indicators.VEHICLE)

@@ -1,7 +1,5 @@
 package me.reidj.forest.data
 
-import me.reidj.forest.data.Item
-import me.reidj.forest.data.Knowledge
 import ru.cristalix.core.math.V3
 import java.util.*
 
@@ -16,7 +14,6 @@ data class Stat(
     var deaths: Int,
     var kills: Int,
     var killMobs: Int,
-    var exp: Int,
     var placeLevel: Int,
     var temperature: Double,
     var lastEntry: Double,

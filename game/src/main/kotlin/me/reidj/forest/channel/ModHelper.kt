@@ -17,7 +17,7 @@ object ModHelper {
         }
     }
 
-    fun highlight(player: Player, message: String) = ModTransfer(message).send("highlight", player)
+    fun highlight(player: Player) = ModTransfer().send("highlight", player)
 
     fun updateTemperature(user: User) = ModTransfer(user.stat.temperature).send("temperature-update", user.player)
 

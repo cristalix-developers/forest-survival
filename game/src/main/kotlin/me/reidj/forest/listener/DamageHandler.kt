@@ -26,7 +26,7 @@ import java.util.*
  * @project : forest
  * @author : Рейдж
  **/
-object DamageHandler : Listener {
+class DamageHandler : Listener {
 
     private val corpses: MutableMap<UUID, Pair<Location, Inventory>> = mutableMapOf()
 

@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.spigotmc.event.entity.EntityDismountEvent
 
-object CancelEvents : Listener {
+class CancelEvents : Listener {
 
     @EventHandler
     fun EntityDismountEvent.handle() {

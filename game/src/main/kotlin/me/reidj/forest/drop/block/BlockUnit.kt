@@ -18,46 +18,45 @@ import org.bukkit.entity.Player
 
 enum class BlockUnit (
     val title: String,
-    val exp: Int,
     val item: ItemList,
     private val dropper: Dropper,
     val generator: Generator,
     private val booty: Booty
 ) {
     STONE(
-        "Камень", 1, STONE1,
+        "Камень",  STONE1,
         RandomItemDrop(1, FLINT1),
         DelayGenerator(STONE2, 20), DropThenGenerate
     ),
     BUSH(
-        "Куст", 1, APPLE1,
+        "Куст",  APPLE1,
         RandomItemDrop(3, APPLE1, STICK1, HEAL1, STRING1),
         DelayGenerator(FULL_BUSH2, 20), ReplaceThenGenerate(EMPTY_BUSH2)
     ),
     GRIB(
-        "Гриб", 2, MUSHROOM2,
+        "Гриб",  MUSHROOM2,
         DropItem, DelayGenerator(MUSHROOM2, 20), DropThenGenerate
     ),
     TOXIC(
-        "Мухомор", 2, RED_MUSHROOM2,
+        "Мухомор",  RED_MUSHROOM2,
         DropItem, DelayGenerator(RED_MUSHROOM2, 60), DropThenGenerate
     ),
     SHELL(
-        "Ракушка", 4, SHELL2,
+        "Ракушка",  SHELL2,
         DropItem, DelayGenerator(SHELL2, 300), DropThenGenerate
     ),
     IRON(
-        "Железо", 5, IRON2,
+        "Железо",  IRON2,
         RandomItemDrop(2, IRON2),
         DelayGenerator(IRON2, 20), DropThenGenerate
     ),
     TOTEM(
-        "Тотем", 7, SKULL1,
+        "Тотем",  SKULL1,
         RandomItemDrop(3, STICK1),
         DelayGenerator(TOTEM2, 300), DropThenGenerate
     ),
     FIRE(
-        "Костер", 0, BONFIRE_OFF2,
+        "Костер",  BONFIRE_OFF2,
         DropItem, BonfireGenerator, BonfireBooty
     ), ;
 

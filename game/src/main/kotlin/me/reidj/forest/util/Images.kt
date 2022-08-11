@@ -19,7 +19,7 @@ enum class Images {
     RED_MUSHROOM,
     HEAL,
     HEALTH,
-    CARTRIDGE,
+    MAGAZINE,
     FOOD,
     ;
 

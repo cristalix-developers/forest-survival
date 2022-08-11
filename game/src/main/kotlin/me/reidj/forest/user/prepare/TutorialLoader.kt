@@ -15,7 +15,6 @@ object TutorialLoader : PrepareUser {
             player.health = 10.0
             player.saturation = 5F
             val user = app.getUser(player)!!
-            user.giveExperience(1)
             user.stat.tutorial = true
         }
     }

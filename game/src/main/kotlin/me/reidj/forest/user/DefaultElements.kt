@@ -17,7 +17,6 @@ object DefaultElements {
         0,
         0,
         0,
-        0,
         36.6,
         3.0,
         null,
