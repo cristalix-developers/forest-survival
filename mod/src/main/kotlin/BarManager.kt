@@ -9,7 +9,7 @@ import ru.cristalix.uiengine.utility.*
 import kotlin.math.ceil
 import kotlin.math.min
 
-object BarManager {
+class BarManager {
 
     private var healthIndicator: HealthIndicator? = null
     private var energyIndicator: EnergyIndicator? = null
@@ -27,9 +27,9 @@ object BarManager {
         airBar = carved {
             size = V3(130.0, 60.0)
             color.alpha = 0.68
-            origin = Relative.BOTTOM
-            align = Relative.BOTTOM
-            offset = V3(413.0, -15.0)
+            origin = Relative.BOTTOM_RIGHT
+            align = Relative.BOTTOM_RIGHT
+            offset.y -= 15.0
             addChild(healthIndicator!!, energyIndicator!!, ammoIndicator!!)
         }
 

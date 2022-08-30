@@ -21,9 +21,10 @@ class App : KotlinMod() {
         TentSettings()
         CorpseManager()
 
-        BarManager
+        BarManager()
         Highlight()
         Banner()
+        EffectManager
 
         registerHandler<KeyPress> {
             if (key == Keyboard.KEY_H)
