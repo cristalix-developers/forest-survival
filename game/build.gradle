@@ -8,6 +8,7 @@ afterEvaluate {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.21'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0'
 
     compileOnly 'cristalix:bukkit-core:21.01.30'
     compileOnly 'cristalix:dark-paper:21.02.03'

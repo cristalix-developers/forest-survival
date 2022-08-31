@@ -12,6 +12,6 @@ object PlayerCommands {
     private const val TEXTURE_HASH = "11180C188F11D8890132123"
 
     init {
-        command("rp") { player, _ -> player.setResourcePack("https://storage.c7x.dev/reidj/forest/new.zip", TEXTURE_HASH) }
+        command("rp") { player, _ -> player.setResourcePack(textureUrl, TEXTURE_HASH) }
     }
 }

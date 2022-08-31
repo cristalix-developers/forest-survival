@@ -1,24 +1,9 @@
 package me.reidj.forest.craft
 
-import me.func.mod.Anime
-import me.func.mod.util.command
-import me.reidj.forest.BARRIER
-import me.reidj.forest.app
-import net.minecraft.server.v1_12_R1.NBTTagCompound
-import org.bukkit.ChatColor
-import org.bukkit.Material
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import ru.cristalix.core.inventory.ClickableItem
-import ru.cristalix.core.inventory.ControlledInventory
-import ru.cristalix.core.inventory.InventoryContents
-import ru.cristalix.core.inventory.InventoryProvider
-
 class CraftManager {
 
     // TODO Переписать на модовые гуи
-    private val menu = ControlledInventory.builder()
+    /*private val menu = ControlledInventory.builder()
         .title("Крафты")
         .rows(3)
         .columns(9)
@@ -33,7 +18,6 @@ class CraftManager {
                 val user = app.getUser(player)!!
 
                 CraftItem.values().sortedBy { it.minLevel }.forEach { item ->
-                    val locked = !user.hasLevel(item.minLevel)
                     var itemWithLore = item.to.item.clone()
                     val pairs = item.from
                     val title = ChatColor.stripColor(itemWithLore.itemMeta.displayName)
@@ -92,5 +76,5 @@ class CraftManager {
 
     init {
         command("craft") { player, _ -> menu.open(player) }
-    }
+    }*/
 }

@@ -1,5 +1,9 @@
 package me.reidj.forest.listener
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.launch
 import me.func.mod.Anime
 import me.func.mod.conversation.ModLoader
 import me.func.mod.util.after
@@ -18,7 +22,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import java.util.concurrent.TimeUnit
+import ru.cristalix.core.formatting.Formatting
+import ru.cristalix.core.transfer.ITransferService
 
 /**
  * @project : forest
@@ -27,23 +32,25 @@ import java.util.concurrent.TimeUnit
 class JoinEvent : Listener {
 
     @EventHandler
-    fun AsyncPlayerPreLoginEvent.handle() {
-        try {
-            val statPckg = clientSocket.writeAndAwaitResponse<StatPackage>(StatPackage(uniqueId)).get(3L, TimeUnit.SECONDS)
-            var stat = statPckg.stat
+    fun AsyncPlayerPreLoginEvent.handle() = registerIntent(app).apply {
+        CoroutineScope(Dispatchers.IO).launch {
+            val statPackage = clientSocket.writeAndAwaitResponse<StatPackage>(StatPackage(uniqueId)).await()
+            var stat = statPackage.stat
             if (stat == null) stat = DefaultElements.createNewUser(uniqueId)
             app.userMap[uniqueId] = User(stat)
-        } catch (ex: Exception) {
-            app.userMap.remove(uniqueId)
-            disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Сейчас нельзя зайти на этот сервер");
-            loginResult = AsyncPlayerPreLoginEvent.Result.KICK_OTHER;
-            ex.printStackTrace()
+            completeIntent(app)
         }
     }
 
     @EventHandler
     fun PlayerJoinEvent.handle() {
-        val user = app.getUser(player)!!
+        val user = app.getUser(player)
+
+        if (user == null) {
+            player.sendMessage(Formatting.error("Нам не удалось прогрузить Вашу статистику."))
+            after(10) { ITransferService.get().transfer(player.uniqueId, app.getHub()) }
+            return
+        }
 
         user.player = player
 
@@ -53,7 +60,15 @@ class JoinEvent : Listener {
             ModLoader.send("mod-bundle-1.0-SNAPSHOT.jar", player)
             ModHelper.updateTemperature(user)
 
-            Anime.hideIndicator(player, Indicators.HEALTH, Indicators.EXP, Indicators.HUNGER, Indicators.ARMOR, Indicators.AIR_BAR, Indicators.VEHICLE)
+            Anime.hideIndicator(
+                player,
+                Indicators.HEALTH,
+                Indicators.EXP,
+                Indicators.HUNGER,
+                Indicators.ARMOR,
+                Indicators.AIR_BAR,
+                Indicators.VEHICLE
+            )
             Anime.loadTextures(player, *Images.values().map { it.path() }.toTypedArray())
 
             user.spawn()

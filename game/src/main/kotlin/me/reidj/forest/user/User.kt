@@ -34,7 +34,6 @@ class User(stat: Stat) {
     lateinit var tentInventory: Inventory
     lateinit var inventory: Inventory
 
-    var level = 0
     var tent: ArmorStand? = null
 
     var player: Player? = null
@@ -48,8 +47,7 @@ class User(stat: Stat) {
 
             tentInventory = Bukkit.createInventory(player, placeLevel * 9, "Палатка $placeLevel УР.")
 
-            putItem(this.stat.tentInventory, tentInventory)
-            putItem(this.stat.playerInventory, player!!.inventory)
+            putItem(this.stat.tentInventory, tentInventory, player?.inventory)
 
             ifTent { showTent(it) }
         }
@@ -78,13 +76,11 @@ class User(stat: Stat) {
         stat.knowledge.add(knowledge)
     }
 
-    private fun putItem(inventory: MutableList<Item>, toPut: Inventory) = inventory.forEach {
+    private fun putItem(inventory: MutableList<Item>, vararg toPut: Inventory?) = inventory.forEach {
         val node = ItemList.valueOf(it.itemList.name).item.clone()
         node.setAmount(it.amount)
-        toPut.setItem(it.slot, node)
+        toPut.forEach { inventory -> inventory?.setItem(it.slot, node) }
     }
-
-    fun hasLevel(level: Int) = level <= this.level
 
     fun changeTemperature(dx: Double) {
         stat.temperature += dx
