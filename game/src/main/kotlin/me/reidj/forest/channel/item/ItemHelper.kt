@@ -1,7 +1,7 @@
 package me.reidj.forest.channel.item
 
 import me.func.mod.util.nbt
-import me.reidj.forest.text
+import me.reidj.forest.util.text
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
@@ -38,5 +38,6 @@ object ItemHelper {
         .lore(mutableListOf("").plus(lore))
         .build()
 
-    fun item(name: String, material: Material, code: String) = me.reidj.forest.item(material).text(name).nbt("code", code)
+    fun item(name: String, material: Material, code: String) = me.reidj.forest.util.item(material)
+        .text(name).nbt("code", code)
 }

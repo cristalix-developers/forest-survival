@@ -19,6 +19,8 @@ import me.reidj.forest.listener.DamageHandler
 import me.reidj.forest.listener.JoinEvent
 import me.reidj.forest.listener.TentManipulator
 import me.reidj.forest.user.User
+import me.reidj.forest.util.MapLoader
+import me.reidj.forest.water.WaterManager
 import me.reidj.forest.weather.ZoneManager
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -50,6 +52,8 @@ class App : JavaPlugin() {
     lateinit var start: Location
 
     val userMap = mutableMapOf<UUID, User>()
+
+    private lateinit var waterManager: WaterManager
 
     override fun onEnable() {
         app = this
@@ -84,11 +88,21 @@ class App : JavaPlugin() {
         // Регистрация меню крафтов
         CraftManager()
 
+        waterManager = WaterManager()
+
         // Регистрация обработчиков событий
-        listener(CancelEvents(), DamageHandler(), ItemManager(), ResourceManager(), JoinEvent(), TentManipulator())
+        listener(CancelEvents(), DamageHandler(), ItemManager(), ResourceManager(), JoinEvent(), TentManipulator(), waterManager)
 
         // Начало игрового времени и добавление временных собитий
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, GameTimer(listOf(ZoneManager(), EffectManager())), 0, 1)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+            this, GameTimer(
+                listOf(
+                    ZoneManager(),
+                    EffectManager(),
+                    waterManager
+                )
+            ), 0, 1
+        )
     }
 
     override fun onDisable() {

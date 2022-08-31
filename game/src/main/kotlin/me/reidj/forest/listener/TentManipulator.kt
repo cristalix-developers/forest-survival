@@ -3,7 +3,7 @@ package me.reidj.forest.listener
 import me.func.mod.Anime
 import me.func.mod.conversation.ModTransfer
 import me.func.mod.util.command
-import me.reidj.forest.BARRIER
+import me.reidj.forest.util.BARRIER
 import me.reidj.forest.app
 import me.reidj.forest.channel.item.ItemList
 import org.bukkit.Bukkit

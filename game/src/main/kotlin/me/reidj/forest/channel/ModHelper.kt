@@ -23,6 +23,8 @@ object ModHelper {
 
     fun updateTemperature(user: User) = ModTransfer(user.stat.temperature).send("temperature-update", user.player)
 
+    fun updateWaterAmount(user: User) = ModTransfer(user.stat.water).send("forest:water-level", user.player)
+
     fun activeEffect(isNewEffect: Boolean, user: User, data: Effect) {
         if (isNewEffect) {
             user.stat.activeEffects.add(data)

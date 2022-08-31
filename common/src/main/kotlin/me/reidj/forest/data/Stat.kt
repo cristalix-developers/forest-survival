@@ -11,6 +11,8 @@ data class Stat(
     var uuid: UUID,
     var tutorial: Boolean,
     var health: Double,
+    var water: Int,
+    var food: Int,
     var deaths: Int,
     var kills: Int,
     var killMobs: Int,

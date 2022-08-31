@@ -1,4 +1,4 @@
-package me.reidj.forest
+package me.reidj.forest.util
 
 import clepto.cristalix.Cristalix
 import clepto.cristalix.WorldMeta

@@ -13,6 +13,8 @@ object DefaultElements {
         userId,
         false,
         20.0,
+        20,
+        20,
         0,
         0,
         0,

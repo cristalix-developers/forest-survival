@@ -1,4 +1,4 @@
-package me.reidj.forest
+package me.reidj.forest.util
 
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack

@@ -52,8 +52,12 @@ class JoinEvent : Listener {
             return
         }
 
+        val stat = user.stat
+
         user.player = player
 
+        player.health = stat.health
+        player.foodLevel = stat.food
         player.gameMode = GameMode.SURVIVAL
 
         after {
@@ -80,7 +84,13 @@ class JoinEvent : Listener {
     fun PlayerQuitEvent.handle() {
         val uuid = player.uniqueId
         val user = app.userMap.remove(uuid) ?: return
+        val stat = user.stat
+
         user.tent?.remove()
+
+        stat.health = player.health
+        stat.food = player.foodLevel
+
         clientSocket.write(SaveUserPackage(uuid, user.stat))
     }
 }

@@ -23,6 +23,7 @@ enum class Images {
     IMMORTALITY,
     REGENERATION,
     RUNNING,
+    WATER,
     ;
 
     fun path() = "https://storage.c7x.dev/reidj/forest/${name.lowercase()}.png"

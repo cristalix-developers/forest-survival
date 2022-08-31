@@ -3,7 +3,7 @@ package me.reidj.forest.channel.item
 import clepto.bukkit.Cycle
 import me.func.mod.Anime
 import me.func.mod.util.after
-import me.reidj.forest.BARRIER
+import me.reidj.forest.util.BARRIER
 import me.reidj.forest.app
 import me.reidj.forest.data.Knowledge
 import me.reidj.forest.drop.dropper.DropItem
