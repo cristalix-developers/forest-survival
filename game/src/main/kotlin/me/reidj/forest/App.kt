@@ -1,5 +1,6 @@
 package me.reidj.forest
 
+import clepto.bukkit.B
 import clepto.cristalix.WorldMeta
 import dev.implario.bukkit.platform.Platforms
 import dev.implario.platform.impl.darkpaper.PlatformDarkPaper
@@ -8,18 +9,17 @@ import me.func.mod.Kit
 import me.func.mod.conversation.ModLoader
 import me.func.mod.util.listener
 import me.reidj.forest.channel.item.ItemManager
-import me.reidj.forest.clock.ClockInject
 import me.reidj.forest.clock.GameTimer
 import me.reidj.forest.command.PlayerCommands
 import me.reidj.forest.craft.CraftManager
 import me.reidj.forest.drop.ResourceManager
+import me.reidj.forest.effect.EffectManager
 import me.reidj.forest.listener.CancelEvents
 import me.reidj.forest.listener.DamageHandler
 import me.reidj.forest.listener.JoinEvent
 import me.reidj.forest.listener.TentManipulator
 import me.reidj.forest.user.User
 import me.reidj.forest.weather.ZoneManager
-import net.minecraft.server.v1_12_R1.MinecraftServer
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -30,6 +30,7 @@ import ru.cristalix.core.inventory.IInventoryService
 import ru.cristalix.core.inventory.InventoryService
 import ru.cristalix.core.network.ISocketClient
 import ru.cristalix.core.realm.IRealmService
+import ru.cristalix.core.realm.RealmId
 import ru.cristalix.core.realm.RealmStatus
 import ru.cristalix.core.scoreboard.IScoreboardService
 import ru.cristalix.core.scoreboard.ScoreboardService
@@ -52,6 +53,7 @@ class App : JavaPlugin() {
 
     override fun onEnable() {
         app = this
+        B.plugin = this
 
         Platforms.set(PlatformDarkPaper())
 
@@ -86,18 +88,7 @@ class App : JavaPlugin() {
         listener(CancelEvents(), DamageHandler(), ItemManager(), ResourceManager(), JoinEvent(), TentManipulator())
 
         // Начало игрового времени и добавление временных собитий
-        GameTimer(listOf(ZoneManager(), object : ClockInject {
-            override fun run() {
-                Bukkit.getLogger().info("Total entities: " + getWorld().livingEntities.size)
-                Bukkit.getLogger().info("Total players: " + Bukkit.getOnlinePlayers().size)
-                Bukkit.getLogger()
-                    .info("TPS: ${MinecraftServer.SERVER.tps1.average} ${MinecraftServer.SERVER.tps15.average}")
-            }
-
-            override fun doEvery(): Int {
-                return 100
-            }
-        })).runTaskTimer(this, 0, 1)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, GameTimer(listOf(ZoneManager(), EffectManager())), 0, 1)
     }
 
     override fun onDisable() {
@@ -121,4 +112,6 @@ class App : JavaPlugin() {
     fun getUser(player: Player): User? = getUser(player.uniqueId)
 
     fun getWorld(): World = worldMeta.world
+
+    fun getHub(): RealmId = RealmId.of("HUB-2")
 }

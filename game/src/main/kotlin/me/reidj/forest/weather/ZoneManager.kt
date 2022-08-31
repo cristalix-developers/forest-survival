@@ -38,9 +38,6 @@ class ZoneManager : ClockInject {
                 continue
             val user = app.getUser(player)!!
 
-            if (!user.hasLevel(3))
-                return
-
             var weather = ""
 
             val zonesIn = zones
@@ -78,8 +75,5 @@ class ZoneManager : ClockInject {
         }
     }
 
-    override fun doEvery(): Int {
-        return 10
-    }
-
+    override fun doEvery() = 10
 }

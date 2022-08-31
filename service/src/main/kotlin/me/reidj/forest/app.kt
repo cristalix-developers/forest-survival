@@ -40,7 +40,7 @@ fun main() {
         }
     }
     clientSocket.addListener(BulkSaveUserPackage::class.java) { realm, pckg ->
-        println("Received BulkSaveUserPackage from ${realm.realmName}-${realm.id}")
+        println("Received BulkSaveUserPackage from ${realm.realmName}")
         mongoAdapter.save(pckg.packages.map { it.stat })
     }
 }

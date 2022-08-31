@@ -158,7 +158,7 @@ class BarManager {
             textureLocation = ResourceLocation.of(NAMESPACE,"magazine.png")
             origin = Relative.CENTER
             align = Relative.CENTER
-            size = V3(16.0, 16.0, 16.0)
+            size = V3(13.0, 13.0, 13.0)
             color = WHITE
         }
 

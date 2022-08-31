@@ -20,7 +20,9 @@ enum class Images {
     HEAL,
     HEALTH,
     MAGAZINE,
-    FOOD,
+    IMMORTALITY,
+    REGENERATION,
+    RUNNING,
     ;
 
     fun path() = "https://storage.c7x.dev/reidj/forest/${name.lowercase()}.png"

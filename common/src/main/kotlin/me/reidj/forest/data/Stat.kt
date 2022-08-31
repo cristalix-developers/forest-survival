@@ -22,4 +22,5 @@ data class Stat(
     var tentInventory: MutableList<Item>,
     var playerInventory: MutableList<Item>,
     var knowledge: MutableList<Knowledge>,
+    var activeEffects: MutableList<Effect>,
 )
